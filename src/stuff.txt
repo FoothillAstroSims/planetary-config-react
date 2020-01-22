@@ -1,0 +1,12 @@
+chris:
+ratio of orbits 
+angle between two planets
+
+josh:
+creating the svg file
+
+andrew and safi: 
+displaying the constetllation stuff on the botttom
+
+
+
