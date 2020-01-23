@@ -3,42 +3,27 @@ import ReactDOM from 'react-dom';
 import MainView from './MainView';
 import ZodiacStrip from './ZodiacStrip';
 import {RangeStepInput} from 'react-range-step-input';
-import {degToRad, forceNumber} from './utils';
+import {forceNumber} from './utils';
 
 class PlanetaryConfigSim extends React.Component {
     constructor(props) {
         super(props);
         this.initialState = {
-            /*
-             * observerAngle refers to the angle of the observer on
-             * the MainView. This is effectively the sun's position in
-             * the sky.
-             */
-            observerAngle: Math.PI / 2,
-            moonAngle: 0,//-Math.PI,
-            marsAngle: 0,//-Math.PI,
-            radiusMars: 80 * 2,
-            radiusMoon: 150 * 2,
+            observerPlanetAngle: 0,
+            targetPlanetAngle: 0,
+            radiusTargetPlanet: 300,
+            radiusObserverPlanet: 160,
+            // This multplier is for the orbital equation: https://tinyurl.com/yx444bnv
+            // Use the ratio between the radius of the two planets to find this multiplier
             multiplier:  Math.pow((160 / 300), 1.5),
             isPlaying: false,
             animationRate: 2,
-            showAngle: false,
-            showLunarLandmark: false,
-            showTimeTickmarks: false,
-
-            celestialSphereIsHidden: false,
-            moonPhaseViewIsHidden: false
         };
+
         this.state = this.initialState;
         this.raf = null;
 
-        // The moon's synodic period
-        this.synodicPeriod = 29.530589;
-        this.handleInputChange = this.handleInputChange.bind(this);
-
         this.stopAnimation = this.stopAnimation.bind(this);
-
-        this.celestialSphereRef = React.createRef();
     }
 
     render() {
@@ -65,118 +50,78 @@ class PlanetaryConfigSim extends React.Component {
             <div className="row mt-2">
                 <div className="col-8">
                     <MainView
-                        observerAngle={this.state.observerAngle}
-                        moonAngle={this.state.moonAngle}
-                        marsAngle={this.state.marsAngle}
-                        radiusMars={this.state.radiusMars}
-                        radiusMoon={this.state.radiusMoon}
-                        showAngle={this.state.showAngle}
-                        showLunarLandmark={this.state.showLunarLandmark}
-                        showTimeTickmarks={this.state.showTimeTickmarks}
-                        onObserverAngleUpdate={this.onObserverAngleUpdate.bind(this)}
-                        onMoonAngleUpdate={this.onMoonAngleUpdate.bind(this)}
-                        onMarsAngleUpdate={this.onMarsAngleUpdate.bind(this)}
+                        observerPlanetAngle={this.state.observerPlanetAngle}
+                        targetPlanetAngle={this.state.targetPlanetAngle}
+                        radiusTargetPlanet={this.state.radiusTargetPlanet}
+                        radiusObserverPlanet={this.state.radiusObserverPlanet}
+                        onObserverPlanetAngleUpdate={this.onObserverPlanetAngleUpdate.bind(this)}
+                        onTargetPlanetAngleUpdate={this.onTargetPlanetAngleUpdate.bind(this)}
                         stopAnimation={this.stopAnimation}
                     />
                 </div>
-                <div className="rowx">
-                    <div className="col">
-                        <h4>Orbit Sizes</h4>
-                        <form className="form-inline">
-                            <label htmlFor="radMoonRange">Radius of moon's orbit</label>
-                            <RangeStepInput name="radiusMoon"
-                                    className="form-control-range ml-2"
-                                    value={this.state.radiusMoon}
-                                    onChange={this.onMoonRadiusChange.bind(this)}
-                                    step={10}
-                                    min={50} max={500} />
-                        </form>
-                        <form className="form-inline">
-                            <label htmlFor="radMarsRange">Radius of Earth's orbit</label>
-                            <RangeStepInput name="radiusMars"
-                                    className="form-control-range ml-2"
-                                    value={this.state.radiusMars}
-                                    onChange={this.onMarsRadiusChange.bind(this)}
-                                    step={10}
-                                    min={50} max={500} />
-                        </form>
-
-
+                    <div className="rowx">
+                        <div className="col">
+                            <h4>Orbit Sizes</h4>
+                            <form className="form-inline">
+                                <label htmlFor="radObserverPlanetRange">Radius of observer planet's orbit</label>
+                                <RangeStepInput name="radiusObserverPlanet"
+                                       className="form-control-range ml-2"
+                                       value={this.state.radiusObserverPlanet}
+                                       onChange={this.onObserverPlanetRadiusChange.bind(this)}
+                                       step={10}
+                                       min={50} max={500} />
+                            </form>
+                            <form className="form-inline">
+                                <label htmlFor="radTargetPlanetRange">Radius of target planet's orbit</label>
+                                <RangeStepInput name="radiusTargetPlanet"
+                                       className="form-control-range ml-2"
+                                       value={this.state.radiusTargetPlanet}
+                                       onChange={this.onTargetPlanetRadiusChange.bind(this)}
+                                       step={10}
+                                       min={50} max={500} />
+                            </form>
+                        </div>
+                        <div className="col">
+                            <h4>Animation Control</h4>
+                            <button type="button" className="btn btn-primary btn-sm"
+                                    onClick={this.onStartClick.bind(this)}>
+                                {startBtnText}
+                            </button>
+                            <form className="form-inline">
+                                <label htmlFor="diamRange">Animation rate:</label>
+                                <RangeStepInput name="animationRate"
+                                       className="form-control-range ml-2"
+                                       value={this.state.animationRate}
+                                       onChange={this.onAnimationRateChange.bind(this)}
+                                       step={0.1}
+                                       min={3} max={10} />
+                            </form>
+                        </div>
                     </div>
-                    <div className="col">
-                        <h4>Animation Control</h4>
-                        <button type="button" className="btn btn-primary btn-sm"
-                                onClick={this.onStartClick.bind(this)}>
-                            {startBtnText}
-                        </button>
-                        <form className="form-inline">
-                            <label htmlFor="diamRange">Animation rate:</label>
-                            <RangeStepInput name="animationRate"
-                                    className="form-control-range ml-2"
-                                    value={this.state.animationRate}
-                                    onChange={this.onAnimationRateChange.bind(this)}
-                                    step={0.1}
-                                    min={3} max={10} />
-                        </form>
-                        
+                    <div className="bot">
+                        {
+                            <ZodiacStrip />
+                        }
                     </div>
                 </div>
-                <div className="bot">
-                    <h3>zodiac strip</h3>
-                    {
-                        <ZodiacStrip />
-                    }
-                </div>
-            </div>
         </React.Fragment>;
     }
 
-    // incrementAngle(n, inc) {
-    //     const newAngle = n + inc;
-    //     if (newAngle > Math.PI * 2) {
-    //         return newAngle - Math.PI * 2;
-    //     }
-    //     return newAngle;
-    // }
-    // decrementAngle(n, dec) {
-    //     const newAngle = n - dec;
-    //     if (newAngle < 0) {
-    //         return newAngle + Math.PI * 2;
-    //     }
-    //     return newAngle;
-    // }
-    incrementMoonAngle(n, inc) {
+   incrementObserverPlanetAngle(n, inc) {
         const newAngle = n + inc;
-        // if (newAngle > Math.PI) {
-        //     return newAngle - Math.PI * 2;
-        // }
         return newAngle;
     }
-    incrementMarsAngle(n, inc) {
-        const newAngle = (1 / this.state.multiplier) * this.state.moonAngle;
-        // if (newAngle > Math.PI) {
-        //     return newAngle - Math.PI * 2;
-        // }
+    incrementTargetPlanetAngle() {
+        const newAngle = (this.state.multiplier) * this.state.observerPlanetAngle;
         return newAngle;
     }
-    decrementMoonAngle(n, dec) {
-        const newAngle = n - dec;
-        if (newAngle < -Math.PI) {
-            return newAngle + Math.PI * 2;
-        }
-        return newAngle;
-    }
+    
     animate() {
         const me = this;
         this.setState(prevState => ({
-            // observerAngle: me.incrementAngle(
-            //     prevState.observerAngle,
-            //     0.03 * this.state.animationRate),
-            marsAngle: me.incrementMarsAngle(
-                prevState.marsAngle,
-                0.010 * this.state.animationRate),
-            moonAngle: me.incrementMoonAngle(
-                prevState.moonAngle,
+            targetPlanetAngle: me.incrementTargetPlanetAngle(),
+            observerPlanetAngle: me.incrementObserverPlanetAngle(
+                prevState.observerPlanetAngle,
                 0.010 * this.state.animationRate)
         }));
         this.raf = requestAnimationFrame(this.animate.bind(this));
@@ -190,60 +135,56 @@ class PlanetaryConfigSim extends React.Component {
             this.setState({isPlaying: false});
         }
     }
-    onObserverAngleUpdate(newAngle) {
-        this.stopAnimation();
-        this.setState({
-            isPlaying: false,
-            observerAngle: newAngle
-        });
-    }
-    onMoonAngleUpdate(newAngle) {
+    
+    onObserverPlanetAngleUpdate(newAngle) {
         this.stopAnimation();
         let diff = 0;
         let newAng = newAngle;
-        let prevMoonAng = this.state.moonAngle;
+        let prevObserverPlanetAng = this.state.observerPlanetAngle;
 
-        if (newAng >= (Math.PI / 2) && newAng <= Math.PI && prevMoonAng >= -Math.PI && prevMoonAng <= (-Math.PI / 2)) {
-            diff = -(Math.abs(newAng - Math.PI) + Math.abs(-Math.PI - prevMoonAng));
-        } else if (prevMoonAng >= (Math.PI / 2) && prevMoonAng <= Math.PI && newAng >= -Math.PI && newAng <= (-Math.PI / 2)) {
-            diff = (Math.abs(prevMoonAng - Math.PI) + Math.abs(-Math.PI - newAng));
+        if (newAng >= (Math.PI / 2) && newAng <= Math.PI && prevObserverPlanetAng >= -Math.PI 
+        && prevObserverPlanetAng <= (-Math.PI / 2)) {
+            diff = -(Math.abs(newAng - Math.PI) + Math.abs(-Math.PI - prevObserverPlanetAng));
+        } else if (prevObserverPlanetAng >= (Math.PI / 2) && prevObserverPlanetAng <= Math.PI 
+        && newAng >= -Math.PI && newAng <= (-Math.PI / 2)) {
+            diff = (Math.abs(prevObserverPlanetAng - Math.PI) + Math.abs(-Math.PI - newAng));
         } else {
-            diff = newAng - this.state.moonAngle;
+            diff = newAng - this.state.observerPlanetAngle;
         }
         
         diff *= this.state.multiplier;
-        let newMars = (this.state.marsAngle + diff); 
+        let newTargetPlanet = (this.state.targetPlanetAngle + diff); 
 
         this.setState({
             isPlaying: false,
-            moonAngle: newAngle,
-            marsAngle: newMars
+            observerPlanetAngle: newAngle,
+            targetPlanetAngle: newTargetPlanet
         });
     }
 
-    onMarsAngleUpdate(newAngle) {
+    onTargetPlanetAngleUpdate(newAngle) {
         this.stopAnimation();
         let diff = 0;
         let newAng = newAngle;
-        let prevMoonAng = this.state.marsAngle;
-        // if (newAngle < 0) {
-        //     newAng = 2 * Math.PI + newAngle;
-        // }
-        if (newAng >= (Math.PI / 2) && newAng <= Math.PI && prevMoonAng >= -Math.PI && prevMoonAng <= (-Math.PI / 2)) {
-            diff = -(Math.abs(newAng - Math.PI) + Math.abs(-Math.PI - prevMoonAng));
-        } else if (prevMoonAng >= (Math.PI / 2) && prevMoonAng <= Math.PI && newAng >= -Math.PI && newAng <= (-Math.PI / 2)) {
-            diff = (Math.abs(prevMoonAng - Math.PI) + Math.abs(-Math.PI - newAng));
+        let prevObserverPlanetAng = this.state.targetPlanetAngle;
+
+        if (newAng >= (Math.PI / 2) && newAng <= Math.PI && prevObserverPlanetAng >= -Math.PI
+         && prevObserverPlanetAng <= (-Math.PI / 2)) {
+            diff = -(Math.abs(newAng - Math.PI) + Math.abs(-Math.PI - prevObserverPlanetAng));
+        } else if (prevObserverPlanetAng >= (Math.PI / 2) && prevObserverPlanetAng <= Math.PI
+         && newAng >= -Math.PI && newAng <= (-Math.PI / 2)) {
+            diff = (Math.abs(prevObserverPlanetAng - Math.PI) + Math.abs(-Math.PI - newAng));
         } else {
-            diff = newAng - this.state.marsAngle;
+            diff = newAng - this.state.targetPlanetAngle;
         }
         
        diff *= (1 / this.state.multiplier);
-       let newMoon = (this.state.moonAngle + diff); 
+       let newObserverPlanet = (this.state.observerPlanetAngle + diff); 
 
        this.setState({
             isPlaying: false,
-            marsAngle: newAngle,
-            moonAngle: newMoon
+            targetPlanetAngle: newAngle,
+            observerPlanetAngle: newObserverPlanet
         });
     }
 
@@ -253,67 +194,15 @@ class PlanetaryConfigSim extends React.Component {
         });
     }
 
-    onMoonRadiusChange(e) {
-        let newMoonRad = forceNumber(e.target.value);
-        // let newMultiplier = Math.pow((this.state.radiusMars / newMoonRad), 1.5);
+    onObserverPlanetRadiusChange(e) {
         this.setState({
-            radiusMoon: forceNumber(e.target.value),
-            // multiplier: newMultiplier
+            radiusObserverPlanet: forceNumber(e.target.value),
         });
-        // this.changeMultiplier.bind(this);
     }
 
-    onMarsRadiusChange(e) {
-        let newMarsRad = forceNumber(e.target.value);
-        // let newMultiplier = Math.pow((newMarsRad / this.state.radiusMoon), 1.5);
+    onTargetPlanetRadiusChange(e) {
         this.setState({
-            radiusMars: newMarsRad,
-            // multiplier: newMultiplier
-        });
-        // this.changeMultiplier.bind(this);
-    }
-
-    // We need to refactor the aboove 2 functions to just call this one
-    // changeMultiplier() {
-    //     console.log("changing multiplier");
-    //     let newMultiplier = Math.pow((this.state.radiusMars / this.state.radiusMoon), 1.5);
-    //     this.setState({
-    //         multiplier: newMultiplier
-    //     });
-    //     console.log(multiplier);
-    // }
-
-    
-    getMoonObserverPos(observerAngle, moonAngle) {
-        return observerAngle + Math.PI - moonAngle;
-    }
-
-    // getMarsObserverPos(observerAngle, marsAngle) {
-    //     return observerAngle + Math.PI - marsAngle;
-    // }
-
-    // TODO: can probably refactor this into something better
-    onDecrementDay() {
-    }
-
-    onIncrementDay() {
-    }
-    onDecrementHour() {
-    }
-    onIncrementHour() {
-    }
-    onDecrementMinute() {
-    }
-    onIncrementMinute() {
-    }
-    handleInputChange(event) {
-        const target = event.target;
-        const value = target.type === 'checkbox' ?
-                      target.checked : target.value;
-        const name = target.name;
-
-        this.setState({
-            [name]: value
+            radiusTargetPlanet: forceNumber(e.target.value)
         });
     }
 
@@ -324,11 +213,6 @@ class PlanetaryConfigSim extends React.Component {
         e.preventDefault();
         this.stopAnimation();
         this.setState(this.initialState);
-
-        // Reset the orbitControls camera
-        if (this.celestialSphereRef && this.celestialSphereRef.current) {
-            this.celestialSphereRef.current.onResetClicked();
-        }
     }
 }
 

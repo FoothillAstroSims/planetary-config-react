@@ -1,29 +1,14 @@
 {
-  "name": "lunar-phase-simulator",
+  "name": "planetary-configuration-simulator",
   "version": "1.0.1",
-  "description": "Lunar Phase Simulator",
   "private": true,
   "main": "main.js",
   "scripts": {
-    "test": "jest",
     "serve": "webpack-dev-server --mode development",
     "dev": "webpack --mode development --watch",
     "build": "webpack --mode production",
     "eslint": "eslint src/*.js src/*.jsx"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ccnmtl/astro-simulations.git"
-  },
-  "keywords": [
-    "astronomy"
-  ],
-  "author": "Nik Nyby",
-  "license": "GPL-3.0+",
-  "bugs": {
-    "url": "https://github.com/ccnmtl/astro-simulations/issues"
-  },
-  "homepage": "https://github.com/ccnmtl/astro-simulations#readme",
   "dependencies": {
     "@babel/cli": "^7.5.5",
     "eslint-plugin-security": "^1.4.0",
@@ -39,11 +24,9 @@
     "@babel/preset-react": "^7.0.0",
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.0.0",
-    "babel-jest": "~24.9.0",
     "babel-loader": "^8.0.0",
     "eslint": "^6.0.0",
     "eslint-plugin-react": "~7.18.0",
-    "jest": "~24.9.0",
     "webpack": "^4.39.1",
     "webpack-cli": "^3.3.6",
     "webpack-dev-server": "^3.1.9"
