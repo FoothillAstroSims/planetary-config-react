@@ -16,8 +16,8 @@ export default class ZodiacStrip extends React.Component {
 
     componentDidMount() {
         this.app = new PIXI.Application({
-            width: 775,
-            height: 125,
+            width: 600,
+            height: 97,
             backgroundColor: 0xcccccc,
             antialias: true,
 
@@ -45,7 +45,7 @@ export default class ZodiacStrip extends React.Component {
         sunImage.y = 62.5;
         stage.addChild(sunImage);
 
-        const moonImage = new PIXI.Sprite(PIXI.Texture.from('img/moon.svg'));
+        const moonImage = new PIXI.Sprite(PIXI.Texture.from('img/mars.png'));
         moonImage.anchor.set(0.5);
         moonImage.width = 25;
         moonImage.height = 25;
@@ -59,17 +59,14 @@ export default class ZodiacStrip extends React.Component {
     componentWillUnmount() {
         this.app.stop();
     }
-
     start() {
         if (!this.frameId) {
             this.frameId = requestAnimationFrame(this.animate);
         }
     }
-
     stop() {
         cancelAnimationFrame(this.frameId)
     }
-
     animate() {
         this.frameId = requestAnimationFrame(this.animate);
     }
