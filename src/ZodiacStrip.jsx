@@ -31,13 +31,17 @@ export default class ZodiacStrip extends React.Component {
         const stage = new PIXI.Container();
         this.app.stage.addChild(stage);
 
-        const zodiacStrip = new PIXI.Sprite(PIXI.Texture.from('img/zodiac-strip.png'));
+        const zodiacStrip = new PIXI.Sprite(
+          PIXI.Texture.from("img/zodiac-strip.png")
+        );
         // zodiacStrip.anchor.set(0.5);
         // zodiacStrip.x = 200;
         // zodiacStrip.y = 200;
         stage.addChild(zodiacStrip);
 
-        const sunImage = new PIXI.Sprite(PIXI.Texture.from('img/sun.png'));
+        const sunImage = new PIXI.Sprite(
+            PIXI.Texture.from("img/sun.png")
+        );
         sunImage.anchor.set(0.5);
         sunImage.width = 50;
         sunImage.height = 50;
@@ -45,7 +49,9 @@ export default class ZodiacStrip extends React.Component {
         sunImage.y = 62.5;
         stage.addChild(sunImage);
 
-        const moonImage = new PIXI.Sprite(PIXI.Texture.from('img/moon.svg'));
+        const moonImage = new PIXI.Sprite(
+            PIXI.Texture.from('img/moon.svg')
+        );
         moonImage.anchor.set(0.5);
         moonImage.width = 25;
         moonImage.height = 25;
@@ -54,7 +60,7 @@ export default class ZodiacStrip extends React.Component {
         stage.addChild(moonImage);
 
         // this.start();
-    }
+        
     /*
     componentWillUnmount() {
         this.app.stop();
@@ -74,4 +80,5 @@ export default class ZodiacStrip extends React.Component {
         this.frameId = requestAnimationFrame(this.animate);
     }
     */
+    }
 }
