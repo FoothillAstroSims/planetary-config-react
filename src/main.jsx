@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import MainView from './MainView';
+import ZodiacStrip from './ZodiacStrip';
 import {RangeStepInput} from 'react-range-step-input';
 import {degToRad, forceNumber} from './utils';
 
@@ -62,7 +63,6 @@ class PlanetaryConfigSim extends React.Component {
                 </ul>
             </nav>
             <div className="row mt-2">
-
                 <div className="col-8">
                     <MainView
                         observerAngle={this.state.observerAngle}
@@ -79,50 +79,55 @@ class PlanetaryConfigSim extends React.Component {
                         stopAnimation={this.stopAnimation}
                     />
                 </div>
+                <div className="rowx">
+                    <div className="col">
+                        <h4>Orbit Sizes</h4>
+                        <form className="form-inline">
+                            <label htmlFor="radMoonRange">Radius of moon's orbit</label>
+                            <RangeStepInput name="radiusMoon"
+                                    className="form-control-range ml-2"
+                                    value={this.state.radiusMoon}
+                                    onChange={this.onMoonRadiusChange.bind(this)}
+                                    step={10}
+                                    min={50} max={500} />
+                        </form>
+                        <form className="form-inline">
+                            <label htmlFor="radMarsRange">Radius of Earth's orbit</label>
+                            <RangeStepInput name="radiusMars"
+                                    className="form-control-range ml-2"
+                                    value={this.state.radiusMars}
+                                    onChange={this.onMarsRadiusChange.bind(this)}
+                                    step={10}
+                                    min={50} max={500} />
+                        </form>
 
-                    <div className="rowx">
-                        <div className="col">
-                            <h4>Orbit Sizes</h4>
-                            <form className="form-inline">
-                                <label htmlFor="radMoonRange">Radius of moon's orbit</label>
-                                <RangeStepInput name="radiusMoon"
-                                       className="form-control-range ml-2"
-                                       value={this.state.radiusMoon}
-                                       onChange={this.onMoonRadiusChange.bind(this)}
-                                       step={10}
-                                       min={50} max={500} />
-                            </form>
-                            <form className="form-inline">
-                                <label htmlFor="radMarsRange">Radius of Earth's orbit</label>
-                                <RangeStepInput name="radiusMars"
-                                       className="form-control-range ml-2"
-                                       value={this.state.radiusMars}
-                                       onChange={this.onMarsRadiusChange.bind(this)}
-                                       step={10}
-                                       min={50} max={500} />
-                            </form>
 
-
-                        </div>
-                        <div className="col">
-                            <h4>Animation Control</h4>
-                            <button type="button" className="btn btn-primary btn-sm"
-                                    onClick={this.onStartClick.bind(this)}>
-                                {startBtnText}
-                            </button>
-                            <form className="form-inline">
-                                <label htmlFor="diamRange">Animation rate:</label>
-                                <RangeStepInput name="animationRate"
-                                       className="form-control-range ml-2"
-                                       value={this.state.animationRate}
-                                       onChange={this.onAnimationRateChange.bind(this)}
-                                       step={0.1}
-                                       min={3} max={10} />
-                            </form>
-                            
-                        </div>
+                    </div>
+                    <div className="col">
+                        <h4>Animation Control</h4>
+                        <button type="button" className="btn btn-primary btn-sm"
+                                onClick={this.onStartClick.bind(this)}>
+                            {startBtnText}
+                        </button>
+                        <form className="form-inline">
+                            <label htmlFor="diamRange">Animation rate:</label>
+                            <RangeStepInput name="animationRate"
+                                    className="form-control-range ml-2"
+                                    value={this.state.animationRate}
+                                    onChange={this.onAnimationRateChange.bind(this)}
+                                    step={0.1}
+                                    min={3} max={10} />
+                        </form>
+                        
                     </div>
                 </div>
+                <div className="bot">
+                    <h3>zodiac strip</h3>
+                    {
+                        <ZodiacStrip />
+                    }
+                </div>
+            </div>
         </React.Fragment>;
     }
 

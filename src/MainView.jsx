@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import * as PIXI from 'pixi.js';
-import {degToRad, radToDeg, roundToOnePlace} from './utils';
+import { degToRad, radToDeg, roundToOnePlace } from './utils';
 
 /**
  * Convert the moon angle for display.
@@ -48,7 +48,7 @@ export default class MainView extends React.Component {
     // https://www.protectator.ch/post/pixijs-v4-in-a-react-component
     render() {
         return (
-            <div className="MainView"
+            <div className="MainView" 
                 ref={(thisDiv) => {this.el = thisDiv}} />
         );
     }
@@ -74,8 +74,8 @@ export default class MainView extends React.Component {
         this.angleText = this.drawAngleText(this.props.moonAngle);
 
         this.app.loader.add('moon', 'img/moon.svg')
-            .add('earth', 'img/sun.png') // eearth
-            .add('mars', 'img/earth.svg')                  //             <------- change this to mars
+            .add('earth', 'img/sun.png')  // earth
+            .add('mars', 'img/earth.svg')  // <------- change this to mars
             .add('avatar', 'img/white-stickfigure.svg')
             .add('highlight', 'img/circle-highlight.svg')
             .add('timeCompass', 'img/time-compass.svg');
@@ -176,8 +176,8 @@ export default class MainView extends React.Component {
     }
     animate() {
         // I'm guessing that the reason why the outline 
-        // of the orbit is overlayed on the planets is due to the 
-        // fact that these coontainers are being cleared and redrawn
+        // of the orbit is overlaid on the planets is due to the 
+        // fact that these containers are being cleared and redrawn
         // whereas the moon container and mars container are not being redrawn
         
         this.moonOrbitContainer.clear();

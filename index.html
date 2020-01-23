@@ -1,21 +1,25 @@
 <!DOCTYPE html>
 <html>
- <head>
-  <meta charset="utf-8"/>
-  <title>
-    Planetary Configurations Simulator
-  </title>
-  <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" rel="stylesheet"/>
-  <style type="text/css">
-  html {
-        background: rgb(17, 62, 68);
-  }
-   body>.container {
-           background: rgb(17, 62, 68);
+
+<head>
+    <meta charset="utf-8" />
+    <title>
+        Planetary Configurations Simulator
+    </title>
+    <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" rel="stylesheet" />
+    <style type="text/css">
+        html {
+            background: rgb(17, 62, 68);
+        }
+
+        body>.container {
+            background: rgb(17, 62, 68);
             width: 960px;
         }
+
         #sim-container {
-           background: rgb(17, 62, 68);
+            background: rgb(17, 62, 68);
             -webkit-touch-callout: none;
             -webkit-user-select: none;
             -khtml-user-select: none;
@@ -25,84 +29,97 @@
             width: 930px;
         }
 
-       .rowx{
-           background: rgb(17, 62, 68);
+        .rowx {
+            background: rgb(17, 62, 68);
             display: inline-block;
             width: 250px;
-       } 
+        }
 
-       .col {
-           background: rgb(120, 165, 110);
-           margin-bottom: 5px;
-           border: 3px solid rgb(5, 37, 56);
-       }
-       body {
-           background: rgb(17, 62, 68);
-       }
-       /* .increment-area button {
+        .col {
+            background: rgb(120, 165, 110);
+            margin-bottom: 5px;
+            border: 3px solid rgb(5, 37, 56);
+        }
+
+        .bot {
+            color: rgb(255, 80, 80);
+        }
+
+        body {
+            background: rgb(17, 62, 68);
+        }
+
+        /* .increment-area button {
             font-weight: bold;
             width: 27px;
        } */
 
-  .MainView>canvas {
+        .MainView>canvas {
 
-      background: rgb(20, 20, 170);
-      width: 600px;
-      height: 460px;
-  }
-  </style>
- </head>
- <body>
-  <div class="container">
-   <div id="sim-container">
-   </div>
-  </div>
-  <div aria-hidden="true" aria-labelledby="helpModalLabel" class="modal" id="helpModal" role="dialog" tabindex="-1">
-   <div class="modal-dialog" role="document">
-    <div class="modal-content">
-     <div class="modal-header">
-      <h5 class="modal-title" id="helpModalLabel">
-       Help
-      </h5>
-      <button aria-label="Close" class="close" data-dismiss="modal" type="button">
-       <span aria-hidden="true">
-        ×
-       </span>
-      </button>
-     </div>
-     <div class="modal-body">
-      <p>This simulator models the movement of planets around the sun in a simplified Copernican model
-           of the solar system. Special emphasis is placed on the elongation angle and associated events. </p>
-     </div>
+            background: rgb(20, 20, 170);
+            width: 600px;
+            height: 460px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div id="sim-container">
+        </div>
     </div>
-   </div>
-  </div>
-  <div aria-hidden="true" aria-labelledby="aboutModalLabel" class="modal" id="aboutModal" role="dialog" tabindex="-1">
-   <div class="modal-dialog" role="document">
-    <div class="modal-content">
-     <div class="modal-header">
-      <h5 class="modal-title" id="aboutModalLabel">
-       About
-      </h5>
-      <button aria-label="Close" class="close" data-dismiss="modal" type="button">
-       <span aria-hidden="true">
-        ×
-       </span>
-      </button>
-     </div>
-     <div class="modal-body">
-      <p class="sim-version">Planetary configurations simulator. Coming to a website near you! (hopefully)</p>
-     </div>
+    <div aria-hidden="true" aria-labelledby="helpModalLabel" class="modal" id="helpModal" role="dialog" tabindex="-1">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="helpModalLabel">
+                        Help
+                    </h5>
+                    <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                        <span aria-hidden="true">
+                            ×
+                        </span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>This simulator models the movement of planets around the sun in a simplified Copernican model
+                        of the solar system. Special emphasis is placed on the elongation angle and associated events.
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
-   </div>
-  </div>
-  <script crossorigin="anonymous" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" src="https://code.jquery.com/jquery-3.3.1.slim.min.js">
-  </script>
-  <script crossorigin="anonymous" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js">
-  </script>
-  <script crossorigin="anonymous" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">
-  </script>
-  <script src="dist/bundle.js">
-  </script>
- </body>
+    <div aria-hidden="true" aria-labelledby="aboutModalLabel" class="modal" id="aboutModal" role="dialog" tabindex="-1">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="aboutModalLabel">
+                        About
+                    </h5>
+                    <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                        <span aria-hidden="true">
+                            ×
+                        </span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="sim-version">Planetary configurations simulator. Coming to a website near you! (hopefully)
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script crossorigin="anonymous" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        src="https://code.jquery.com/jquery-3.3.1.slim.min.js">
+        </script>
+    <script crossorigin="anonymous" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js">
+        </script>
+    <script crossorigin="anonymous" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">
+        </script>
+    <script src="dist/bundle.js">
+    </script>
+</body>
+
 </html>
