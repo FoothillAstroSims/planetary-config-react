@@ -48,40 +48,6 @@ export default class ZodiacStrip extends React.Component {
 
         this.el.appendChild(this.app.view);
 
-<<<<<<< HEAD
-        const stage = new PIXI.Container();
-        this.app.stage.addChild(stage);
-
-        const zodiacStrip = new PIXI.Sprite(
-          PIXI.Texture.from("img/zodiac-strip.png")
-        );
-        // zodiacStrip.anchor.set(0.5);
-        // zodiacStrip.x = 200;
-        // zodiacStrip.y = 200;
-        stage.addChild(zodiacStrip);
-
-        const sunImage = new PIXI.Sprite(
-            PIXI.Texture.from("img/sun.png")
-        );
-        sunImage.anchor.set(0.5);
-        sunImage.width = 50;
-        sunImage.height = 50;
-        sunImage.x = 500;
-        sunImage.y = 62.5;
-        stage.addChild(sunImage);
-
-        const moonImage = new PIXI.Sprite(PIXI.Texture.from('img/mars.png'));
-        moonImage.anchor.set(0.5);
-        moonImage.width = 25;
-        moonImage.height = 25;
-        moonImage.x = 300;
-        moonImage.y = 62.5;
-        stage.addChild(moonImage);
-
-        // this.start();
-        
-    /*
-=======
         // Loads all the images
         this.app.loader.add('targetPlanet', 'img/mars.png')
             .add('sunZodiac', 'img/sun.png');
@@ -204,7 +170,6 @@ export default class ZodiacStrip extends React.Component {
     }
     
     
->>>>>>> d91a697a3e25fc291f7a91dee432396b73407432
     componentWillUnmount() {
         this.app.stop();
     }
@@ -295,11 +260,6 @@ export default class ZodiacStrip extends React.Component {
     	this.frameId = requestAnimationFrame(this.animate);
 
     }
-<<<<<<< HEAD
-    */
-    }
-}
-=======
 }
 
 // ZodiacStrip.propTypes = {
@@ -307,4 +267,3 @@ export default class ZodiacStrip extends React.Component {
 //     getElongationAngle: Proptypes.func.isRequired
 // };
 
->>>>>>> d91a697a3e25fc291f7a91dee432396b73407432
