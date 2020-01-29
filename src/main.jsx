@@ -16,28 +16,29 @@ import ReactDOM from 'react-dom';
 import MainView from './MainView';
 import ZodiacStrip from './ZodiacStrip';
 import {RangeStepInput} from 'react-range-step-input';
-import {forceNumber} from './utils';
+import {forceNumber, radToDeg, degToRad} from './utils';
+import { maxHeaderSize } from 'http';
 
 class PlanetaryConfigSim extends React.Component {
-    constructor(props) {
-        super(props);
-        this.initialState = {
-            observerPlanetAngle: 0,
-            targetPlanetAngle: 0,
-            radiusTargetPlanet: 300,
-            radiusObserverPlanet: 160,
-            // This multplier is for the orbital equation: https://tinyurl.com/yx444bnv
-            // Use the ratio between the radius of the two planets to find this multiplier
-            multiplier:  Math.pow((160 / 300), 1.5),
-            isPlaying: false,
-            animationRate: 2,
-        };
+	constructor(props) {
+		super(props);
+		this.initialState = {
+		    observerPlanetAngle: 0,
+		    targetPlanetAngle: 0,
+		    radiusTargetPlanet: 300,
+		    radiusObserverPlanet: 160,
+		    // This multiplier is for the orbital equation: https://tinyurl.com/yx444bnv
+		    // Use the ratio between the radius of the two planets to find this multiplier
+		    multiplier:  Math.pow((160 / 300), 1.5),
+		    isPlaying: false,
+		    animationRate: 0.5,
+		};
 
-        this.state = this.initialState;
-        this.raf = null;
+		this.state = this.initialState;
+		this.raf = null;
 
-        this.stopAnimation = this.stopAnimation.bind(this);
-    }
+		this.stopAnimation = this.stopAnimation.bind(this);
+	}
 
     render() {
         let startBtnText = 'Play animation';
@@ -75,27 +76,6 @@ class PlanetaryConfigSim extends React.Component {
                     <div className="rowx">
                         <div className="col">
                             <h4>Orbit Sizes</h4>
-<<<<<<< HEAD
-                            <form className="form-inline">
-                                <label htmlFor="radObserverPlanetRange">Radius of observer planet's orbit</label>
-                                <RangeStepInput name="radiusObserverPlanet"
-                                       className="form-control-range ml-2"
-                                       value={this.state.radiusObserverPlanet}
-                                       onChange={this.onObserverPlanetRadiusChange.bind(this)}
-                                       step={10}
-                                       min={50} max={500} />
-                            </form>
-                            <form className="form-inline">
-                                <label htmlFor="radTargetPlanetRange">Radius of target planet's orbit</label>
-                                <RangeStepInput name="radiusTargetPlanet"
-                                       className="form-control-range ml-2"
-                                       value={this.state.radiusTargetPlanet}
-                                       onChange={this.onTargetPlanetRadiusChange.bind(this)}
-                                       step={10}
-                                       min={50} max={500} />
-                            </form>
-                        </div>
-=======
 
                             <div className="radObserver">
                                 <form className="form-inline">
@@ -135,7 +115,6 @@ class PlanetaryConfigSim extends React.Component {
                             </div>
                         </div>
 
->>>>>>> added/fixed: radius changes, period proportions, zodiac movements, angle function, and a couple more
                         <div className="col">
                             <h4>Animation Control</h4>
                             <button type="button" className="btn btn-primary btn-sm"
@@ -153,10 +132,16 @@ class PlanetaryConfigSim extends React.Component {
                             </form>
                         </div>
                     </div>
-                    <div className="bot">
-                        {
-                            <ZodiacStrip />
-                        }
+		    <div className="bot">
+		        <ZodiacStrip
+				speed={this.state.animationRate}
+				observerPlanetAngle={this.state.observerPlanetAngle}
+				targetPlanetAngle={this.state.targetPlanetAngle}
+                radiusObserverPlanet={this.state.radiusObserverPlanet}
+                radiusTargetPlanet={this.state.radiusTargetPlanet}
+				isPlaying={this.state.isPlaying}
+                stopAnimation={this.stopAnimation}
+		        />
                     </div>
                 </div>
         </React.Fragment>;
@@ -164,23 +149,31 @@ class PlanetaryConfigSim extends React.Component {
 
    incrementObserverPlanetAngle(n, inc) {
         const newAngle = n + inc;
+        if (newAngle > Math.PI) {
+            return newAngle * -1;
+        }
         return newAngle;
     }
-    incrementTargetPlanetAngle() {
-        const newAngle = (this.state.multiplier) * this.state.observerPlanetAngle;
+
+    incrementTargetPlanetAngle(n, inc) {
+        const newAngle = n + (this.state.multiplier) * inc; 
+        if (newAngle > Math.PI) {
+            return newAngle * -1;
+        }
         return newAngle;
     }
     
     animate() {
+        let newMultiplier = Math.pow((this.state.radiusObserverPlanet / this.state.radiusTargetPlanet), 2)
         const me = this;
         this.setState(prevState => ({
-            targetPlanetAngle: me.incrementTargetPlanetAngle(),
-            observerPlanetAngle: me.incrementObserverPlanetAngle(
-                prevState.observerPlanetAngle,
-                0.010 * this.state.animationRate)
+            multiplier: newMultiplier,
+            observerPlanetAngle: me.incrementObserverPlanetAngle(prevState.observerPlanetAngle, 0.010 * this.state.animationRate),
+            targetPlanetAngle: me.incrementTargetPlanetAngle(prevState.targetPlanetAngle, 0.010 * this.state.animationRate)
         }));
         this.raf = requestAnimationFrame(this.animate.bind(this));
     }
+
     onStartClick() {
         if (!this.state.isPlaying) {
             this.raf = requestAnimationFrame(this.animate.bind(this));
@@ -191,11 +184,13 @@ class PlanetaryConfigSim extends React.Component {
         }
     }
     
+    // Earth
     onObserverPlanetAngleUpdate(newAngle) {
         this.stopAnimation();
         let diff = 0;
         let newAng = newAngle;
         let prevObserverPlanetAng = this.state.observerPlanetAngle;
+        
 
         if (newAng >= (Math.PI / 2) && newAng <= Math.PI && prevObserverPlanetAng >= -Math.PI 
         && prevObserverPlanetAng <= (-Math.PI / 2)) {
@@ -206,11 +201,23 @@ class PlanetaryConfigSim extends React.Component {
         } else {
             diff = newAng - this.state.observerPlanetAngle;
         }
-        
+
         diff *= this.state.multiplier;
         let newTargetPlanet = (this.state.targetPlanetAngle + diff); 
+        if (newTargetPlanet >= Math.PI) {
+            newTargetPlanet = -Math.PI;
+        } else if (newTargetPlanet <= -Math.PI) {
+            newTargetPlanet = Math.PI;
+        }
+
+        // console.log("prev earth: ", radToDeg(this.state.observerPlanetAngle), "new earth: ", radToDeg(newAngle),
+        //              "prev mars: ", radToDeg(this.state.targetPlanetAngle), "new mars: ", radToDeg(newTargetPlanet)
+        // );
+
+        let newMultiplier = Math.pow((this.state.radiusObserverPlanet / this.state.radiusTargetPlanet), 2)
 
         this.setState({
+            multiplier: newMultiplier,
             isPlaying: false,
             observerPlanetAngle: newAngle,
             targetPlanetAngle: newTargetPlanet
@@ -233,10 +240,21 @@ class PlanetaryConfigSim extends React.Component {
             diff = newAng - this.state.targetPlanetAngle;
         }
         
+
        diff *= (1 / this.state.multiplier);
        let newObserverPlanet = (this.state.observerPlanetAngle + diff); 
+        if (newObserverPlanet >= Math.PI) {
+            newObserverPlanet = -Math.PI;
+        } else if (newObserverPlanet <= -Math.PI) {
+            newObserverPlanet = Math.PI;
+        }
+        // console.log("prev earth: ", radToDeg(this.state.observerPlanetAngle), "new earth: ", radToDeg(newObserverPlanet),
+        //              "prev mars: ", radToDeg(this.state.targetPlanetAngle), "new mars: ", radToDeg(newAngle)
+        // );
 
+        let newMultiplier = Math.pow((this.state.radiusObserverPlanet / this.state.radiusTargetPlanet), 2)
        this.setState({
+            multiplier: newMultiplier,
             isPlaying: false,
             targetPlanetAngle: newAngle,
             observerPlanetAngle: newObserverPlanet

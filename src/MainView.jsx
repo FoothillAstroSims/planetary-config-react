@@ -14,6 +14,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import * as PIXI from 'pixi.js';
 
+const getPlanetPos = function(radius, phase) {
+    return new PIXI.Point(
+        radius * Math.cos(-phase) + 600,
+        radius * Math.sin(-phase) + 460); // these magic numbers come from this.orbitCenter
+}
+
 export default class MainView extends React.Component {
     constructor(props) {
         super(props);
@@ -61,7 +67,7 @@ export default class MainView extends React.Component {
         // Loads all the images
         this.app.loader.add('observerPlanet', 'img/earth.svg')
             .add('earth', 'img/sun.png') 
-            .add('targetPlanet', 'img/mars.png')                
+	    .add('targetPlanet', 'img/mars.png')                
             .add('highlight', 'img/circle-highlight.svg');
 
         const me = this;
@@ -105,19 +111,6 @@ export default class MainView extends React.Component {
             me.earth = me.drawEarth(
                 resources.earth);
 
-            me.earth
-              // events for drag start
-              .on('mousedown', me.onDragStart)
-              .on('touchstart', me.onDragStart)
-              // events for drag end
-              .on('mouseup', me.onDragEnd)
-              .on('mouseupoutside', me.onDragEnd)
-              .on('touchend', me.onDragEnd)
-              .on('touchendoutside', me.onDragEnd)
-              // events for drag move
-              .on('mousemove', me.onEarthMove)
-              .on('touchmove', me.onEarthMove);
-
             me.start();
         });
     }
@@ -136,22 +129,25 @@ export default class MainView extends React.Component {
     }
 
     stop() {
-        cancelAnimationFrame(this.frameId)
+        cancelAnimationFrame(this.frameId);
     }
 
     animate() {
         // I'm guessing that the reason why the outline 
         // of the orbit is overlayed on the planets is due to the 
         // fact that these coontainers are being cleared and redrawn
-        // whereas the observerPlanet container and targetPlanet container are not being redrawn
+        // whereas the observerPlanet container and targetPlanet container are not 
+	// being redrawn
         
         this.observerPlanetOrbitContainer.clear();
         this.observerPlanetOrbitContainer = this.drawObserverPlanetOrbit();
         this.targetPlanetOrbitContainer.clear();
         this.targetPlanetOrbitContainer = this.drawTargetPlanetOrbit();
 
-        this.observerPlanetContainer.position = this.getObserverPlanetPos(this.props.observerPlanetAngle);
-        this.targetPlanetContainer.position = this.getTargetPlanetPos(this.props.targetPlanetAngle);
+        this.observerPlanetContainer.position = getPlanetPos(this.props.radiusObserverPlanet,
+                                                    this.props.observerPlanetAngle);
+        this.targetPlanetContainer.position = getPlanetPos(this.props.radiusTargetPlanet, 
+                                                    this.props.targetPlanetAngle);
 
         if (this.state.isHoveringOnObserverPlanet || this.draggingObserverPlanet) {
             this.observerPlanetHighlight.visible = true;
@@ -256,6 +252,7 @@ export default class MainView extends React.Component {
         this.app.stage.addChild(earthContainer);
         return earthContainer;
     }
+
     onDragStart(event) {
         this.props.stopAnimation();
 
@@ -329,25 +326,12 @@ export default class MainView extends React.Component {
         if (this.draggingTargetPlanet) {
             const newPosition = this.data.getLocalPosition(this.app.stage);
 
-            console.log(newPosition);
             const vAngle =
                 -1 * Math.atan2(newPosition.y - this.orbitCenter.y,
                            newPosition.x - this.orbitCenter.x);
 
             this.props.onTargetPlanetAngleUpdate(vAngle);
         }
-    }
-
-    getObserverPlanetPos(phase) {
-        return new PIXI.Point(
-            this.props.radiusObserverPlanet * Math.cos(-phase) + this.orbitCenter.x,
-            this.props.radiusObserverPlanet * Math.sin(-phase) + this.orbitCenter.y);   
-    }
-
-    getTargetPlanetPos(phase) {
-        return new PIXI.Point(
-            this.props.radiusTargetPlanet * Math.cos(-phase) + this.orbitCenter.x,
-            this.props.radiusTargetPlanet * Math.sin(-phase) + this.orbitCenter.y); 
     }
 }
 
@@ -359,4 +343,4 @@ MainView.propTypes = {
     onObserverPlanetAngleUpdate: PropTypes.func.isRequired,
     onTargetPlanetAngleUpdate: PropTypes.func.isRequired,
     stopAnimation: PropTypes.func.isRequired
-};
+}
