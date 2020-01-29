@@ -267,12 +267,14 @@ class PlanetaryConfigSim extends React.Component {
         });
     }
 
+    // THIS IS WHERE THE CODE FOR MAKING THE OUTER RADIUS CONSTANT GOES
     onObserverPlanetRadiusChange(e) {
         this.setState({
             radiusObserverPlanet: forceNumber(e.target.value),
         });
     }
 
+    // THIS IS WHERE THE CODE FOR MAKING THE OUTER RADIUS CONSTANT GOES
     onTargetPlanetRadiusChange(e) {
         this.setState({
             radiusTargetPlanet: forceNumber(e.target.value)
