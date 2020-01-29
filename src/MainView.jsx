@@ -1,3 +1,15 @@
+// hello and welcome friends.
+// This code is quite hideous, and
+// is in need of some major refactoring
+
+// Tbh, most of it can be understood if you
+// think about it for a couple min.
+
+// But if you need clarification, just PM me
+// on discord
+
+// - sudo-safi
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import * as PIXI from 'pixi.js';

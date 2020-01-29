@@ -1,3 +1,16 @@
+// hello and welcome friends.
+// This code is quite hideous, and
+// is in need of some major refactoring
+
+// Tbh, most of it can be understood if you
+// think about it for a couple min.
+
+// But if you need clarification, just PM me
+// on discord
+
+// - sudo-safi
+
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import MainView from './MainView';
@@ -62,6 +75,7 @@ class PlanetaryConfigSim extends React.Component {
                     <div className="rowx">
                         <div className="col">
                             <h4>Orbit Sizes</h4>
+<<<<<<< HEAD
                             <form className="form-inline">
                                 <label htmlFor="radObserverPlanetRange">Radius of observer planet's orbit</label>
                                 <RangeStepInput name="radiusObserverPlanet"
@@ -81,6 +95,47 @@ class PlanetaryConfigSim extends React.Component {
                                        min={50} max={500} />
                             </form>
                         </div>
+=======
+
+                            <div className="radObserver">
+                                <form className="form-inline">
+                                    <label htmlFor="radObserverPlanetRange">Radius of observer planet's orbit</label>
+                                    <RangeStepInput name="radiusObserverPlanet"
+                                           className="form-control-range ml-2"
+                                           value={this.state.radiusObserverPlanet}
+                                           onChange={this.onObserverPlanetRadiusChange.bind(this)}
+                                           step={10}
+                                           min={50} max={500} />
+                                </form>
+                            </div>
+                            
+                            <div className="radTarget">
+                                <form className="form-inline">
+                                    <label htmlFor="radTargetPlanetRange">Radius of target planet's orbit</label>
+                                    <RangeStepInput name="radiusTargetPlanet"
+                                           className="form-control-range ml-2"
+                                           value={this.state.radiusTargetPlanet}
+                                           onChange={this.onTargetPlanetRadiusChange.bind(this)}
+                                           step={10}
+                                           min={50} max={500} />
+                                </form>
+                            </div>
+
+                            <div className="presets">
+                                <form>
+                                    <select className="form-control form-control-sm" onChange={this.onPresetSelect}>
+                                        <option value={-1}>Earth</option>
+                                        <option value={1}>Mercury</option>
+                                        <option value={2}>Venus</option>
+                                        <option value={3}>Earth</option>
+                                        <option value={3}>What's upppp</option>
+                                        <option value={3}>I clearly don't know how to format divs</option>
+                                    </select>
+                                </form>
+                            </div>
+                        </div>
+
+>>>>>>> added/fixed: radius changes, period proportions, zodiac movements, angle function, and a couple more
                         <div className="col">
                             <h4>Animation Control</h4>
                             <button type="button" className="btn btn-primary btn-sm"
