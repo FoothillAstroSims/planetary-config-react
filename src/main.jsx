@@ -1,15 +1,4 @@
-// hello and welcome friends.
-// This code is quite hideous, and
-// is in need of some major refactoring
-
-// Tbh, most of it can be understood if you
-// think about it for a couple min.
-
-// But if you need clarification, just PM me
-// on discord
-
-// - sudo-safi
-
+// Code needs to be refactored, but still pretty readable
 
 import React from 'react';
 import ReactDOM from 'react-dom';
