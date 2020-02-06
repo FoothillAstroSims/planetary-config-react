@@ -72,7 +72,7 @@ export default class ZodiacStrip extends React.Component {
         g.visible = false;
 
         g.clear();
-        g.lineStyle(6, 0xffe040);
+        g.lineStyle(2, 0x00FFD2);
         g.beginFill(0xffe200, 0.7);
 
         this.app.stage.addChild(g);
@@ -89,14 +89,14 @@ export default class ZodiacStrip extends React.Component {
         });
 
         // angleText.rotation = degToRad(-90);
-        angleText.position.x = 255;
+        angleText.position.x = 240;
         angleText.position.y = 150;
         this.app.stage.addChild(angleText);
         return angleText;
     }
 
     drawZodiac() {
-        const zodiacText = new PIXI.Text('Zodiac Strip', {
+        const zodiacText = new PIXI.Text('Zodiac Strip with Constellations', {
             fontFamily: 'Arial',
             fontSize: 30,
             // fontWeight: 'bold',
@@ -105,8 +105,8 @@ export default class ZodiacStrip extends React.Component {
         });
 
         // angleText.rotation = degToRad(-90);
-        zodiacText.position.x = 0;
-        zodiacText.position.y = 0;
+        zodiacText.position.x = 100;
+        zodiacText.position.y = 7;
         this.app.stage.addChild(zodiacText);
         return zodiacText;
     }
@@ -175,23 +175,43 @@ export default class ZodiacStrip extends React.Component {
     } 
 
     getElongationAngle() {
-        let targetPos = getPlanetPos(this.props.radiusTargetPlanet, this.props.targetPlanetAngle);
+
         let observerPos = getPlanetPos(this.props.radiusObserverPlanet, this.props.observerPlanetAngle);
+        let targetPos = getPlanetPos(this.props.radiusTargetPlanet, this.props.targetPlanetAngle);
+        let sunPos = new PIXI.Point(0, 0); 
 
-        let distBetweenObserverAndTarget = this.getDistance(targetPos, observerPos);
+        observerPos.x -= 600;
+        observerPos.y -= 460;
 
-        let elongAngle = Math.pow(distBetweenObserverAndTarget, 2)
-                            + Math.pow(this.props.radiusObserverPlanet, 2)
-                            - Math.pow(this.props.radiusTargetPlanet, 2);
-        elongAngle /= (2 * this.props.radiusObserverPlanet * distBetweenObserverAndTarget);
-        elongAngle = Math.acos(elongAngle);
+        observerPos.y *= -1;
         
-        let a1 = this.props.radiusTargetPlanet - this.props.radiusObserverPlanet;
-        let a2 = this.props.radiusTargetPlanet - this.props.radiusObserverPlanet;
+        targetPos.x -= 600;
+        targetPos.y -= 460;
 
-        // console.log(a1, a2);
+        targetPos.y *= -1;
 
-        // console.log("Elongation angle: ", elongAngle);
+        let targetPlanetAngle = Math.atan2(targetPos.y - observerPos.y, targetPos.x - observerPos.x);
+        let sunAngle = Math.atan2(sunPos.y - observerPos.y, sunPos.x - observerPos.x);
+
+        if (-Math.PI < sunAngle && sunAngle < 0) {
+            sunAngle += 2 * Math.PI;
+        }
+
+        if (-Math.PI < targetPlanetAngle && targetPlanetAngle < 0) {
+            targetPlanetAngle += 2 * Math.PI;
+        }
+
+        let elongAngle = targetPlanetAngle - sunAngle;
+        
+        let e = elongAngle * 180 / Math.PI;
+        let s = sunAngle * 180 / Math.PI;
+        let t = targetPlanetAngle * 180 / Math.PI;
+
+        if (elongAngle < 0) {
+            elongAngle += 2 * Math.PI;
+        }
+        console.log("Earth position: ", observerPos, "Target position: ", targetPos, "Sun Position: ", sunPos);
+        console.log("Elongation Angle: ", e, "Sun Angle: ", s, "Target Planet Angle: ", t);
         return elongAngle;
     }
 
@@ -207,8 +227,8 @@ export default class ZodiacStrip extends React.Component {
         this.g.clear();
         this.g.moveTo(this.sunZodiacContainer.x, this.sunZodiacContainer.y);
         this.g.visible = true;
-        this.g.lineStyle(6, 0xffe040);
-        this.g.beginFill(0xffe200, 0.7);
+        this.g.lineStyle(2, 0x00f2ff);
+        this.g.beginFill(0x00f2ff, 0.7);
 
         this.g.lineTo(this.targetPlanetZodiacContainer.x, this.targetPlanetZodiacContainer.y);
 
@@ -220,22 +240,24 @@ export default class ZodiacStrip extends React.Component {
 
     animate() {
 
-    	let angle = this.props.observerPlanetAngle / (2 * Math.PI); 
+        let a1 = -1 * this.props.observerPlanetAngle;
+
+    	let angle = a1 / (2 * Math.PI); 
         
-        if (this.props.observerPlanetAngle >= -Math.PI && this.props.observerPlanetAngle < 0) {
-            angle = this.props.observerPlanetAngle + (2 * Math.PI);
+        if (a1 >= -Math.PI && a1 < 0) {
+            angle = a1 + (2 * Math.PI);
             angle /= (2 * Math.PI);
         }
     
         if (angle > 0.75 && angle < 1.0) {
             angle -= 1;
         }
-    
+ 
         let elongAngle = this.getElongationAngle() / (2 * Math.PI);
 
         this.sunZodiacContainer.position.x = 150 + angle * 600;
         this.targetPlanetZodiacContainer.x = this.sunZodiacContainer.position.x + elongAngle * 600;
-
+        
         if (this.targetPlanetZodiacContainer.x > 600) {
             this.targetPlanetZodiacContainer.x -= 600;            
         }
@@ -244,7 +266,16 @@ export default class ZodiacStrip extends React.Component {
 
         let num = Math.round(this.getElongationAngle() * 180 / Math.PI * 10) / 10;
 
+        let direction = ' E';
+        if (num > 180) {
+            let temp = num - 180;
+            num -= temp * 2;
+            direction = ' W ';
+        }
+
         let textNum = Number(Math.round(num +'e2')+'e-2');
+        textNum += direction;
+
         this.updateText(textNum);
 
     	this.frameId = requestAnimationFrame(this.animate);

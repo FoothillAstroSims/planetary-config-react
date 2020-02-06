@@ -96,9 +96,6 @@ class PlanetaryConfigSim extends React.Component {
                                         <option value={-1}>Earth</option>
                                         <option value={1}>Mercury</option>
                                         <option value={2}>Venus</option>
-                                        <option value={3}>Earth</option>
-                                        <option value={3}>What's upppp</option>
-                                        <option value={3}>I clearly don't know how to format divs</option>
                                     </select>
                                 </form>
                             </div>

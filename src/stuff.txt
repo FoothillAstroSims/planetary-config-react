@@ -1,5 +1,40 @@
 
 
+// Geoff's recommended code:
+
+        let observerPos = getPlanetPos(this.props.radiusObserverPlanet, this.props.observerPlanetAngle);
+        let targetPos = getPlanetPos(this.props.radiusTargetPlanet, this.props.targetPlanetAngle);
+        let sunPos = new PIXI.Point(600, -460); 
+
+        let targetPlanetAngle = Math.atan2(targetPos.y - observerPos.y, targetPos.x - observerPos.x);
+        let sunAngle = Math.atan2(sunPos.y - observerPos.y, sunPos.x - observerPos.x);
+
+        if (-Math.PI > sunAngle && sunAngle > 0) {
+            sunAngle += 2 * Math.PI;
+        }
+
+        if (-Math.PI > targetPlanetAngle && targetPlanetAngle > 0) {
+            targetPlanetAngle += 2 * Math.PI;
+        }
+
+        let elongAngle = targetPlanetAngle - sunAngle;
+        
+        console.log(elongAngle);
+
+        return elongAngle;
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
