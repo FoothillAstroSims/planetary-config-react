@@ -25,11 +25,11 @@ class PlanetaryConfigSim extends React.Component {
 		this.initialState = {
 		    observerPlanetAngle: 0,
 		    targetPlanetAngle: 0,
-		    radiusTargetPlanet: 300,
+		    radiusTargetPlanet: 360,
 		    radiusObserverPlanet: 160,
 		    // This multiplier is for the orbital equation: https://tinyurl.com/yx444bnv
 		    // Use the ratio between the radius of the two planets to find this multiplier
-		    multiplier:  Math.pow((160 / 300), 1.5),
+		    multiplier:  Math.pow((160 / 360), 1.5),
 		    isPlaying: false,
 		    animationRate: 0.5,
 		};
@@ -241,8 +241,8 @@ class PlanetaryConfigSim extends React.Component {
         }
         
 
-       diff *= (1 / this.state.multiplier);
-       let newObserverPlanet = (this.state.observerPlanetAngle + diff); 
+        diff *= (1 / this.state.multiplier);
+        let newObserverPlanet = (this.state.observerPlanetAngle + diff); 
         if (newObserverPlanet >= Math.PI) {
             newObserverPlanet = -Math.PI;
         } else if (newObserverPlanet <= -Math.PI) {
@@ -253,7 +253,7 @@ class PlanetaryConfigSim extends React.Component {
         // );
 
         let newMultiplier = Math.pow((this.state.radiusObserverPlanet / this.state.radiusTargetPlanet), 2)
-       this.setState({
+        this.setState({
             multiplier: newMultiplier,
             isPlaying: false,
             targetPlanetAngle: newAngle,
