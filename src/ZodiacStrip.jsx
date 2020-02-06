@@ -1,20 +1,14 @@
-// Code needs to be refactored, but still pretty readable
-
 import React from 'react';
-// import PropTypes from 'prop-types';
 import * as PIXI from 'pixi.js';
-// import { degToRad, radToDeg, roundToOnePlace } from './utils';
 
 const getPlanetPos = function(radius, phase) {
     return new PIXI.Point(
         radius * Math.cos(-phase) + 600,
         radius * Math.sin(-phase) + 460); // these magic numbers come from this.orbitCenter
 }
-
-
 export default class ZodiacStrip extends React.Component {
     constructor(props) {
-        super(props);        
+        super(props);
 
         this.start = this.start.bind(this);
         this.stop = this.stop.bind(this);
@@ -22,7 +16,6 @@ export default class ZodiacStrip extends React.Component {
 
         this.tpa = 0;
         this.sa = 0;
-
     }
     render()  {
         return (
@@ -30,7 +23,6 @@ export default class ZodiacStrip extends React.Component {
                 ref={(thisDiv) => {this.el = thisDiv}} />
         );
     }
-
     componentDidMount() {
         this.app = new PIXI.Application({
             width: 600,
@@ -40,10 +32,6 @@ export default class ZodiacStrip extends React.Component {
         });
 
         this.el.appendChild(this.app.view);
-
-        // Loads all the images
-        this.app.loader.add('targetPlanet', 'img/mars.png')
-            .add('sunZodiac', 'img/sun.png');
 
         const me = this;
         this.app.loader.load((loader, resources) => {
@@ -59,16 +47,15 @@ export default class ZodiacStrip extends React.Component {
             zodiacStrip.y += 50;
             stage.addChild(zodiacStrip);
 
-            me.sunZodiacContainer = me.drawSunZodiac(resources.sun);
-            me.targetPlanetZodiacContainer = me.drawTargetPlanetZodiac(
-                resources.targetPlanet);
+            me.targetPlanetZodiacContainer = me.drawTargetPlanetZodiac();
+
+            me.sunZodiacContainer = me.drawSunZodiac();
             me.g = me.drawLine();
             me.text = me.drawText();
             me.zodiacText = me.drawZodiac(); 
             me.start();
         });
     }
-
     drawLine() {
         const g = new PIXI.Graphics();
         g.visible = false;
@@ -80,7 +67,6 @@ export default class ZodiacStrip extends React.Component {
         this.app.stage.addChild(g);
         return g;
     }
-
     drawText() {
         const angleText = new PIXI.Text('Angle', {
             fontFamily: 'Arial',
@@ -96,7 +82,6 @@ export default class ZodiacStrip extends React.Component {
         this.app.stage.addChild(angleText);
         return angleText;
     }
-
     drawZodiac() {
         const zodiacText = new PIXI.Text('Zodiac Strip with Constellations', {
             fontFamily: 'Arial',
@@ -112,22 +97,6 @@ export default class ZodiacStrip extends React.Component {
         this.app.stage.addChild(zodiacText);
         return zodiacText;
     }
-
-    // Uncomment and modify to draw east and then add support to draw west
-//    drawEastAndWest() {
-//        const east = new PIXI.Text('East', {
-//            fontFamily: 'Arial',
-//            fontSize: 28 * 2,
-//            fontWeight: 'bold',
-//            fill: 0xffff80,
-//            align: 'center'
-//        });
-//        east.rotation = degToRad(-90);
-//        east.position.x = 14 * 2;
-//        east.position.y = 270 * 2;
-//        this.app.stage.addChild(east);
-//    }
-
     drawSunZodiac() {
 
         const sunZodiacContainer = new PIXI.Container();
@@ -144,14 +113,13 @@ export default class ZodiacStrip extends React.Component {
         return sunZodiacContainer;
 
     }
-
-    drawTargetPlanetZodiac(targetPlanetResource) {
+    drawTargetPlanetZodiac() {
 
         const targetPlanetContainer = new PIXI.Container();
         targetPlanetContainer.name = 'targetPlanetZodiac';
         targetPlanetContainer.position = new PIXI.Point(3 * 600 / 4, 48.5 + 50);
 
-        const targetPlanetImage = new PIXI.Sprite(targetPlanetResource.texture);
+        const targetPlanetImage = new PIXI.Sprite(PIXI.Texture.from('img/mars.png'));
         targetPlanetImage.anchor.set(0.5);
         targetPlanetImage.width = 30;
         targetPlanetImage.height = 30;
@@ -160,22 +128,17 @@ export default class ZodiacStrip extends React.Component {
         this.app.stage.addChild(targetPlanetContainer);
         return targetPlanetContainer;
     }
-    
-    
     componentWillUnmount() {
         this.app.stop();
     }
-
     start() {
         if (!this.frameId) {
             this.frameId = requestAnimationFrame(this.animate);
         }
     } 
-
     stop() {
         cancelAnimationFrame(this.frameId)
     } 
-
     getElongationAngle() {
 
         let observerPos = getPlanetPos(this.props.radiusObserverPlanet, this.props.observerPlanetAngle);
@@ -216,18 +179,17 @@ export default class ZodiacStrip extends React.Component {
         if (elongAngle < 0) {
             elongAngle += 2 * Math.PI;
         }
+
         //console.log("Earth position: ", observerPos, "Target position: ", targetPos, "Sun Position: ", sunPos);
         //console.log("Elongation Angle: ", e, "Sun Angle: ", s, "Target Planet Angle: ", t);
         return elongAngle;
     }
-
     getDistance(targetPos, observerPos) {
         let diffX = Math.pow((targetPos.x - observerPos.x), 2);
         let diffY = Math.pow((targetPos.y - observerPos.y), 2);
 
         return Math.pow((diffX + diffY), 0.5);
     }
-
     updateAngle(elongationAngle) {
 
         this.g.clear();
@@ -239,11 +201,9 @@ export default class ZodiacStrip extends React.Component {
         this.g.lineTo(this.targetPlanetZodiacContainer.x, this.targetPlanetZodiacContainer.y);
 
     }
-
     updateText(newAngle) {
         this.text.text = newAngle + '°';
     }
-
     animate() {
 
        // let a1 = -1 * this.props.observerPlanetAngle;
@@ -289,7 +249,7 @@ export default class ZodiacStrip extends React.Component {
 
         let elongAngle = this.getElongationAngle() / (2 * Math.PI);
 
-        console.log('111tp angle: ', this.tpa * 180 / Math.PI, 's angle: ', this.sa * 180 / Math.PI);
+        // console.log('111tp angle: ', this.tpa * 180 / Math.PI, 's angle: ', this.sa * 180 / Math.PI);
 
         this.sunZodiacContainer.position.x = 450 + angle * 600;
         this.targetPlanetZodiacContainer.x = 450 + angle2 * 600;
