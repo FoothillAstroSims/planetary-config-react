@@ -20,6 +20,9 @@ export default class ZodiacStrip extends React.Component {
         this.stop = this.stop.bind(this);
         this.animate = this.animate.bind(this);
 
+        this.tpa = 0;
+        this.sa = 0;
+
     }
     render()  {
         return (
@@ -54,7 +57,6 @@ export default class ZodiacStrip extends React.Component {
 	        );
 
             zodiacStrip.y += 50;
-            console.log("posiiton of the sprite:", zodiacStrip.y);
             stage.addChild(zodiacStrip);
 
             me.sunZodiacContainer = me.drawSunZodiac(resources.sun);
@@ -193,6 +195,10 @@ export default class ZodiacStrip extends React.Component {
         let targetPlanetAngle = Math.atan2(targetPos.y - observerPos.y, targetPos.x - observerPos.x);
         let sunAngle = Math.atan2(sunPos.y - observerPos.y, sunPos.x - observerPos.x);
 
+
+        this.tpa = targetPlanetAngle;
+        this.sa = sunAngle;
+
         if (-Math.PI < sunAngle && sunAngle < 0) {
             sunAngle += 2 * Math.PI;
         }
@@ -210,8 +216,8 @@ export default class ZodiacStrip extends React.Component {
         if (elongAngle < 0) {
             elongAngle += 2 * Math.PI;
         }
-        console.log("Earth position: ", observerPos, "Target position: ", targetPos, "Sun Position: ", sunPos);
-        console.log("Elongation Angle: ", e, "Sun Angle: ", s, "Target Planet Angle: ", t);
+        //console.log("Earth position: ", observerPos, "Target position: ", targetPos, "Sun Position: ", sunPos);
+        //console.log("Elongation Angle: ", e, "Sun Angle: ", s, "Target Planet Angle: ", t);
         return elongAngle;
     }
 
@@ -240,23 +246,53 @@ export default class ZodiacStrip extends React.Component {
 
     animate() {
 
-        let a1 = -1 * this.props.observerPlanetAngle;
+       // let a1 = -1 * this.props.observerPlanetAngle;
 
-    	let angle = a1 / (2 * Math.PI); 
+       // let angle = a1 / (2 * Math.PI); 
+       // 
+       // if (a1 >= -Math.PI && a1 < 0) {
+       //     angle = a1 + (2 * Math.PI);
+       //     angle /= (2 * Math.PI);
+       // }
+    
+       // if (angle > 0.75 && angle < 1.0) {
+       //     angle -= 1;
+       // }
+
+
+    	let angle = this.sa / (2 * Math.PI); 
         
-        if (a1 >= -Math.PI && a1 < 0) {
-            angle = a1 + (2 * Math.PI);
+        if (this.sa >= -Math.PI && this.sa < 0) {
+            angle = this.sa + (2 * Math.PI);
             angle /= (2 * Math.PI);
         }
     
         if (angle > 0.75 && angle < 1.0) {
             angle -= 1;
         }
- 
+
+        angle *= -1;
+
+    	let angle2 = this.tpa / (2 * Math.PI); 
+        
+        if (this.tpa >= -Math.PI && this.tpa < 0) {
+            angle2 = this.tpa + (2 * Math.PI);
+            angle2 /= (2 * Math.PI);
+        }
+    
+        if (angle2 > 0.75 && angle2 < 1.0) {
+            angle2 -= 1;
+        }
+
+        angle2 *= -1;
+
+
         let elongAngle = this.getElongationAngle() / (2 * Math.PI);
 
-        this.sunZodiacContainer.position.x = 150 + angle * 600;
-        this.targetPlanetZodiacContainer.x = this.sunZodiacContainer.position.x + elongAngle * 600;
+        console.log('111tp angle: ', this.tpa * 180 / Math.PI, 's angle: ', this.sa * 180 / Math.PI);
+
+        this.sunZodiacContainer.position.x = 450 + angle * 600;
+        this.targetPlanetZodiacContainer.x = 450 + angle2 * 600;
         
         if (this.targetPlanetZodiacContainer.x > 600) {
             this.targetPlanetZodiacContainer.x -= 600;            
