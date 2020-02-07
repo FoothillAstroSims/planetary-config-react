@@ -14,8 +14,8 @@ export default class ZodiacStrip extends React.Component {
         this.stop = this.stop.bind(this);
         this.animate = this.animate.bind(this);
 
-        this.tpa = 0;
-        this.sa = 0;
+        this.targetPlanetLongitude = 0;
+        this.sunLongitude = 0;
     }
     render()  {
         return (
@@ -48,9 +48,11 @@ export default class ZodiacStrip extends React.Component {
             stage.addChild(zodiacStrip);
 
             me.targetPlanetZodiacContainer = me.drawTargetPlanetZodiac();
-
             me.sunZodiacContainer = me.drawSunZodiac();
-            me.g = me.drawLine();
+
+            me.directLine = me.drawLine();
+            me.wrapAroundLine = me.drawLine();
+
             me.text = me.drawText();
             me.zodiacText = me.drawZodiac(); 
             me.start();
@@ -159,8 +161,8 @@ export default class ZodiacStrip extends React.Component {
         let sunAngle = Math.atan2(sunPos.y - observerPos.y, sunPos.x - observerPos.x);
 
 
-        this.tpa = targetPlanetAngle;
-        this.sa = sunAngle;
+        this.targetPlanetLongitude = targetPlanetAngle;
+        this.sunLongitude = sunAngle;
 
         if (-Math.PI < sunAngle && sunAngle < 0) {
             sunAngle += 2 * Math.PI;
@@ -190,40 +192,50 @@ export default class ZodiacStrip extends React.Component {
 
         return Math.pow((diffX + diffY), 0.5);
     }
-    updateAngle(elongationAngle) {
+    updateLine(elongationAngle) {
+        this.wrapAroundLine.clear();
+        this.directLine.clear();
 
-        this.g.clear();
-        this.g.moveTo(this.sunZodiacContainer.x, this.sunZodiacContainer.y);
-        this.g.visible = true;
-        this.g.lineStyle(2, 0x00f2ff);
-        this.g.beginFill(0x00f2ff, 0.7);
+        this.directLine.moveTo(this.sunZodiacContainer.x, this.sunZodiacContainer.y);
+        this.directLine.visible = true;
+        this.directLine.lineStyle(2, 0x00f2ff);
+        this.directLine.beginFill(0x00f2ff, 0.7);
 
-        this.g.lineTo(this.targetPlanetZodiacContainer.x, this.targetPlanetZodiacContainer.y);
+        this.wrapAroundLine.visible = false;
+        this.wrapAroundLine.lineStyle(2, 0x00f2ff);
+        this.wrapAroundLine.beginFill(0x00f2ff, 0.7);
 
+        let targetX = this.targetPlanetZodiacContainer.x;
+        let sunX = this.sunZodiacContainer.x;
+
+        if (elongationAngle >= 180) {
+            if (sunX < targetX) {
+                this.directLine.lineTo(this.targetPlanetZodiacContainer.x, this.targetPlanetZodiacContainer.y);
+            } else if (sunX > targetX) {
+                this.wrapAroundLine.visible = true;
+                this.directLine.lineTo(600, this.targetPlanetZodiacContainer.y);
+                this.wrapAroundLine.moveTo(0, this.sunZodiacContainer.y);
+                this.wrapAroundLine.lineTo(this.targetPlanetZodiacContainer.x, this.targetPlanetZodiacContainer.y);
+            }
+        } else if (elongationAngle < 180) {
+            if (sunX > targetX) {
+                this.directLine.lineTo(this.targetPlanetZodiacContainer.x, this.targetPlanetZodiacContainer.y);
+            } else if (sunX < targetX) {
+                this.wrapAroundLine.visible = true;
+                this.directLine.lineTo(0, this.targetPlanetZodiacContainer.y);
+                this.wrapAroundLine.moveTo(600, this.sunZodiacContainer.y);
+                this.wrapAroundLine.lineTo(this.targetPlanetZodiacContainer.x, this.targetPlanetZodiacContainer.y);
+            }
+        }
     }
     updateText(newAngle) {
-        this.text.text = newAngle + '°';
+        this.text.text = newAngle;
     }
-    animate() {
-
-       // let a1 = -1 * this.props.observerPlanetAngle;
-
-       // let angle = a1 / (2 * Math.PI); 
-       // 
-       // if (a1 >= -Math.PI && a1 < 0) {
-       //     angle = a1 + (2 * Math.PI);
-       //     angle /= (2 * Math.PI);
-       // }
-    
-       // if (angle > 0.75 && angle < 1.0) {
-       //     angle -= 1;
-       // }
-
-
-    	let angle = this.sa / (2 * Math.PI); 
+    updateZodiacBodyPos(longitude, body, width) {
+     	let angle = longitude / (2 * Math.PI); 
         
-        if (this.sa >= -Math.PI && this.sa < 0) {
-            angle = this.sa + (2 * Math.PI);
+        if (longitude >= -Math.PI && longitude < 0) {
+            angle = longitude + (2 * Math.PI);
             angle /= (2 * Math.PI);
         }
     
@@ -232,41 +244,27 @@ export default class ZodiacStrip extends React.Component {
         }
 
         angle *= -1;
+        body.x = 450 + (angle * (600 + width));
+    }
+    animate() {
+        let elongAngle = this.getElongationAngle();
 
-    	let angle2 = this.tpa / (2 * Math.PI); 
-        
-        if (this.tpa >= -Math.PI && this.tpa < 0) {
-            angle2 = this.tpa + (2 * Math.PI);
-            angle2 /= (2 * Math.PI);
-        }
-    
-        if (angle2 > 0.75 && angle2 < 1.0) {
-            angle2 -= 1;
-        }
+        // The 0s are for the width value of the body
+        this.updateZodiacBodyPos(this.sunLongitude, this.sunZodiacContainer, 20);
+        this.updateZodiacBodyPos(this.targetPlanetLongitude, this.targetPlanetZodiacContainer, 15);
 
-        angle2 *= -1;
+        let num = Math.round(elongAngle * 180 / Math.PI * 10) / 10;
+        this.updateLine(num);
 
-
-        let elongAngle = this.getElongationAngle() / (2 * Math.PI);
-
-        // console.log('111tp angle: ', this.tpa * 180 / Math.PI, 's angle: ', this.sa * 180 / Math.PI);
-
-        this.sunZodiacContainer.position.x = 450 + angle * 600;
-        this.targetPlanetZodiacContainer.x = 450 + angle2 * 600;
-        
-        if (this.targetPlanetZodiacContainer.x > 600) {
-            this.targetPlanetZodiacContainer.x -= 600;            
-        }
-
-        this.updateAngle(elongAngle);
-
-        let num = Math.round(this.getElongationAngle() * 180 / Math.PI * 10) / 10;
-
-        let direction = ' E';
+        let direction = '° E ';
         if (num > 180) {
             let temp = num - 180;
             num -= temp * 2;
-            direction = ' W ';
+            direction = '° W ';
+        }
+
+        if (num == 0 || num == 180) {
+            direction = '° ';
         }
 
         let textNum = Number(Math.round(num +'e2')+'e-2');
