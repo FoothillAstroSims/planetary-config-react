@@ -1,5 +1,6 @@
 import React from 'react';
 import * as PIXI from 'pixi.js';
+import GlobalDebugger from './Debugger'
 
 const getPlanetPos = function(radius, phase) {
     return new PIXI.Point(
@@ -19,7 +20,7 @@ export default class ZodiacStrip extends React.Component {
     }
     render()  {
         return (
-            <div className="ZodiacStrip" 
+            <div className="ZodiacStrip"
                 ref={(thisDiv) => {this.el = thisDiv}} />
         );
     }
@@ -54,7 +55,7 @@ export default class ZodiacStrip extends React.Component {
             me.wrapAroundLine = me.drawLine();
 
             me.text = me.drawText();
-            me.zodiacText = me.drawZodiac(); 
+            me.zodiacText = me.drawZodiac();
             me.start();
         });
     }
@@ -110,7 +111,7 @@ export default class ZodiacStrip extends React.Component {
         sunZodiac.width = 40;
         sunZodiac.height = 40;
         sunZodiacContainer.addChild(sunZodiac);
-        
+
         this.app.stage.addChild(sunZodiacContainer);
         return sunZodiacContainer;
 
@@ -126,7 +127,7 @@ export default class ZodiacStrip extends React.Component {
         targetPlanetImage.width = 30;
         targetPlanetImage.height = 30;
         targetPlanetContainer.addChild(targetPlanetImage);
-        
+
         this.app.stage.addChild(targetPlanetContainer);
         return targetPlanetContainer;
     }
@@ -137,21 +138,21 @@ export default class ZodiacStrip extends React.Component {
         if (!this.frameId) {
             this.frameId = requestAnimationFrame(this.animate);
         }
-    } 
+    }
     stop() {
         cancelAnimationFrame(this.frameId)
-    } 
+    }
     getElongationAngle() {
 
         let observerPos = getPlanetPos(this.props.radiusObserverPlanet, this.props.observerPlanetAngle);
         let targetPos = getPlanetPos(this.props.radiusTargetPlanet, this.props.targetPlanetAngle);
-        let sunPos = new PIXI.Point(0, 0); 
+        let sunPos = new PIXI.Point(0, 0);
 
         observerPos.x -= 600;
         observerPos.y -= 460;
 
         observerPos.y *= -1;
-        
+
         targetPos.x -= 600;
         targetPos.y -= 460;
 
@@ -173,7 +174,7 @@ export default class ZodiacStrip extends React.Component {
         }
 
         let elongAngle = targetPlanetAngle - sunAngle;
-        
+
         let e = elongAngle * 180 / Math.PI;
         let s = sunAngle * 180 / Math.PI;
         let t = targetPlanetAngle * 180 / Math.PI;
@@ -208,6 +209,10 @@ export default class ZodiacStrip extends React.Component {
         let targetX = this.targetPlanetZodiacContainer.x;
         let sunX = this.sunZodiacContainer.x;
 
+        GlobalDebugger.set("elogationAngle", Number.parseFloat(elongationAngle).toFixed(2));
+        GlobalDebugger.set("targetX", Number.parseFloat(targetX).toFixed(2));
+        GlobalDebugger.set("sunX", Number.parseFloat(sunX).toFixed(2));
+
         if (elongationAngle >= 180) {
             if (sunX < targetX) {
                 this.directLine.lineTo(this.targetPlanetZodiacContainer.x, this.targetPlanetZodiacContainer.y);
@@ -232,13 +237,13 @@ export default class ZodiacStrip extends React.Component {
         this.text.text = newAngle;
     }
     updateZodiacBodyPos(longitude, body, width) {
-     	let angle = longitude / (2 * Math.PI); 
-        
+     	let angle = longitude / (2 * Math.PI);
+
         if (longitude >= -Math.PI && longitude < 0) {
             angle = longitude + (2 * Math.PI);
             angle /= (2 * Math.PI);
         }
-    
+
         if (angle > 0.75 && angle < 1.0) {
             angle -= 1;
         }
@@ -281,4 +286,3 @@ export default class ZodiacStrip extends React.Component {
 //     deltaAngle: Proptypes.number.isRequired,
 //     getElongationAngle: Proptypes.func.isRequired
 // };
-
