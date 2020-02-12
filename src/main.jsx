@@ -7,6 +7,7 @@ import ZodiacStrip from './ZodiacStrip';
 import {RangeStepInput} from 'react-range-step-input';
 import {forceNumber, radToDeg, degToRad} from './utils';
 import { maxHeaderSize } from 'http';
+import {DebuggerTable} from './Debugger';
 
 class PlanetaryConfigSim extends React.Component {
 	constructor(props) {
@@ -77,7 +78,7 @@ class PlanetaryConfigSim extends React.Component {
                                            min={50} max={500} />
                                 </form>
                             </div>
-                            
+
                             <div className="radTarget">
                                 <form className="form-inline">
                                     <label htmlFor="radTargetPlanetRange">Radius of target planet's orbit</label>
@@ -130,6 +131,7 @@ class PlanetaryConfigSim extends React.Component {
 		        />
                     </div>
                 </div>
+			<DebuggerTable/>
         </React.Fragment>;
     }
    incrementObserverPlanetAngle(n, inc) {
@@ -140,7 +142,7 @@ class PlanetaryConfigSim extends React.Component {
         return newAngle;
     }
     incrementTargetPlanetAngle(n, inc) {
-        const newAngle = n + (this.state.multiplier) * inc; 
+        const newAngle = n + (this.state.multiplier) * inc;
         if (newAngle > Math.PI) {
             return newAngle * -1;
         }
@@ -170,12 +172,12 @@ class PlanetaryConfigSim extends React.Component {
         let diff = 0;
         let newAng = newAngle;
         let prevObserverPlanetAng = this.state.observerPlanetAngle;
-        
 
-        if (newAng >= (Math.PI / 2) && newAng <= Math.PI && prevObserverPlanetAng >= -Math.PI 
+
+        if (newAng >= (Math.PI / 2) && newAng <= Math.PI && prevObserverPlanetAng >= -Math.PI
         && prevObserverPlanetAng <= (-Math.PI / 2)) {
             diff = -(Math.abs(newAng - Math.PI) + Math.abs(-Math.PI - prevObserverPlanetAng));
-        } else if (prevObserverPlanetAng >= (Math.PI / 2) && prevObserverPlanetAng <= Math.PI 
+        } else if (prevObserverPlanetAng >= (Math.PI / 2) && prevObserverPlanetAng <= Math.PI
         && newAng >= -Math.PI && newAng <= (-Math.PI / 2)) {
             diff = (Math.abs(prevObserverPlanetAng - Math.PI) + Math.abs(-Math.PI - newAng));
         } else {
@@ -183,7 +185,7 @@ class PlanetaryConfigSim extends React.Component {
         }
 
         diff *= this.state.multiplier;
-        let newTargetPlanet = (this.state.targetPlanetAngle + diff); 
+        let newTargetPlanet = (this.state.targetPlanetAngle + diff);
         if (newTargetPlanet >= Math.PI) {
             newTargetPlanet = -Math.PI;
         } else if (newTargetPlanet <= -Math.PI) {
@@ -218,10 +220,10 @@ class PlanetaryConfigSim extends React.Component {
         } else {
             diff = newAng - this.state.targetPlanetAngle;
         }
-        
+
 
        diff *= (1 / this.state.multiplier);
-       let newObserverPlanet = (this.state.observerPlanetAngle + diff); 
+       let newObserverPlanet = (this.state.observerPlanetAngle + diff);
         if (newObserverPlanet >= Math.PI) {
             newObserverPlanet = -Math.PI;
         } else if (newObserverPlanet <= -Math.PI) {
