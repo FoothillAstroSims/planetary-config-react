@@ -16,7 +16,9 @@ class PlanetaryConfigSim extends React.Component {
 		    targetPlanetAngle: 0,
 		    radiusTargetPlanet: 300,
 		    radiusObserverPlanet: 160,
-            targetFixed: true,
+		    targetFixed: true,
+		    radiusPixelTarget: 300,
+		    radiusPixelObserver: 160,
 		    // This multiplier is for the orbital equation: https://tinyurl.com/yx444bnv
 		    // Use the ratio between the radius of the two planets to find this multiplier
 		    multiplier:  Math.pow((160 / 300), 1.5),
@@ -34,6 +36,7 @@ class PlanetaryConfigSim extends React.Component {
         if (this.state.isPlaying) {
             startBtnText = 'Pause Animation';
         }
+	
         return <React.Fragment>
             <nav className="navbar navbar-expand-md navbar-light bg-light d-flex justify-content-between">
                 <span className="navbar-brand mb-0 h1">Planetary Configurations Simulator</span>
@@ -71,7 +74,7 @@ class PlanetaryConfigSim extends React.Component {
                                     <label htmlFor="radObserverPlanetRange">Radius of observer planet's orbit</label>
                                     <RangeStepInput name="radiusObserverPlanet"
                                            className="form-control-range ml-2"
-                                           value={this.state.radiusObserverPlanet}
+                                           value={this.state.radiusPixelObserver}
                                            onChange={this.onObserverPlanetRadiusChange.bind(this)}
                                            step={10}
                                            min={50} max={500} />
@@ -83,7 +86,7 @@ class PlanetaryConfigSim extends React.Component {
                                     <label htmlFor="radTargetPlanetRange">Radius of target planet's orbit</label>
                                     <RangeStepInput name="radiusTargetPlanet"
                                            className="form-control-range ml-2"
-                                           value={this.state.radiusTargetPlanet}
+                                           value={this.state.radiusPixelTarget}
                                            onChange={this.onTargetPlanetRadiusChange.bind(this)}
                                            step={10}
                                            min={50} max={500} />
@@ -245,29 +248,48 @@ class PlanetaryConfigSim extends React.Component {
         });
     }
     onObserverPlanetRadiusChange(e) {
+
+	let au = e.target.value;
+
+	if (this.state.radiusObserverPlanet > this.state.radiusTargetPlanet) {
+	    this.changeTarget(au)
+	} else {
+	    this.setState({
+		radiusPixelObserver: au,
+		radiusTargetPlanet: forceNumber(e.target.value),
+            });
+	}
+    }
+    
+    changeTarget(au) {
+        let ratio = (this.state.radiusPixelTarget / au) * 300;
+        console.log(ratio);
+
         this.setState({
-            radiusObserverPlanet: forceNumber(e.target.value),
+	    radiusPixelObserver: au, 
+            radiusTargetPlanet: forceNumber(ratio),
         });
     }
+    
     onTargetPlanetRadiusChange(e) {
 
         let au = e.target.value;
 
-        // console.log(this.radiusTargetPlanet, this.radiusObserverPlanet);
         if (this.state.radiusTargetPlanet > this.state.radiusObserverPlanet) {
-            //console.log(au);
             this.changeObserver(au);
         } else {
             this.setState({
+		radiusPixelTarget: au,
                 radiusTargetPlanet: forceNumber(e.target.value)
             });
         }
     }
     changeObserver(au) {
-        let ratio = (this.state.radiusObserverPlanet / au) * 300;
+        let ratio = (this.state.radiusPixelObserver / au) * 300;
         console.log(ratio);
 
         this.setState({
+	    radiusPixelTarget: au, 
             radiusObserverPlanet: forceNumber(ratio),
         });
 
