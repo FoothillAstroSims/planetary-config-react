@@ -1,5 +1,3 @@
-// Code needs to be refactored, but still pretty readable
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 import MainView from './MainView';
@@ -7,7 +5,6 @@ import ZodiacStrip from './ZodiacStrip';
 import {RangeStepInput} from 'react-range-step-input';
 import {forceNumber, radToDeg, degToRad} from './utils';
 import { maxHeaderSize } from 'http';
-// import GlobalDebugger, {DebuggerTable} from './Debugger';
 
 class PlanetaryConfigSim extends React.Component {
 	constructor(props) {
@@ -15,8 +12,8 @@ class PlanetaryConfigSim extends React.Component {
 		this.initialState = {
 		    observerPlanetAngle: 0,
 		    targetPlanetAngle: 0,
-		    radiusTargetPlanet: 400,
-		    radiusObserverPlanet: 160,
+		    radiusTargetPlanet: 6.45,
+		    radiusObserverPlanet: 2.2,
 		    targetFixed: true,
 		    radiusPixelTarget: 400,
 		    radiusPixelObserver: 160,
@@ -59,10 +56,8 @@ class PlanetaryConfigSim extends React.Component {
                     <MainView
                         observerPlanetAngle={this.state.observerPlanetAngle}
                         targetPlanetAngle={this.state.targetPlanetAngle}
-                        /* radiusTargetPlanet={this.state.radiusTargetPlanet} */
                         radiusTargetPlanet={this.state.radiusPixelTarget}
                         radiusObserverPlanet={this.state.radiusPixelObserver}
-                        /* radiusObserverPlanet={this.state.radiusObserverPlanet} */
                         onObserverPlanetAngleUpdate={this.onObserverPlanetAngleUpdate.bind(this)}
                         onTargetPlanetAngleUpdate={this.onTargetPlanetAngleUpdate.bind(this)}
                         stopAnimation={this.stopAnimation}
@@ -78,8 +73,8 @@ class PlanetaryConfigSim extends React.Component {
  <div classname="radius-forms">
                                            <input type="number" size="4"
                                            className="form-control form-control-sm"
-                                           step="10" name="distance"
-                                           min={50} max={600}
+                                           step="0.01" name="distance"
+                                           min={0.25} max={10}
                                            value={this.state.radiusObserverPlanet}
                                                   onChange={this.onObserverPlanetRadiusChange.bind(this)}/>
  </div>
@@ -88,8 +83,8 @@ class PlanetaryConfigSim extends React.Component {
                                            className="form-control-range ml-2"
                                            value={this.state.radiusObserverPlanet}
                                            onChange={this.onObserverPlanetRadiusChange.bind(this)}
-                                           step={0.1}
-                                           min={50} max={600} />
+                                           step={0.01}
+                                           min={0.25} max={10} />
  </div>
 
                                 </form>
@@ -102,8 +97,8 @@ class PlanetaryConfigSim extends React.Component {
 <div classname="radius-forms">	    
 	    	                    <input type="number" size="4"
                                            className="form-control form-control-sm"
-                                           step="10" name="distance"
-                                           min={50} max={600}
+                                           step="0.01" name="distance"
+                                           min={0.25} max={10}
                                            value={this.state.radiusTargetPlanet}
                                            onChange={this.onTargetPlanetRadiusChange.bind(this)}/>
 	    </div>
@@ -112,7 +107,7 @@ class PlanetaryConfigSim extends React.Component {
                                            className="form-control-range ml-2"
                                            value={this.state.radiusTargetPlanet}
                                            onChange={this.onTargetPlanetRadiusChange.bind(this)}
-                                           step={0.1} min={50} max={600} />
+                                           step={0.01} min={0.25} max={10} />
 </div>	    
                                 </form>
                             </div>
@@ -174,7 +169,7 @@ class PlanetaryConfigSim extends React.Component {
         return newAngle;
     }
     animate() {
-        let newMultiplier = Math.pow((this.state.radiusObserverPlanet / this.state.radiusTargetPlanet), 2)
+        let newMultiplier = Math.pow((this.state.radiusObserverPlanet / this.state.radiusTargetPlanet), 2);
         const me = this;
         this.setState(prevState => ({
             multiplier: newMultiplier,
@@ -217,7 +212,7 @@ class PlanetaryConfigSim extends React.Component {
             newTargetPlanet = Math.PI;
         }
 
-        let newMultiplier = Math.pow((this.state.radiusObserverPlanet / this.state.radiusTargetPlanet), 2)
+        let newMultiplier = Math.pow((this.state.radiusObserverPlanet / this.state.radiusTargetPlanet), 2);
 
         this.setState({
             multiplier: newMultiplier,
@@ -254,7 +249,7 @@ class PlanetaryConfigSim extends React.Component {
         //              "prev mars: ", radToDeg(this.state.targetPlanetAngle), "new mars: ", radToDeg(newAngle)
         // );
 
-       let newMultiplier = Math.pow((this.state.radiusObserverPlanet / this.state.radiusTargetPlanet), 2)
+        let newMultiplier = Math.pow((this.state.radiusObserverPlanet / this.state.radiusTargetPlanet), 2);
        this.setState({
             multiplier: newMultiplier,
             isPlaying: false,
@@ -281,9 +276,6 @@ class PlanetaryConfigSim extends React.Component {
                 radiusPixelTarget: 400,
             });
 	}
-
-        console.log("LOKO HRE", this.state.radiusPixelObserver);
-        console.log("LOKO HRE", this.state.radiusPixelTarget);
     }
     changeTarget(au) {
         let ratio = (this.state.radiusTargetPlanet / au) * 400;
