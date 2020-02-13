@@ -1,10 +1,4 @@
 
-
-
-
-
-
-
 Features:
 
 Done --> 1. Fix bug with dragging and multiplier not changing.
@@ -18,37 +12,5 @@ Done --> 2. Create Zodiac container
 
 
 
-
-
-p.update = function() {
-	this.angle1 = this.epochAngle1 + 2*Math.PI*this.time/this.period1;
-	this.angle1 = (this.angle1%(2*Math.PI) + (2*Math.PI))%(2*Math.PI);
-	this.angle2 = this.epochAngle2 + 2*Math.PI*this.time/this.period2;
-	this.angle2 = (this.angle2%(2*Math.PI) + (2*Math.PI))%(2*Math.PI);
-
-	var x1 = this.semimajorAxis1*Math.cos(this.angle1);
-	var y1 = this.semimajorAxis1*Math.sin(this.angle1);
-	var x2 = this.semimajorAxis2*Math.cos(this.angle2);
-	var y2 = this.semimajorAxis2*Math.sin(this.angle2);
-
-	// the planet and sun longitudes are given in radians between 0 and 2*Pi
-	this.planetLongitude = (Math.atan2(y2-y1, x2-x1)%(2*Math.PI) + (2*Math.PI))%(2*Math.PI);
-	this.sunLongitude = (Math.atan2(-y1, -x1)%(2*Math.PI) + (2*Math.PI))%(2*Math.PI);
-
-	// - elongationValue is the elongation, in degrees, rounded to the nearest tenth; the
-	//   range is -179.9 to 180.0, where east is negative
-	// - elongationString is the the string representation of the elongation, including the
-	//   degree symbol and direction character (e.g. "134.5° E")
-	var elong = (((this.sunLongitude - this.planetLongitude)*180/Math.PI)%360 + 360)%360;
-	if (elong>180) elong -= 360;
-	this.elongationString = Math.abs(elong).toFixed(1);
-	this.elongationValue = parseFloat(this.elongationString);
-	if (elong<0 && this.elongationValue!=180) this.elongationValue *= -1;
-	this.elongationString += "°";
-	if (this.elongationValue<0) this.elongationString += " E";
-	else if (this.elongationValue>0 && this.elongationValue!=180) this.elongationString += " W";
-
-	for (var i=0; i<this.updateListenerList.length; i++) this.updateListenerList[i].onSimulatorUpdated();
-};
 
 

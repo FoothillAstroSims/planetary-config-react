@@ -1,43 +1,29 @@
-// hello and welcome friends.
-// This code is quite hideous, and
-// is in need of some major refactoring
-
-// Tbh, most of it can be understood if you
-// think about it for a couple min.
-
-// But if you need clarification, just PM me
-// on discord
-
-// - sudo-safi
-
 import React from 'react';
-// import PropTypes from 'prop-types';
 import * as PIXI from 'pixi.js';
-// import { degToRad, radToDeg, roundToOnePlace } from './utils';
+// import GlobalDebugger from './Debugger'
 
 const getPlanetPos = function(radius, phase) {
     return new PIXI.Point(
         radius * Math.cos(-phase) + 600,
         radius * Math.sin(-phase) + 460); // these magic numbers come from this.orbitCenter
 }
-
-
 export default class ZodiacStrip extends React.Component {
     constructor(props) {
-        super(props);        
+        super(props);
 
         this.start = this.start.bind(this);
         this.stop = this.stop.bind(this);
         this.animate = this.animate.bind(this);
 
+        this.targetPlanetLongitude = 0;
+        this.sunLongitude = 0;
     }
     render()  {
         return (
-            <div className="ZodiacStrip" 
+            <div className="ZodiacStrip"
                 ref={(thisDiv) => {this.el = thisDiv}} />
         );
     }
-
     componentDidMount() {
         this.app = new PIXI.Application({
             width: 600,
@@ -47,10 +33,6 @@ export default class ZodiacStrip extends React.Component {
         });
 
         this.el.appendChild(this.app.view);
-
-        // Loads all the images
-        this.app.loader.add('targetPlanet', 'img/mars.png')
-            .add('sunZodiac', 'img/sun.png');
 
         const me = this;
         this.app.loader.load((loader, resources) => {
@@ -64,31 +46,30 @@ export default class ZodiacStrip extends React.Component {
 	        );
 
             zodiacStrip.y += 50;
-            console.log("posiiton of the sprite:", zodiacStrip.y);
             stage.addChild(zodiacStrip);
 
-            me.sunZodiacContainer = me.drawSunZodiac(resources.sun);
-            me.targetPlanetZodiacContainer = me.drawTargetPlanetZodiac(
-                resources.targetPlanet);
-            me.g = me.drawLine();
+            me.targetPlanetZodiacContainer = me.drawTargetPlanetZodiac();
+            me.sunZodiacContainer = me.drawSunZodiac();
+
+            me.directLine = me.drawLine();
+            me.wrapAroundLine = me.drawLine();
+
             me.text = me.drawText();
-            me.zodiacText = me.drawZodiac(); 
+            me.zodiacText = me.drawZodiac();
             me.start();
         });
     }
-
     drawLine() {
         const g = new PIXI.Graphics();
         g.visible = false;
 
         g.clear();
-        g.lineStyle(6, 0xffe040);
+        g.lineStyle(2, 0x00FFD2);
         g.beginFill(0xffe200, 0.7);
 
         this.app.stage.addChild(g);
         return g;
     }
-
     drawText() {
         const angleText = new PIXI.Text('Angle', {
             fontFamily: 'Arial',
@@ -99,14 +80,13 @@ export default class ZodiacStrip extends React.Component {
         });
 
         // angleText.rotation = degToRad(-90);
-        angleText.position.x = 255;
+        angleText.position.x = 240;
         angleText.position.y = 150;
         this.app.stage.addChild(angleText);
         return angleText;
     }
-
     drawZodiac() {
-        const zodiacText = new PIXI.Text('Zodiac Strip', {
+        const zodiacText = new PIXI.Text('Zodiac Strip with Constellations', {
             fontFamily: 'Arial',
             fontSize: 30,
             // fontWeight: 'bold',
@@ -115,27 +95,11 @@ export default class ZodiacStrip extends React.Component {
         });
 
         // angleText.rotation = degToRad(-90);
-        zodiacText.position.x = 0;
-        zodiacText.position.y = 0;
+        zodiacText.position.x = 100;
+        zodiacText.position.y = 7;
         this.app.stage.addChild(zodiacText);
         return zodiacText;
     }
-
-    // Uncomment and modify to draw east and then add support to draw west
-//    drawEastAndWest() {
-//        const east = new PIXI.Text('East', {
-//            fontFamily: 'Arial',
-//            fontSize: 28 * 2,
-//            fontWeight: 'bold',
-//            fill: 0xffff80,
-//            align: 'center'
-//        });
-//        east.rotation = degToRad(-90);
-//        east.position.x = 14 * 2;
-//        east.position.y = 270 * 2;
-//        this.app.stage.addChild(east);
-//    }
-
     drawSunZodiac() {
 
         const sunZodiacContainer = new PIXI.Container();
@@ -147,114 +111,170 @@ export default class ZodiacStrip extends React.Component {
         sunZodiac.width = 40;
         sunZodiac.height = 40;
         sunZodiacContainer.addChild(sunZodiac);
-        
+
         this.app.stage.addChild(sunZodiacContainer);
         return sunZodiacContainer;
 
     }
-
-    drawTargetPlanetZodiac(targetPlanetResource) {
+    drawTargetPlanetZodiac() {
 
         const targetPlanetContainer = new PIXI.Container();
         targetPlanetContainer.name = 'targetPlanetZodiac';
         targetPlanetContainer.position = new PIXI.Point(3 * 600 / 4, 48.5 + 50);
 
-        const targetPlanetImage = new PIXI.Sprite(targetPlanetResource.texture);
+        const targetPlanetImage = new PIXI.Sprite(PIXI.Texture.from('img/mars.png'));
         targetPlanetImage.anchor.set(0.5);
         targetPlanetImage.width = 30;
         targetPlanetImage.height = 30;
         targetPlanetContainer.addChild(targetPlanetImage);
-        
+
         this.app.stage.addChild(targetPlanetContainer);
         return targetPlanetContainer;
     }
-    
-    
     componentWillUnmount() {
         this.app.stop();
     }
-
     start() {
         if (!this.frameId) {
             this.frameId = requestAnimationFrame(this.animate);
         }
-    } 
-
+    }
     stop() {
         cancelAnimationFrame(this.frameId)
-    } 
-
+    }
     getElongationAngle() {
-        let targetPos = getPlanetPos(this.props.radiusTargetPlanet, this.props.targetPlanetAngle);
+
         let observerPos = getPlanetPos(this.props.radiusObserverPlanet, this.props.observerPlanetAngle);
+        let targetPos = getPlanetPos(this.props.radiusTargetPlanet, this.props.targetPlanetAngle);
+        let sunPos = new PIXI.Point(0, 0);
 
-        let distBetweenObserverAndTarget = this.getDistance(targetPos, observerPos);
+        observerPos.x -= 600;
+        observerPos.y -= 460;
 
-        let elongAngle = Math.pow(distBetweenObserverAndTarget, 2)
-                            + Math.pow(this.props.radiusObserverPlanet, 2)
-                            - Math.pow(this.props.radiusTargetPlanet, 2);
-        elongAngle /= (2 * this.props.radiusObserverPlanet * distBetweenObserverAndTarget);
-        elongAngle = Math.acos(elongAngle);
-        
-        let a1 = this.props.radiusTargetPlanet - this.props.radiusObserverPlanet;
-        let a2 = this.props.radiusTargetPlanet - this.props.radiusObserverPlanet;
+        observerPos.y *= -1;
 
-        // console.log(a1, a2);
+        targetPos.x -= 600;
+        targetPos.y -= 460;
 
-        // console.log("Elongation angle: ", elongAngle);
+        targetPos.y *= -1;
+
+        let targetPlanetAngle = Math.atan2(targetPos.y - observerPos.y, targetPos.x - observerPos.x);
+        let sunAngle = Math.atan2(sunPos.y - observerPos.y, sunPos.x - observerPos.x);
+
+
+        this.targetPlanetLongitude = targetPlanetAngle;
+        this.sunLongitude = sunAngle;
+
+        if (-Math.PI < sunAngle && sunAngle < 0) {
+            sunAngle += 2 * Math.PI;
+        }
+
+        if (-Math.PI < targetPlanetAngle && targetPlanetAngle < 0) {
+            targetPlanetAngle += 2 * Math.PI;
+        }
+
+        let elongAngle = targetPlanetAngle - sunAngle;
+
+        let e = elongAngle * 180 / Math.PI;
+        let s = sunAngle * 180 / Math.PI;
+        let t = targetPlanetAngle * 180 / Math.PI;
+
+        if (elongAngle < 0) {
+            elongAngle += 2 * Math.PI;
+        }
+
+        //console.log("Earth position: ", observerPos, "Target position: ", targetPos, "Sun Position: ", sunPos);
+        //console.log("Elongation Angle: ", e, "Sun Angle: ", s, "Target Planet Angle: ", t);
         return elongAngle;
     }
-
     getDistance(targetPos, observerPos) {
         let diffX = Math.pow((targetPos.x - observerPos.x), 2);
         let diffY = Math.pow((targetPos.y - observerPos.y), 2);
 
         return Math.pow((diffX + diffY), 0.5);
     }
+    updateLine(elongationAngle) {
+        this.wrapAroundLine.clear();
+        this.directLine.clear();
 
-    updateAngle(elongationAngle) {
+        this.directLine.moveTo(this.sunZodiacContainer.x, this.sunZodiacContainer.y);
+        this.directLine.visible = true;
+        this.directLine.lineStyle(2, 0x00f2ff);
+        this.directLine.beginFill(0x00f2ff, 0.7);
 
-        this.g.clear();
-        this.g.moveTo(this.sunZodiacContainer.x, this.sunZodiacContainer.y);
-        this.g.visible = true;
-        this.g.lineStyle(6, 0xffe040);
-        this.g.beginFill(0xffe200, 0.7);
+        this.wrapAroundLine.visible = false;
+        this.wrapAroundLine.lineStyle(2, 0x00f2ff);
+        this.wrapAroundLine.beginFill(0x00f2ff, 0.7);
 
-        this.g.lineTo(this.targetPlanetZodiacContainer.x, this.targetPlanetZodiacContainer.y);
+        let targetX = this.targetPlanetZodiacContainer.x;
+        let sunX = this.sunZodiacContainer.x;
 
+//        GlobalDebugger.set("elogationAngle", Number.parseFloat(elongationAngle).toFixed(2));
+//        GlobalDebugger.set("targetX", Number.parseFloat(targetX).toFixed(2));
+//        GlobalDebugger.set("sunX", Number.parseFloat(sunX).toFixed(2));
+
+        if (elongationAngle >= 180) {
+            if (sunX < targetX) {
+                this.directLine.lineTo(this.targetPlanetZodiacContainer.x, this.targetPlanetZodiacContainer.y);
+            } else if (sunX > targetX) {
+                this.wrapAroundLine.visible = true;
+                this.directLine.lineTo(600, this.targetPlanetZodiacContainer.y);
+                this.wrapAroundLine.moveTo(0, this.sunZodiacContainer.y);
+                this.wrapAroundLine.lineTo(this.targetPlanetZodiacContainer.x, this.targetPlanetZodiacContainer.y);
+            }
+        } else if (elongationAngle < 180) {
+            if (sunX > targetX) {
+                this.directLine.lineTo(this.targetPlanetZodiacContainer.x, this.targetPlanetZodiacContainer.y);
+            } else if (sunX < targetX) {
+                this.wrapAroundLine.visible = true;
+                this.directLine.lineTo(0, this.targetPlanetZodiacContainer.y);
+                this.wrapAroundLine.moveTo(600, this.sunZodiacContainer.y);
+                this.wrapAroundLine.lineTo(this.targetPlanetZodiacContainer.x, this.targetPlanetZodiacContainer.y);
+            }
+        }
     }
-
     updateText(newAngle) {
-        this.text.text = newAngle + '°';
+        this.text.text = newAngle;
     }
+    updateZodiacBodyPos(longitude, body, width) {
+     	let angle = longitude / (2 * Math.PI);
 
-    animate() {
-
-    	let angle = this.props.observerPlanetAngle / (2 * Math.PI); 
-        
-        if (this.props.observerPlanetAngle >= -Math.PI && this.props.observerPlanetAngle < 0) {
-            angle = this.props.observerPlanetAngle + (2 * Math.PI);
+        if (longitude >= -Math.PI && longitude < 0) {
+            angle = longitude + (2 * Math.PI);
             angle /= (2 * Math.PI);
         }
-    
+
         if (angle > 0.75 && angle < 1.0) {
             angle -= 1;
         }
-    
-        let elongAngle = this.getElongationAngle() / (2 * Math.PI);
 
-        this.sunZodiacContainer.position.x = 150 + angle * 600;
-        this.targetPlanetZodiacContainer.x = this.sunZodiacContainer.position.x + elongAngle * 600;
+        angle *= -1;
+        body.x = 450 + (angle * (600 + width));
+    }
+    animate() {
+        let elongAngle = this.getElongationAngle();
 
-        if (this.targetPlanetZodiacContainer.x > 600) {
-            this.targetPlanetZodiacContainer.x -= 600;            
+        // The 0s are for the width value of the body
+        this.updateZodiacBodyPos(this.sunLongitude, this.sunZodiacContainer, 0); // should be 20 
+        this.updateZodiacBodyPos(this.targetPlanetLongitude, this.targetPlanetZodiacContainer, 0); // should be 15
+
+        let num = Math.round(elongAngle * 180 / Math.PI * 10) / 10;
+        this.updateLine(num);
+
+        let direction = '° E ';
+        if (num > 180) {
+            let temp = num - 180;
+            num -= temp * 2;
+            direction = '° W ';
         }
 
-        this.updateAngle(elongAngle);
-
-        let num = Math.round(this.getElongationAngle() * 180 / Math.PI * 10) / 10;
+        if (num == 0 || num == 180) {
+            direction = '° ';
+        }
 
         let textNum = Number(Math.round(num +'e2')+'e-2');
+        textNum += direction;
+
         this.updateText(textNum);
 
     	this.frameId = requestAnimationFrame(this.animate);
@@ -266,4 +286,3 @@ export default class ZodiacStrip extends React.Component {
 //     deltaAngle: Proptypes.number.isRequired,
 //     getElongationAngle: Proptypes.func.isRequired
 // };
-
