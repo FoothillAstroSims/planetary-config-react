@@ -1,6 +1,6 @@
 import React from 'react';
 import * as PIXI from 'pixi.js';
-import GlobalDebugger from './Debugger'
+// import GlobalDebugger from './Debugger'
 
 const getPlanetPos = function(radius, phase) {
     return new PIXI.Point(
@@ -209,9 +209,9 @@ export default class ZodiacStrip extends React.Component {
         let targetX = this.targetPlanetZodiacContainer.x;
         let sunX = this.sunZodiacContainer.x;
 
-        GlobalDebugger.set("elogationAngle", Number.parseFloat(elongationAngle).toFixed(2));
-        GlobalDebugger.set("targetX", Number.parseFloat(targetX).toFixed(2));
-        GlobalDebugger.set("sunX", Number.parseFloat(sunX).toFixed(2));
+//        GlobalDebugger.set("elogationAngle", Number.parseFloat(elongationAngle).toFixed(2));
+//        GlobalDebugger.set("targetX", Number.parseFloat(targetX).toFixed(2));
+//        GlobalDebugger.set("sunX", Number.parseFloat(sunX).toFixed(2));
 
         if (elongationAngle >= 180) {
             if (sunX < targetX) {
@@ -255,8 +255,8 @@ export default class ZodiacStrip extends React.Component {
         let elongAngle = this.getElongationAngle();
 
         // The 0s are for the width value of the body
-        this.updateZodiacBodyPos(this.sunLongitude, this.sunZodiacContainer, 20);
-        this.updateZodiacBodyPos(this.targetPlanetLongitude, this.targetPlanetZodiacContainer, 15);
+        this.updateZodiacBodyPos(this.sunLongitude, this.sunZodiacContainer, 0); // should be 20 
+        this.updateZodiacBodyPos(this.targetPlanetLongitude, this.targetPlanetZodiacContainer, 0); // should be 15
 
         let num = Math.round(elongAngle * 180 / Math.PI * 10) / 10;
         this.updateLine(num);
