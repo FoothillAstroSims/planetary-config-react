@@ -7,6 +7,7 @@ const getPlanetPos = function(radius, phase) {
         radius * Math.cos(-phase) + 600,
         radius * Math.sin(-phase) + 460); // these magic numbers come from this.orbitCenter
 }
+
 export default class ZodiacStrip extends React.Component {
     constructor(props) {
         super(props);
@@ -18,12 +19,14 @@ export default class ZodiacStrip extends React.Component {
         this.targetPlanetLongitude = 0;
         this.sunLongitude = 0;
     }
+
     render()  {
         return (
             <div className="ZodiacStrip"
                 ref={(thisDiv) => {this.el = thisDiv}} />
         );
     }
+
     componentDidMount() {
         this.app = new PIXI.Application({
             width: 600,
@@ -61,6 +64,7 @@ export default class ZodiacStrip extends React.Component {
             me.start();
         });
     }
+
     drawLine() {
         const g = new PIXI.Graphics();
         g.visible = false;
@@ -72,11 +76,12 @@ export default class ZodiacStrip extends React.Component {
         this.app.stage.addChild(g);
         return g;
     }
+
     drawText() {
         const angleText = new PIXI.Text('Angle', {
             fontFamily: 'Garamond',
             fontSize: 42,
-            fontWeight: 'bold',
+            // fontWeight: 'bold',
             fill: 0x39696, //0xffff80,
         });
 
@@ -87,6 +92,7 @@ export default class ZodiacStrip extends React.Component {
         this.app.stage.addChild(angleText);
         return angleText;
     }
+
     drawZodiac() {
         const zodiacText = new PIXI.Text('Zodiac Strip with Constellations', {
             fontFamily: 'Garamond',
@@ -102,8 +108,8 @@ export default class ZodiacStrip extends React.Component {
         this.app.stage.addChild(zodiacText);
         return zodiacText;
     }
-    drawSunZodiac() {
 
+    drawSunZodiac() {
         const sunZodiacContainer = new PIXI.Container();
         sunZodiacContainer.name = 'sunZodiac';
         sunZodiacContainer.position = new PIXI.Point(600 / 4, 48.5 + 50);
@@ -116,10 +122,9 @@ export default class ZodiacStrip extends React.Component {
 
         this.app.stage.addChild(sunZodiacContainer);
         return sunZodiacContainer;
-
     }
-    drawTargetPlanetZodiac() {
 
+    drawTargetPlanetZodiac() {
         const targetPlanetContainer = new PIXI.Container();
         targetPlanetContainer.name = 'targetPlanetZodiac';
         targetPlanetContainer.position = new PIXI.Point(3 * 600 / 4, 48.5 + 50);
@@ -133,21 +138,26 @@ export default class ZodiacStrip extends React.Component {
         this.app.stage.addChild(targetPlanetContainer);
         return targetPlanetContainer;
     }
+
     componentWillUnmount() {
         this.app.stop();
     }
+
     start() {
         if (!this.frameId) {
             this.frameId = requestAnimationFrame(this.animate);
         }
     }
+
     stop() {
         cancelAnimationFrame(this.frameId)
     }
-    getElongationAngle() {
 
-        let observerPos = getPlanetPos(this.props.radiusObserverPlanet, this.props.observerPlanetAngle);
-        let targetPos = getPlanetPos(this.props.radiusTargetPlanet, this.props.targetPlanetAngle);
+    getElongationAngle() {
+        let observerPos = getPlanetPos(this.props.radiusObserverPlanet, 
+            this.props.observerPlanetAngle);
+        let targetPos = getPlanetPos(this.props.radiusTargetPlanet, 
+            this.props.targetPlanetAngle);
         let sunPos = new PIXI.Point(0, 0);
 
         observerPos.x -= 600;
@@ -160,8 +170,10 @@ export default class ZodiacStrip extends React.Component {
 
         targetPos.y *= -1;
 
-        let targetPlanetAngle = Math.atan2(targetPos.y - observerPos.y, targetPos.x - observerPos.x);
-        let sunAngle = Math.atan2(sunPos.y - observerPos.y, sunPos.x - observerPos.x);
+        let targetPlanetAngle = Math.atan2(targetPos.y - observerPos.y, 
+            targetPos.x - observerPos.x);
+        let sunAngle = Math.atan2(sunPos.y - observerPos.y, 
+            sunPos.x - observerPos.x);
 
 
         this.targetPlanetLongitude = targetPlanetAngle;
@@ -175,20 +187,22 @@ export default class ZodiacStrip extends React.Component {
             targetPlanetAngle += 2 * Math.PI;
         }
 
-        let elongAngle = targetPlanetAngle - sunAngle;
+        let elongationAngle = targetPlanetAngle - sunAngle;
 
-        if (elongAngle < 0) {
-            elongAngle += 2 * Math.PI;
+        if (elongationAngle < 0) {
+            elongationAngle += 2 * Math.PI;
         }
 
-        return elongAngle;
+        return elongationAngle;
     }
+
     getDistance(targetPos, observerPos) {
         let diffX = Math.pow((targetPos.x - observerPos.x), 2);
         let diffY = Math.pow((targetPos.y - observerPos.y), 2);
 
         return Math.pow((diffX + diffY), 0.5);
     }
+
     updateLine(elongationAngle) {
         this.wrapAroundLine.clear();
         this.directLine.clear();
@@ -211,27 +225,33 @@ export default class ZodiacStrip extends React.Component {
 
         if (elongationAngle >= 180) {
             if (sunX < targetX) {
-                this.directLine.lineTo(this.targetPlanetZodiacContainer.x, this.targetPlanetZodiacContainer.y);
+                this.directLine.lineTo(this.targetPlanetZodiacContainer.x, 
+                    this.targetPlanetZodiacContainer.y);
             } else if (sunX > targetX) {
                 this.wrapAroundLine.visible = true;
                 this.directLine.lineTo(600, this.targetPlanetZodiacContainer.y);
                 this.wrapAroundLine.moveTo(0, this.sunZodiacContainer.y);
-                this.wrapAroundLine.lineTo(this.targetPlanetZodiacContainer.x, this.targetPlanetZodiacContainer.y);
+                this.wrapAroundLine.lineTo(this.targetPlanetZodiacContainer.x, 
+                    this.targetPlanetZodiacContainer.y);
             }
         } else if (elongationAngle < 180) {
             if (sunX > targetX) {
-                this.directLine.lineTo(this.targetPlanetZodiacContainer.x, this.targetPlanetZodiacContainer.y);
+                this.directLine.lineTo(this.targetPlanetZodiacContainer.x, 
+                    this.targetPlanetZodiacContainer.y);
             } else if (sunX < targetX) {
                 this.wrapAroundLine.visible = true;
                 this.directLine.lineTo(0, this.targetPlanetZodiacContainer.y);
                 this.wrapAroundLine.moveTo(600, this.sunZodiacContainer.y);
-                this.wrapAroundLine.lineTo(this.targetPlanetZodiacContainer.x, this.targetPlanetZodiacContainer.y);
+                this.wrapAroundLine.lineTo(this.targetPlanetZodiacContainer.x, 
+                    this.targetPlanetZodiacContainer.y);
             }
         }
     }
+
     updateText(newAngle) {
         this.text.text = newAngle;
     }
+
     updateZodiacBodyPos(longitude, body, width) {
      	let angle = longitude / (2 * Math.PI);
 
@@ -247,6 +267,7 @@ export default class ZodiacStrip extends React.Component {
         angle *= -1;
         body.x = 450 + (angle * (600 + width));
     }
+
     animate() {
         let elongAngle = this.getElongationAngle();
 
@@ -274,7 +295,6 @@ export default class ZodiacStrip extends React.Component {
         this.updateText(textNum);
 
     	this.frameId = requestAnimationFrame(this.animate);
-
     }
 }
 
