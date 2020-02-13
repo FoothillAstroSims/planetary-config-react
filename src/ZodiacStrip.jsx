@@ -3,10 +3,15 @@ import * as PIXI from 'pixi.js';
 // import GlobalDebugger from './Debugger'
 
 const getPlanetPos = function(radius, phase) {
+    let pixelRadius = convertFromAU(radius);
     return new PIXI.Point(
-        radius * Math.cos(-phase) + 600,
-        radius * Math.sin(-phase) + 460); // these magic numbers come from this.orbitCenter
-}
+        pixelRadius * Math.cos(-phase) + 600,
+        pixelRadius * Math.sin(-phase) + 460); // these magic numbers come from this.orbitCenter
+};
+const convertFromAU = function(AUradius) {
+    let pixelRadius = ((AUradius - 0.25) / 9.75) * 550 + 50;
+    return pixelRadius;
+};
 export default class ZodiacStrip extends React.Component {
     constructor(props) {
         super(props);
@@ -140,7 +145,7 @@ export default class ZodiacStrip extends React.Component {
         }
     }
     stop() {
-        cancelAnimationFrame(this.frameId)
+        cancelAnimationFrame(this.frameId);
     }
     getElongationAngle() {
 
