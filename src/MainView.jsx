@@ -13,7 +13,6 @@ export default class MainView extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            isHoveringOnEarth: false,
             isHoveringOnObserverPlanet: false,
             isHoveringOnTargetPlanet: false
         };
@@ -29,7 +28,6 @@ export default class MainView extends React.Component {
         this.onDragStart = this.onDragStart.bind(this);
         this.onDragEnd = this.onDragEnd.bind(this);
 
-        this.onEarthMove = this.onEarthMove.bind(this);
         this.onObserverPlanetMove = this.onObserverPlanetMove.bind(this);
         this.onTargetPlanetMove = this.onTargetPlanetMove.bind(this);
     }
@@ -52,7 +50,7 @@ export default class MainView extends React.Component {
 
         // Loads all the images
         this.app.loader.add('observerPlanet', 'img/earth.svg')
-            .add('earth', 'img/sun.png') 
+            .add('sun', 'img/sun.png') 
 	        .add('targetPlanet', 'img/mars.png')                
             .add('highlight', 'img/circle-highlight.svg');
 
@@ -94,8 +92,8 @@ export default class MainView extends React.Component {
               .on('touchmove', me.onTargetPlanetMove);
 
 
-            me.earth = me.drawEarth(
-                resources.earth);
+            me.sun = me.drawSun(
+                resources.sun);
 
             me.start();
         });
@@ -114,11 +112,11 @@ export default class MainView extends React.Component {
         cancelAnimationFrame(this.frameId);
     }
     animate() {
-        // I'm guessing that the reason why the outline 
-        // of the orbit is overlayed on the planets is due to the 
-        // fact that these coontainers are being cleared and redrawn
-        // whereas the observerPlanet container and targetPlanet container are not 
-	    // being redrawn
+        // I'm guessing that the reason why the outline of the orbit 
+        // is overlaid on the planets is due to the fact that
+        // these containers are being cleared and redrawn
+        // whereas the observerPlanet container and targetPlanet container 
+	    // are not being redrawn
         
         this.updateObserverPlanetOrbit();
         this.updateTargetPlanetOrbit();
@@ -214,24 +212,22 @@ export default class MainView extends React.Component {
         this.app.stage.addChild(targetPlanetContainer);
         return targetPlanetContainer;
     }
-    drawEarth(earthResource) {
-        const earthContainer = new PIXI.Container();
-        earthContainer.pivot = this.orbitCenter;
-        earthContainer.name = 'earth';
-        earthContainer.buttonMode = true;
-        earthContainer.interactive = true;
-        earthContainer.position = this.orbitCenter;
+    drawSun(sunResource) {
+        const sunContainer = new PIXI.Container();
+        sunContainer.pivot = this.orbitCenter;
+        sunContainer.name = 'sun';
+        sunContainer.position = this.orbitCenter;
 
-        const earth = new PIXI.Sprite(earthResource.texture);
-        earth.width = 40 * 2;
-        earth.height = 40 * 2;
-        earth.position = this.orbitCenter;
-        earth.anchor.set(0.5);
-        earth.rotation = -0.9;
-        earthContainer.addChild(earth);
+        const sun = new PIXI.Sprite(sunResource.texture);
+        sun.width = 40 * 2;
+        sun.height = 40 * 2;
+        sun.position = this.orbitCenter;
+        sun.anchor.set(0.5);
+        sun.rotation = -0.9;
+        sunContainer.addChild(sun);
 
-        this.app.stage.addChild(earthContainer);
-        return earthContainer;
+        this.app.stage.addChild(sunContainer);
+        return sunContainer;
     }
     onDragStart(event) {
         this.props.stopAnimation();
@@ -239,40 +235,25 @@ export default class MainView extends React.Component {
         this.data = event.data;
         this.dragStartPos = this.data.getLocalPosition(this.app.stage);
 
-        if (event.target.name === 'earth') {
-            this.draggingEarth = true;
-        } else if (event.target.name === 'observerPlanet') {
+        if (event.target.name === 'observerPlanet') {
             this.draggingObserverPlanet = true;
-        } else if (event.target.name === 'targetPlanet') {
+        } 
+        if (event.target.name === 'targetPlanet') {
             this.draggingTargetPlanet = true;
         }
     }
     onDragEnd() {
-        this.draggingEarth = false;
         this.draggingObserverPlanet = false;
         this.draggingTargetPlanet = false;
         // set the interaction data to null
         this.data = null;
     }
-    onEarthMove(e) {
-        if (e.target && e.target.name === 'earth' &&
-            !this.state.isHoveringOnEarth &&
-            !this.draggingObserverPlanet && 
-            !this.draggingTargetPlanet
-        ) {
-            this.setState({isHoveringOnEarth: true});
-        }
-        if (!e.target && this.state.isHoveringOnEarth) {
-            this.setState({isHoveringOnEarth: false});
-        }
-    }
     onObserverPlanetMove(e) {
         if (e.target && e.target.name === 'observerPlanet' &&
-            !this.state.isHoveringOnObserverPlanet &&
-            !this.draggingEarth
-        ) {
+            !this.state.isHoveringOnObserverPlanet) {
             this.setState({isHoveringOnObserverPlanet: true});
         }
+        
         if (!e.target && this.state.isHoveringOnObserverPlanet) {
             this.setState({isHoveringOnObserverPlanet: false});
         }
@@ -292,11 +273,10 @@ export default class MainView extends React.Component {
     }
     onTargetPlanetMove(e) {
         if (e.target && e.target.name === 'targetPlanet' &&
-            !this.state.isHoveringOnTargetPlanet &&
-            !this.draggingEarth
-        ) {
+            !this.state.isHoveringOnTargetPlanet) {
             this.setState({isHoveringOnTargetPlanet: true});
         }
+
         if (!e.target && this.state.isHoveringOnTargetPlanet) {
             this.setState({isHoveringOnTargetPlanet: false});
         }

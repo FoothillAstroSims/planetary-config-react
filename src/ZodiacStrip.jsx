@@ -42,9 +42,11 @@ export default class ZodiacStrip extends React.Component {
             this.app.stage.addChild(stage);
 
             const zodiacStrip = new PIXI.Sprite(
-		        PIXI.Texture.from('img/zodiac-strip.png')
+		        PIXI.Texture.from('img/zodiac-strip.jpg')
 	        );
-
+            
+            zodiacStrip.scale.x = 0.295;  // magic numbers, sorry
+            zodiacStrip.scale.y = 0.3;  // magic numbers, sorry
             zodiacStrip.y += 50;
             stage.addChild(zodiacStrip);
 
@@ -72,31 +74,31 @@ export default class ZodiacStrip extends React.Component {
     }
     drawText() {
         const angleText = new PIXI.Text('Angle', {
-            fontFamily: 'Arial',
-            fontSize: 45,
+            fontFamily: 'Garamond',
+            fontSize: 42,
             fontWeight: 'bold',
             fill: 0x39696, //0xffff80,
-            align: 'center'
         });
 
         // angleText.rotation = degToRad(-90);
-        angleText.position.x = 240;
-        angleText.position.y = 150;
+        angleText.anchor.set(0.5);
+        angleText.position.x = 300;
+        angleText.position.y = 175;
         this.app.stage.addChild(angleText);
         return angleText;
     }
     drawZodiac() {
         const zodiacText = new PIXI.Text('Zodiac Strip with Constellations', {
-            fontFamily: 'Arial',
-            fontSize: 30,
+            fontFamily: 'Garamond',
+            fontSize: 36,
             // fontWeight: 'bold',
             fill: 0x39696, //0xffff80,
-            align: 'center'
         });
 
         // angleText.rotation = degToRad(-90);
-        zodiacText.position.x = 100;
-        zodiacText.position.y = 7;
+        zodiacText.anchor.set(0.5);
+        zodiacText.position.x = 300;
+        zodiacText.position.y = 25;
         this.app.stage.addChild(zodiacText);
         return zodiacText;
     }
@@ -175,16 +177,10 @@ export default class ZodiacStrip extends React.Component {
 
         let elongAngle = targetPlanetAngle - sunAngle;
 
-        let e = elongAngle * 180 / Math.PI;
-        let s = sunAngle * 180 / Math.PI;
-        let t = targetPlanetAngle * 180 / Math.PI;
-
         if (elongAngle < 0) {
             elongAngle += 2 * Math.PI;
         }
 
-        //console.log("Earth position: ", observerPos, "Target position: ", targetPos, "Sun Position: ", sunPos);
-        //console.log("Elongation Angle: ", e, "Sun Angle: ", s, "Target Planet Angle: ", t);
         return elongAngle;
     }
     getDistance(targetPos, observerPos) {
@@ -258,7 +254,7 @@ export default class ZodiacStrip extends React.Component {
         this.updateZodiacBodyPos(this.sunLongitude, this.sunZodiacContainer, 0); // should be 20 
         this.updateZodiacBodyPos(this.targetPlanetLongitude, this.targetPlanetZodiacContainer, 0); // should be 15
 
-        let num = Math.round(elongAngle * 180 / Math.PI * 10) / 10;
+        let num = elongAngle * 180 / Math.PI;
         this.updateLine(num);
 
         let direction = '° E ';
@@ -272,7 +268,7 @@ export default class ZodiacStrip extends React.Component {
             direction = '° ';
         }
 
-        let textNum = Number(Math.round(num +'e2')+'e-2');
+        let textNum = String(" " + num.toFixed(2)).slice(-6);
         textNum += direction;
 
         this.updateText(textNum);
@@ -283,6 +279,6 @@ export default class ZodiacStrip extends React.Component {
 }
 
 // ZodiacStrip.propTypes = {
-//     deltaAngle: Proptypes.number.isRequired,
-//     getElongationAngle: Proptypes.func.isRequired
+//     deltaAngle: PropTypes.number.isRequired,
+//     getElongationAngle: PropTypes.func.isRequired
 // };

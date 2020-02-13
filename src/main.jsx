@@ -250,9 +250,6 @@ class PlanetaryConfigSim extends React.Component {
         } else if (newObserverPlanet <= -Math.PI) {
             newObserverPlanet = Math.PI;
         }
-        // console.log("prev earth: ", radToDeg(this.state.observerPlanetAngle), "new earth: ", radToDeg(newObserverPlanet),
-        //              "prev mars: ", radToDeg(this.state.targetPlanetAngle), "new mars: ", radToDeg(newAngle)
-        // );
 
        let newMultiplier = Math.pow((this.state.radiusObserverPlanet / this.state.radiusTargetPlanet), 2)
        this.setState({
