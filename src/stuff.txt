@@ -6,11 +6,32 @@ Done --> 2. Create Zodiac container
 3. Label orbits
 4. Choose planets
 5. Show display for the AU from Sun
-7. Move line drawing to bottom and add the angle 
+7. Move line drawing to bottom and add the angle
 8. Outer radius fixed
 9. Show elongation angle
 
 
+
+Emacs commands
+
+M-m                     First word of line
+C-m                     Next line
+
+Marks:
+
+C-x r SPC               Store point in register
+C-x r j                 Go to mark in register
+
+Bookmarks:
+
+C-x r m                 Store a named bookmark
+C-x r b                 Go to a named bookmark
+C-x r l                 List all bookmarks
+
+Search:
+C-s <insert word>       Search for word
+C-w                     Add more words to search after cursor pointer
+M-c                     Toggle case sensitivity
 
 
 

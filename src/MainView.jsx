@@ -1,5 +1,3 @@
-// Code needs to be refactored, but still pretty readable
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import * as PIXI from 'pixi.js';
@@ -8,7 +6,7 @@ const getPlanetPos = function(radius, phase) {
     return new PIXI.Point(
         radius * Math.cos(-phase) + 600,
         radius * Math.sin(-phase) + 460); // these magic numbers come from this.orbitCenter
-}
+};
 export default class MainView extends React.Component {
     constructor(props) {
         super(props);
@@ -36,7 +34,7 @@ export default class MainView extends React.Component {
     render() {
         return (
             <div className="MainView"
-                ref={(thisDiv) => {this.el = thisDiv}} />
+                 ref={(thisDiv) => {this.el = thisDiv;}} />
         );
     }
     componentDidMount() {
@@ -52,13 +50,16 @@ export default class MainView extends React.Component {
 
         // Loads all the images
         this.app.loader.add('observerPlanet', 'img/earth.svg')
-            .add('earth', 'img/sun.png') 
-	        .add('targetPlanet', 'img/mars.png')                
-            .add('highlight', 'img/circle-highlight.svg');
+        .add('earth', 'img/sun.png')
+	.add('targetPlanet', 'img/mars.png')
+        .add('highlight', 'img/circle-highlight.svg');
 
         const me = this;
         this.app.loader.load((loader, resources) => {
             me.resources = resources;
+
+            me.earth = me.drawEarth(
+                resources.earth);
 
             me.observerPlanetOrbitContainer = me.drawObserverPlanetOrbit();
             me.targetPlanetOrbitContainer = me.drawTargetPlanetOrbit();
@@ -93,10 +94,6 @@ export default class MainView extends React.Component {
               .on('mousemove', me.onTargetPlanetMove)
               .on('touchmove', me.onTargetPlanetMove);
 
-
-            me.earth = me.drawEarth(
-                resources.earth);
-
             me.start();
         });
     }
@@ -114,18 +111,18 @@ export default class MainView extends React.Component {
         cancelAnimationFrame(this.frameId);
     }
     animate() {
-        // I'm guessing that the reason why the outline 
-        // of the orbit is overlayed on the planets is due to the 
+        // I'm guessing that the reason why the outline
+        // of the orbit is overlayed on the planets is due to the
         // fact that these coontainers are being cleared and redrawn
-        // whereas the observerPlanet container and targetPlanet container are not 
-	    // being redrawn
-        
+        // whereas the observerPlanet container and targetPlanet container are not
+	// being redrawn
+
         this.updateObserverPlanetOrbit();
         this.updateTargetPlanetOrbit();
 
         this.observerPlanetContainer.position = getPlanetPos(this.props.radiusObserverPlanet,
                                                     this.props.observerPlanetAngle);
-        this.targetPlanetContainer.position = getPlanetPos(this.props.radiusTargetPlanet, 
+        this.targetPlanetContainer.position = getPlanetPos(this.props.radiusTargetPlanet,
                                                     this.props.targetPlanetAngle);
 
         if (this.state.isHoveringOnObserverPlanet || this.draggingObserverPlanet) {
@@ -257,7 +254,7 @@ export default class MainView extends React.Component {
     onEarthMove(e) {
         if (e.target && e.target.name === 'earth' &&
             !this.state.isHoveringOnEarth &&
-            !this.draggingObserverPlanet && 
+            !this.draggingObserverPlanet &&
             !this.draggingTargetPlanet
         ) {
             this.setState({isHoveringOnEarth: true});
@@ -321,4 +318,4 @@ MainView.propTypes = {
     onObserverPlanetAngleUpdate: PropTypes.func.isRequired,
     onTargetPlanetAngleUpdate: PropTypes.func.isRequired,
     stopAnimation: PropTypes.func.isRequired
-}
+};

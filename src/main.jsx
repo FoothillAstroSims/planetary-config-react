@@ -12,15 +12,12 @@ class PlanetaryConfigSim extends React.Component {
 		this.initialState = {
 		    observerPlanetAngle: 0,
 		    targetPlanetAngle: 0,
-		    radiusTargetPlanet: 6.45,
-		    radiusObserverPlanet: 2.2,
+		  radiusTargetPlanet: 2.4,
+		    radiusObserverPlanet: 1.0,
 		    targetFixed: true,
 		    radiusPixelTarget: 400,
-		    radiusPixelObserver: 160,
-		    // This multiplier is for the orbital equation: https://tinyurl.com/yx444bnv
-		    // Use the ratio between the radius of the two planets to find this multiplier
-		    multiplier:  Math.pow((160 / 400), 1.5),
-		    isPlaying: false,
+		    radiusPixelObserver: 166.66,
+		    multiplier:  Math.pow((166.66 / 400), 1.5),
 		    animationRate: 1.5,
 		};
 
@@ -34,7 +31,7 @@ class PlanetaryConfigSim extends React.Component {
         if (this.state.isPlaying) {
             startBtnText = 'Pause Animation';
         }
-	
+
         return <React.Fragment>
             <nav className="navbar navbar-expand-md navbar-light bg-light d-flex justify-content-between">
                 <span className="navbar-brand mb-0 h1">Planetary Configurations Simulator</span>
@@ -162,17 +159,17 @@ class PlanetaryConfigSim extends React.Component {
         return newAngle;
     }
     incrementTargetPlanetAngle(n, inc) {
-        const newAngle = n + (this.state.multiplier) * inc;
-        if (newAngle > Math.PI) {
-            return newAngle * -1;
-        }
-        return newAngle;
+      const newAngle = n + (this.state.multiplier) * inc;
+      // let newMultiplier = Math.pow((this.state.radiusObserverPlanet / this.state.radiusTargetPlanet), 1.5);
+      if (newAngle > Math.PI) {
+         return newAngle * -1;
+      }
+      return newAngle;
     }
     animate() {
-        let newMultiplier = Math.pow((this.state.radiusObserverPlanet / this.state.radiusTargetPlanet), 2);
+        this.updateMultiplier();
         const me = this;
         this.setState(prevState => ({
-            multiplier: newMultiplier,
             observerPlanetAngle: me.incrementObserverPlanetAngle(prevState.observerPlanetAngle, 0.010 * this.state.animationRate),
             targetPlanetAngle: me.incrementTargetPlanetAngle(prevState.targetPlanetAngle, 0.010 * this.state.animationRate)
         }));
@@ -212,14 +209,13 @@ class PlanetaryConfigSim extends React.Component {
             newTargetPlanet = Math.PI;
         }
 
-        let newMultiplier = Math.pow((this.state.radiusObserverPlanet / this.state.radiusTargetPlanet), 2);
+      this.updateMultiplier();
 
-        this.setState({
-            multiplier: newMultiplier,
-            isPlaying: false,
-            observerPlanetAngle: newAngle,
-            targetPlanetAngle: newTargetPlanet
-        });
+      this.setState({
+                     isPlaying: false,
+                     observerPlanetAngle: newAngle,
+                     targetPlanetAngle: newTargetPlanet
+                     });
     }
     onTargetPlanetAngleUpdate(newAngle) {
         this.stopAnimation();
@@ -245,19 +241,22 @@ class PlanetaryConfigSim extends React.Component {
         } else if (newObserverPlanet <= -Math.PI) {
             newObserverPlanet = Math.PI;
         }
-        // console.log("prev earth: ", radToDeg(this.state.observerPlanetAngle), "new earth: ", radToDeg(newObserverPlanet),
-        //              "prev mars: ", radToDeg(this.state.targetPlanetAngle), "new mars: ", radToDeg(newAngle)
-        // );
 
-        let newMultiplier = Math.pow((this.state.radiusObserverPlanet / this.state.radiusTargetPlanet), 2);
+       this.updateMultiplier();
        this.setState({
-            multiplier: newMultiplier,
             isPlaying: false,
             targetPlanetAngle: newAngle,
             observerPlanetAngle: newObserverPlanet
         });
     }
-    
+
+    updateMultiplier() {
+          let newMultiplier = Math.pow((this.state.radiusObserverPlanet / this.state.radiusTargetPlanet), 1.5);
+              this.setState({
+            multiplier: newMultiplier,
+          });
+    }
+
     onAnimationRateChange(e) {
         this.setState({
             animationRate: forceNumber(e.target.value)
@@ -276,6 +275,8 @@ class PlanetaryConfigSim extends React.Component {
                 radiusPixelTarget: 400,
             });
 	}
+
+        this.updateMultiplier();
     }
     changeTarget(au) {
         let ratio = (this.state.radiusTargetPlanet / au) * 400;
@@ -288,7 +289,7 @@ class PlanetaryConfigSim extends React.Component {
     }
     onTargetPlanetRadiusChange(e) {
         let au = e.target.value;
-	
+
         if (this.state.radiusTargetPlanet >= this.state.radiusObserverPlanet) {
             this.changeObserver(au);
         } else {
@@ -299,6 +300,8 @@ class PlanetaryConfigSim extends React.Component {
                 radiusPixelObserver: 400,
             });
         }
+
+        this.updateMultiplier();
     }
     changeObserver(au) {
         let ratio = (this.state.radiusObserverPlanet / au) * 400;
