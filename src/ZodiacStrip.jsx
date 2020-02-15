@@ -1,6 +1,5 @@
 import React from 'react';
 import * as PIXI from 'pixi.js';
-// import GlobalDebugger from './Debugger'
 
 const getPlanetPos = function(radius, phase) {
     let pixelRadius = convertFromAU(radius);
@@ -39,30 +38,26 @@ export default class ZodiacStrip extends React.Component {
 
         this.el.appendChild(this.app.view);
 
-        const me = this;
-        this.app.loader.load((loader, resources) => {
-            me.resources = resources;
+      const me = this;
+      const stage = new PIXI.Container();
+      this.app.stage.addChild(stage);
 
-            const stage = new PIXI.Container();
-            this.app.stage.addChild(stage);
+      const zodiacStrip = new PIXI.Sprite(
+	PIXI.Texture.from('img/zodiac-strip.png')
+      );
 
-            const zodiacStrip = new PIXI.Sprite(
-		        PIXI.Texture.from('img/zodiac-strip.png')
-	        );
+      zodiacStrip.y += 50;
+      stage.addChild(zodiacStrip);
 
-            zodiacStrip.y += 50;
-            stage.addChild(zodiacStrip);
+      me.targetPlanetZodiacContainer = me.drawTargetPlanetZodiac();
+      me.sunZodiacContainer = me.drawSunZodiac();
 
-            me.targetPlanetZodiacContainer = me.drawTargetPlanetZodiac();
-            me.sunZodiacContainer = me.drawSunZodiac();
+      me.directLine = me.drawLine();
+      me.wrapAroundLine = me.drawLine();
 
-            me.directLine = me.drawLine();
-            me.wrapAroundLine = me.drawLine();
-
-            me.text = me.drawText();
-            me.zodiacText = me.drawZodiac();
-            me.start();
-        });
+      me.text = me.drawText();
+      me.zodiacText = me.drawZodiac();
+      me.start();
     }
     drawLine() {
         const g = new PIXI.Graphics();
@@ -188,8 +183,6 @@ export default class ZodiacStrip extends React.Component {
             elongAngle += 2 * Math.PI;
         }
 
-        //console.log("Earth position: ", observerPos, "Target position: ", targetPos, "Sun Position: ", sunPos);
-        //console.log("Elongation Angle: ", e, "Sun Angle: ", s, "Target Planet Angle: ", t);
         return elongAngle;
     }
     getDistance(targetPos, observerPos) {
@@ -213,10 +206,6 @@ export default class ZodiacStrip extends React.Component {
 
         let targetX = this.targetPlanetZodiacContainer.x;
         let sunX = this.sunZodiacContainer.x;
-
-//        GlobalDebugger.set("elogationAngle", Number.parseFloat(elongationAngle).toFixed(2));
-//        GlobalDebugger.set("targetX", Number.parseFloat(targetX).toFixed(2));
-//        GlobalDebugger.set("sunX", Number.parseFloat(sunX).toFixed(2));
 
         if (elongationAngle >= 180) {
             if (sunX < targetX) {
