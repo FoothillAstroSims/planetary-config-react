@@ -5,8 +5,10 @@ import * as PIXI from 'pixi.js';
 const getPlanetPos = function(radius, phase) {
     return new PIXI.Point(
         radius * Math.cos(-phase) + 600,
-        radius * Math.sin(-phase) + 460); // these magic numbers come from this.orbitCenter
+        radius * Math.sin(-phase) + 460
+    );
 };
+
 export default class MainView extends React.Component {
     constructor(props) {
         super(props);
@@ -30,6 +32,7 @@ export default class MainView extends React.Component {
         this.onEarthMove = this.onEarthMove.bind(this);
         this.onObserverPlanetMove = this.onObserverPlanetMove.bind(this);
         this.onTargetPlanetMove = this.onTargetPlanetMove.bind(this);
+        this.sprite = null;
     }
     render() {
         return (
@@ -65,34 +68,42 @@ export default class MainView extends React.Component {
             me.targetPlanetOrbitContainer = me.drawTargetPlanetOrbit();
 
             me.observerPlanetContainer = me.drawObserverPlanet(
-            resources.observerPlanet, resources.highlight);
+                resources.observerPlanet, resources.highlight);
             me.observerPlanetContainer
-              // events for drag start
-              .on('mousedown', me.onDragStart)
-              .on('touchstart', me.onDragStart)
-              // events for drag end
-              .on('mouseup', me.onDragEnd)
-              .on('mouseupoutside', me.onDragEnd)
-              .on('touchend', me.onDragEnd)
-              .on('touchendoutside', me.onDragEnd)
-              // events for drag move
-              .on('mousemove', me.onObserverPlanetMove)
-              .on('touchmove', me.onObserverPlanetMove);
+            // events for drag start
+                .on('mousedown', me.onDragStart)
+                .on('touchstart', me.onDragStart)
+            // events for drag end
+                .on('mouseup', me.onDragEnd)
+                .on('mouseupoutside', me.onDragEnd)
+                .on('touchend', me.onDragEnd)
+                .on('touchendoutside', me.onDragEnd)
+            // events for drag move
+                .on('mousemove', me.onObserverPlanetMove)
+                .on('touchmove', me.onObserverPlanetMove);
 
             me.targetPlanetContainer = me.drawTargetPlanet(
                 resources.targetPlanet, resources.highlight);
             me.targetPlanetContainer
-              // events for drag start
-              .on('mousedown', me.onDragStart)
-              .on('touchstart', me.onDragStart)
-              // events for drag end
-              .on('mouseup', me.onDragEnd)
-              .on('mouseupoutside', me.onDragEnd)
-              .on('touchend', me.onDragEnd)
-              .on('touchendoutside', me.onDragEnd)
-              // events for drag move
-              .on('mousemove', me.onTargetPlanetMove)
-              .on('touchmove', me.onTargetPlanetMove);
+            // events for drag start
+                .on('mousedown', me.onDragStart)
+                .on('touchstart', me.onDragStart)
+            // events for drag end
+                .on('mouseup', me.onDragEnd)
+                .on('mouseupoutside', me.onDragEnd)
+                .on('touchend', me.onDragEnd)
+                .on('touchendoutside', me.onDragEnd)
+            // events for drag move
+                .on('mousemove', me.onTargetPlanetMove)
+                .on('touchmove', me.onTargetPlanetMove);
+
+
+            me.arrowToSun = me.drawArrows ();
+            me.arrowToTarget = me.drawArrows ();
+            me.elongationArc = me.drawArc();
+
+            me.observerPlanetName = me.drawText (this.props.observerName, me.props.radiusObserverPlanet, false);
+            me.targetPlanetName = me.drawText (this.props.targetName, me.props.radiusTargetPlanet, true);
 
             me.start();
         });
@@ -111,19 +122,27 @@ export default class MainView extends React.Component {
         cancelAnimationFrame(this.frameId);
     }
     animate() {
-        // I'm guessing that the reason why the outline
-        // of the orbit is overlayed on the planets is due to the
-        // fact that these coontainers are being cleared and redrawn
-        // whereas the observerPlanet container and targetPlanet container are not
-	// being redrawn
-
         this.updateObserverPlanetOrbit();
         this.updateTargetPlanetOrbit();
 
-        this.observerPlanetContainer.position = getPlanetPos(this.props.radiusObserverPlanet,
-                                                    this.props.observerPlanetAngle);
-        this.targetPlanetContainer.position = getPlanetPos(this.props.radiusTargetPlanet,
-                                                    this.props.targetPlanetAngle);
+        this.updateText();
+
+        this.observerPlanetContainer.position = getPlanetPos(
+            this.props.radiusObserverPlanet,
+            this.props.observerPlanetAngle
+        );
+
+        this.targetPlanetContainer.position = getPlanetPos(
+            this.props.radiusTargetPlanet,
+            this.props.targetPlanetAngle
+        );
+
+        // this.sprite.texture = PIXI.Texture.from('img/earth.svg');
+        console.log(this.sprite.texture.resource);
+
+
+        this.updateArrows ();
+        this.updateArc();
 
         if (this.state.isHoveringOnObserverPlanet || this.draggingObserverPlanet) {
             this.observerPlanetHighlight.visible = true;
@@ -139,16 +158,165 @@ export default class MainView extends React.Component {
 
         this.frameId = requestAnimationFrame(this.animate);
     }
+
+    drawText(name, bodyRadius, target) {
+        const text = new PIXI.Text(name, {
+            fontFamily: 'Garamond',
+            fontSize: 45,
+            fill: 0x39696,
+            align: 'center'
+        });
+
+        let radius = bodyRadius + 15;
+
+        if (target) {
+            radius = bodyRadius * -1;
+            radius -= 60;
+        }
+
+        text.position.x = 600 - (text.width / 2);
+        text.position.y = 460 + radius;
+        this.app.stage.addChild(text);
+        console.log('issa meee', text.width, text.height);
+        return text;
+    }
+
+    updateText() {
+        let observerNameY = this.props.radiusObserverPlanet + 8;
+        let targetNameY = this.props.radiusTargetPlanet * -1 - 60;
+
+        let observerNameX = this.observerPlanetName.width;
+        let targetNameX = this.targetPlanetName.width;
+
+        this.observerPlanetName.x = 600 - 30;
+        this.targetPlanetName.x = 600 - 30;
+
+        this.observerPlanetName.y = 475 + observerNameY;
+        this.targetPlanetName.y = 475 + targetNameY;
+    }
+
+    drawArc () {
+        const elongArc = new PIXI.Graphics ();
+        elongArc.visible = true;
+
+        elongArc.clear();
+        elongArc.lineStyle(2, 0x00FFD2);
+        elongArc.beginFill(0x90f599, 0.7);
+        elongArc.arc(
+            this.observerPlanetContainer.x,
+            this.observerPlanetContainer.y,
+            45,
+            this.props.targetAngle,
+            this.props.sunAngle,
+            true
+        );
+
+        this.app.stage.addChild(elongArc);
+        return elongArc;
+    }
+
+    updateArc() {
+        this.elongationArc.clear();
+        this.elongationArc.lineStyle(2, 0x00FFD2);
+        this.elongationArc.beginFill(0x90f599, 0.7);
+        this.elongationArc.moveTo(this.observerPlanetContainer.x, this.observerPlanetContainer.y);
+        this.elongationArc.arc(
+            this.observerPlanetContainer.x,
+            this.observerPlanetContainer.y,
+            45,
+            -this.props.targetAngle,
+            -this.props.sunAngle,
+            this.greaterThan180()
+        );
+        // let tar = this.props.targetAngle * 180 / Math.PI;
+        // let sunn = this.props.sunAngle * 180 / Math.PI;
+        // console.log('mars and sun angles: ', tar, sunn);
+    }
+
+    greaterThan180() {
+        let sunAng = this.props.sunAngle;
+        let targetAng = this.props.targetAngle;
+
+        if (-Math.PI < this.props.sunAngle && this.props.sunAngle < 0) {
+            sunAng += 2 * Math.PI;
+        }
+
+        if (-Math.PI < this.props.targetAngle && this.props.targetAngle < 0) {
+            targetAng += 2 * Math.PI;
+        }
+
+        let differenceInAngles = targetAng - sunAng;
+
+        if (differenceInAngles < 0) {
+            differenceInAngles += 2 * Math.PI;
+        }
+
+        let num = Math.round(differenceInAngles * 180 / Math.PI * 10) / 10;
+
+        if (num > 180) {
+            return true;
+        }
+
+        return false;
+    }
+
+    drawArrows () {
+        const g = new PIXI.Graphics();
+        g.visible = false;
+
+        g.clear();
+        g.lineStyle(2, 0x00FFD2);
+        g.beginFill(0xffe200, 0.7);
+
+        this.app.stage.addChild(g);
+        return g;
+    }
+
+    updateArrows () {
+        this.arrowToSun.clear();
+        this.arrowToTarget.clear();
+
+        this.arrowToTarget.moveTo(
+            this.observerPlanetContainer.x,
+            this.observerPlanetContainer.y
+        );
+
+        this.arrowToSun.moveTo(
+            this.observerPlanetContainer.x,
+            this.observerPlanetContainer.y
+        );
+
+        this.arrowToTarget.visible = true;
+        this.arrowToTarget.lineStyle(2, 0x00f2ff);
+        this.arrowToTarget.beginFill(0x00f2ff, 0.7);
+
+        this.arrowToSun.visible = true;
+        this.arrowToSun.lineStyle(2, 0x00f2ff);
+        this.arrowToSun.beginFill(0x00f2ff, 0.7);
+
+        this.arrowToTarget.lineTo(
+            this.targetPlanetContainer.x,
+            this.targetPlanetContainer.y
+        );
+
+        this.arrowToSun.lineTo(
+            this.earth.x,
+            this.earth.y
+        );
+    }
+
     updateObserverPlanetOrbit() {
         this.observerPlanetOrbitContainer.clear();
         this.observerPlanetOrbitContainer.lineStyle(2, 0xffffff);
         this.observerPlanetOrbitContainer.drawCircle(this.orbitCenter.x, this.orbitCenter.y, this.props.radiusObserverPlanet);
     }
+
     updateTargetPlanetOrbit() {
         this.targetPlanetOrbitContainer.clear();
         this.targetPlanetOrbitContainer.lineStyle(2, 0xffffff);
         this.targetPlanetOrbitContainer.drawCircle(this.orbitCenter.x, this.orbitCenter.y, this.props.radiusTargetPlanet);
     }
+
     drawObserverPlanetOrbit() {
         const graphicsObserverPlanet = new PIXI.Graphics();
         graphicsObserverPlanet.lineStyle(2, 0xffffff);
@@ -183,6 +351,7 @@ export default class MainView extends React.Component {
         observerPlanet.height = 20 * 2;
         observerPlanet.anchor.set(0.5);
         observerPlanetContainer.addChild(observerPlanet);
+        this.sprite = observerPlanet;
 
         this.app.stage.addChild(observerPlanetContainer);
         return observerPlanetContainer;

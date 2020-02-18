@@ -7,26 +7,32 @@ import {forceNumber, radToDeg, degToRad} from './utils';
 import { maxHeaderSize } from 'http';
 
 class PlanetaryConfigSim extends React.Component {
-	constructor(props) {
-		super(props);
-		this.initialState = {
-		    observerPlanetAngle: 0,
-		    targetPlanetAngle: 0,
- 		    radiusTargetPlanet: 2.4,
-		    radiusObserverPlanet: 1.0,
-		    targetFixed: true,
-		    radiusPixelTarget: 400,
-		    radiusPixelObserver: 166.66,
-		  observerMultiplier: Math.pow (1.0, -1.5),
-                  targetMultiplier:  Math.pow(2.4, -1.5),
-		  animationRate: 1.5,
-		};
+    constructor(props) {
+	super(props);
+	this.initialState = {
+	    observerPlanetAngle: 0,
+	    targetPlanetAngle: 0,
+ 	    radiusTargetPlanet: 2.4,
+	    radiusObserverPlanet: 1.0,
+	    targetFixed: true,
+	    radiusPixelTarget: 400,
+	    radiusPixelObserver: 166.66,
+	    observerMultiplier: Math.pow (1.0, -1.5),
+            targetMultiplier:  Math.pow(2.4, -1.5),
+	    animationRate: 1.5,
+            targetAngle: 0,
+            sunAngle: -Math.PI,
+            optionObserver: 0,
+            optionTarget: 0,
+            targetName: 'target planet',
+            observerName: 'observer planet'
+	};
 
-		this.state = this.initialState;
-		this.raf = null;
+	this.state = this.initialState;
+	this.raf = null;
 
-		this.stopAnimation = this.stopAnimation.bind(this);
-	}
+	this.stopAnimation = this.stopAnimation.bind(this);
+    }
     render() {
         let startBtnText = 'Play animation';
         if (this.state.isPlaying) {
@@ -34,137 +40,157 @@ class PlanetaryConfigSim extends React.Component {
         }
 
         return <React.Fragment>
-            <nav className="navbar navbar-expand-md navbar-light bg-light d-flex justify-content-between">
-                <span className="navbar-brand mb-0 h1">Planetary Configurations Simulator</span>
+                 <nav className="navbar navbar-expand-md navbar-light bg-light d-flex justify-content-between">
+                   <span className="navbar-brand mb-0 h1">Planetary Configurations Simulator</span>
 
-                <ul className="navbar-nav">
-                    <li className="nav-item">
-                        <a className="nav-link" href="#" onClick={this.onResetClick.bind(this)}>Reset</a>
-                    </li>
-                    <li className="nav-item">
-                        <a className="nav-link" href="#" data-toggle="modal" data-target="#helpModal">Help</a>
-                    </li>
-                    <li className="nav-item">
-                        <a className="nav-link" href="#" data-toggle="modal" data-target="#aboutModal">About</a>
-                    </li>
-                </ul>
-            </nav>
-            <div className="row mt-2">
-                <div className="col-8">
-                    <MainView
-                        observerPlanetAngle={this.state.observerPlanetAngle}
-                        targetPlanetAngle={this.state.targetPlanetAngle}
-                        radiusTargetPlanet={this.state.radiusPixelTarget}
-                        radiusObserverPlanet={this.state.radiusPixelObserver}
-                        onObserverPlanetAngleUpdate={this.onObserverPlanetAngleUpdate.bind(this)}
-                        onTargetPlanetAngleUpdate={this.onTargetPlanetAngleUpdate.bind(this)}
-                        stopAnimation={this.stopAnimation}
-                    />
-                </div>
-                    <div className="rowx">
-                        <div className="col">
-                            <h4>Orbit Sizes</h4>
+                   <ul className="navbar-nav">
+                     <li className="nav-item">
+                       <a className="nav-link" href="#" onClick={this.onResetClick.bind(this)}>Reset</a>
+                     </li>
+                     <li className="nav-item">
+                       <a className="nav-link" href="#" data-toggle="modal" data-target="#helpModal">Help</a>
+                     </li>
+                     <li className="nav-item">
+                       <a className="nav-link" href="#" data-toggle="modal" data-target="#aboutModal">About</a>
+                     </li>
+                   </ul>
+                 </nav>
+                 <div className="row mt-2">
+                   <div className="col-8">
+                     <MainView
+                       observerPlanetAngle={this.state.observerPlanetAngle}
+                       targetPlanetAngle={this.state.targetPlanetAngle}
+                       radiusTargetPlanet={this.state.radiusPixelTarget}
+                       radiusObserverPlanet={this.state.radiusPixelObserver}
+                       targetAU={this.state.radiusTargetPlanet}
+                       observerAU={this.state.radiusObserverPlanet}
+                       onObserverPlanetAngleUpdate={this.onObserverPlanetAngleUpdate.bind(this)}
+                       onTargetPlanetAngleUpdate={this.onTargetPlanetAngleUpdate.bind(this)}
+                       stopAnimation={this.stopAnimation}
+                       targetAngle={this.state.targetAngle}
+                       sunAngle={this.state.sunAngle}
+                       targetName={this.state.targetName}
+                       observerName={this.state.observerName}
+                     />
+                   </div>
+                   <div className="rowx">
+                     <div className="col">
+                       <h4>Orbit Sizes</h4>
 
-                            <div className="radObserver">
-                                <form className="form-inline">
-                                    <label htmlFor="radObserverPlanetRange">Radius of observer planet's orbit</label>
- <div className="radius-forms">
-                                           <input type="number" size="4"
-                                           className="form-control form-control-sm"
-                                           step="0.01" name="distance"
-                                           min={0.25} max={10}
-                                           value={this.state.radiusObserverPlanet}
-                                                  onChange={this.onObserverPlanetRadiusChange.bind(this)}/>
- </div>
-<div className="radius-forms">
-                                    <RangeStepInput name="radiusObserverPlanet"
-                                           className="form-control-range ml-2"
-                                           value={this.state.radiusObserverPlanet}
-                                           onChange={this.onObserverPlanetRadiusChange.bind(this)}
-                                           step={0.01}
-                                           min={0.25} max={10} />
- </div>
+                       <div className="radObserver">
+                         <form className="form-inline">
+                           <label htmlFor="radObserverPlanetRange">Radius of observer planet's orbit</label>
+                           <div className="radius-forms">
+                             <input type="number" size="4"
+                                    className="inputs"
+                                    step="0.01" name="distance"
+                                    min={0.25} max={10}
+                                    value={this.state.radiusObserverPlanet}
+                                    onChange={this.onObserverPlanetRadiusChange.bind(this)}/>
+                           </div>
+                           <div className="radius-forms">
+                             <RangeStepInput name="radiusObserverPlanet"
+                                             className="form-control-range ml-2"
+                                             value={this.state.radiusObserverPlanet}
+                                             onChange={this.onObserverPlanetRadiusChange.bind(this)}
+                                             step={0.01}
+                                             min={0.25} max={10}
+                             />
+                           </div>
+                           <select className="form-control form-control-sm"
+                                   onChange={this.onPresetSelectObserver.bind(this)}
+                                   value={this.state.optionObserver}
+                           >
+                             <option value={0}>Preset</option>
+                             <option value={1}>Mercury</option>
+                             <option value={2}>Venus</option>
+                             <option value={3}>Earth</option>
+                             <option value={4}>Mars</option>
+                             <option value={5}>Jupiter</option>
+                             <option value={6}>Saturn</option>
+                           </select>
+                         </form>
+                       </div>
 
-                                </form>
+                       <div className="radTarget">
+                         <form className="form-inline">
+                           <label htmlFor="radTargetPlanetRange">Radius of target planet's orbit</label>
+                           <div className="radius-forms">
+	    	             <input type="number" size="4"
+                                    className="inputs"
+                                    step="0.01" name="distance"
+                                    min={0.25} max={10}
+                                    value={this.state.radiusTargetPlanet}
+                                    onChange={this.onTargetPlanetRadiusChange.bind(this)}/>
+	                   </div>
+                           <div className="radius-forms">
+                             <RangeStepInput name="radiusTargetPlanet"
+                                             className="form-control-range ml-2"
+                                             value={this.state.radiusTargetPlanet}
+                                             onChange={this.onTargetPlanetRadiusChange.bind(this)}
+                                             step={0.01} min={0.25} max={10} />
+                           </div>
+                           <select className="form-control form-control-sm"
+                                   onChange={this.onPresetSelectTarget.bind(this)}
+                                   value={this.state.optionTarget}
+                           >
+                             <option value={0}>Preset</option>
+                             <option value={1}>Mercury</option>
+                             <option value={2}>Venus</option>
+                             <option value={3}>Earth</option>
+                             <option value={4}>Mars</option>
+                             <option value={5}>Jupiter</option>
+                             <option value={6}>Saturn</option>
+                           </select>
+                         </form>
+                       </div>
+                     </div>
 
-                            </div>
-
-                            <div className="radTarget">
-                                <form className="form-inline">
-                                    <label htmlFor="radTargetPlanetRange">Radius of target planet's orbit</label>
-<div className="radius-forms">
-	    	                    <input type="number" size="4"
-                                           className="form-control form-control-sm"
-                                           step="0.01" name="distance"
-                                           min={0.25} max={10}
-                                           value={this.state.radiusTargetPlanet}
-                                           onChange={this.onTargetPlanetRadiusChange.bind(this)}/>
-	    </div>
-<div className="radius-forms">
-                                    <RangeStepInput name="radiusTargetPlanet"
-                                           className="form-control-range ml-2"
-                                           value={this.state.radiusTargetPlanet}
-                                           onChange={this.onTargetPlanetRadiusChange.bind(this)}
-                                           step={0.01} min={0.25} max={10} />
-</div>
-                                </form>
-                            </div>
-
-	{/*                      <div className="presets">
-                                <form>
-                                    <select className="form-control form-control-sm" onChange={this.onPresetSelect}>
-                                        <option value={-1}>Earth</option>
-                                        <option value={1}>Mercury</option>
-                                        <option value={2}>Venus</option>
-                                    </select>
-                                </form>
-				</div> */}
-                        </div>
-
-                        <div className="col">
-                            <h4>Animation Control</h4>
-                            <button type="button" className="btn btn-primary btn-sm"
-                                    onClick={this.onStartClick.bind(this)}>
-                                {startBtnText}
-                            </button>
-                            <form className="form-inline">
-                                <label htmlFor="diamRange">Animation rate:</label>
-                                <RangeStepInput name="animationRate"
-                                       className="form-control-range ml-2"
-                                       value={this.state.animationRate}
-                                       onChange={this.onAnimationRateChange.bind(this)}
-                                       step={0.1}
-                                       min={0.1} max={3} />
-                            </form>
-                        </div>
-                    </div>
-		    <div className="bot">
-		        <ZodiacStrip
-				speed={this.state.animationRate}
-				observerPlanetAngle={this.state.observerPlanetAngle}
-				targetPlanetAngle={this.state.targetPlanetAngle}
-                                radiusObserverPlanet={this.state.radiusObserverPlanet}
-                                radiusTargetPlanet={this.state.radiusTargetPlanet}
-				isPlaying={this.state.isPlaying}
-                                stopAnimation={this.stopAnimation}
-		        />
-                    </div>
-                </div>
-        </React.Fragment>;
+                     <div className="col">
+                       <h4>Animation Control</h4>
+                       <button type="button" className="btn btn-primary btn-sm"
+                               onClick={this.onStartClick.bind(this)}>
+                         {startBtnText}
+                       </button>
+                       <form className="form-inline">
+                         <label htmlFor="diamRange">Animation rate:</label>
+                         <RangeStepInput name="animationRate"
+                                         className="form-control-range ml-2"
+                                         value={this.state.animationRate}
+                                         onChange={this.onAnimationRateChange.bind(this)}
+                                         step={0.1}
+                                         min={0.1} max={3} />
+                       </form>
+                     </div>
+                   </div>
+		   <div className="bot">
+		     <ZodiacStrip
+		       speed={this.state.animationRate}
+		       observerPlanetAngle={this.state.observerPlanetAngle}
+		       targetPlanetAngle={this.state.targetPlanetAngle}
+                       radiusObserverPlanet={this.state.radiusPixelObserver}
+                       radiusTargetPlanet={this.state.radiusPixelTarget}
+		       isPlaying={this.state.isPlaying}
+                       stopAnimation={this.stopAnimation}
+                       updateAngles={this.updateAngles.bind(this)}
+		     />
+                   </div>
+                 </div>
+               </React.Fragment>;
     }
-  incrementObserverPlanetAngle(n, inc) {
+    incrementObserverPlanetAngle(n, inc) {
         const newAngle = n + (this.state.observerMultiplier * inc);
         if (newAngle > Math.PI) {
             return newAngle * -1;
         }
         return newAngle;
     }
-  incrementTargetPlanetAngle(n, inc) {
-      const newAngle = n + (this.state.targetMultiplier * inc);
-      if (newAngle > Math.PI) {
-         return newAngle * -1;
-      }
-      return newAngle;
+    incrementTargetPlanetAngle(n, inc) {
+        const newAngle = n + (this.state.targetMultiplier * inc);
+        if (newAngle > Math.PI) {
+            return newAngle * -1;
+        }
+        return newAngle;
     }
     animate() {
         this.updateMultiplier();
@@ -173,6 +199,7 @@ class PlanetaryConfigSim extends React.Component {
             observerPlanetAngle: me.incrementObserverPlanetAngle(prevState.observerPlanetAngle, 0.0115 * this.state.animationRate),
             targetPlanetAngle: me.incrementTargetPlanetAngle(prevState.targetPlanetAngle, 0.0115 * this.state.animationRate)
         }));
+
         this.raf = requestAnimationFrame(this.animate.bind(this));
     }
     onStartClick() {
@@ -184,6 +211,14 @@ class PlanetaryConfigSim extends React.Component {
             this.setState({isPlaying: false});
         }
     }
+
+    updateAngles(targetAng, sunAng) {
+        this.setState({
+            targetAngle: targetAng,
+            sunAngle: sunAng,
+        });
+    }
+
     onObserverPlanetAngleUpdate(newAngle) {
         this.stopAnimation();
         let diff = 0;
@@ -191,10 +226,10 @@ class PlanetaryConfigSim extends React.Component {
         let prevObserverPlanetAng = this.state.observerPlanetAngle;
 
         if (newAng >= (Math.PI / 2) && newAng <= Math.PI && prevObserverPlanetAng >= -Math.PI
-        && prevObserverPlanetAng <= (-Math.PI / 2)) {
+            && prevObserverPlanetAng <= (-Math.PI / 2)) {
             diff = -(Math.abs(newAng - Math.PI) + Math.abs(-Math.PI - prevObserverPlanetAng));
         } else if (prevObserverPlanetAng >= (Math.PI / 2) && prevObserverPlanetAng <= Math.PI
-        && newAng >= -Math.PI && newAng <= (-Math.PI / 2)) {
+                   && newAng >= -Math.PI && newAng <= (-Math.PI / 2)) {
             diff = (Math.abs(prevObserverPlanetAng - Math.PI) + Math.abs(-Math.PI - newAng));
         } else {
             diff = newAng - this.state.observerPlanetAngle;
@@ -210,11 +245,11 @@ class PlanetaryConfigSim extends React.Component {
         }
 
 
-      this.setState({
-                     isPlaying: false,
-                     observerPlanetAngle: newAngle,
-                     targetPlanetAngle: newTargetPlanet
-                     });
+        this.setState({
+            isPlaying: false,
+            observerPlanetAngle: newAngle,
+            targetPlanetAngle: newTargetPlanet
+        });
     }
     onTargetPlanetAngleUpdate(newAngle) {
         this.stopAnimation();
@@ -223,25 +258,25 @@ class PlanetaryConfigSim extends React.Component {
         let prevObserverPlanetAng = this.state.targetPlanetAngle;
 
         if (newAng >= (Math.PI / 2) && newAng <= Math.PI && prevObserverPlanetAng >= -Math.PI
-         && prevObserverPlanetAng <= (-Math.PI / 2)) {
+            && prevObserverPlanetAng <= (-Math.PI / 2)) {
             diff = -(Math.abs(newAng - Math.PI) + Math.abs(-Math.PI - prevObserverPlanetAng));
         } else if (prevObserverPlanetAng >= (Math.PI / 2) && prevObserverPlanetAng <= Math.PI
-         && newAng >= -Math.PI && newAng <= (-Math.PI / 2)) {
+                   && newAng >= -Math.PI && newAng <= (-Math.PI / 2)) {
             diff = (Math.abs(prevObserverPlanetAng - Math.PI) + Math.abs(-Math.PI - newAng));
         } else {
             diff = newAng - this.state.targetPlanetAngle;
         }
 
-      this.updateMultiplier();
-      diff *= this.state.observerMultiplier / this.state.targetMultiplier;
-       let newObserverPlanet = (this.state.observerPlanetAngle + diff);
+        this.updateMultiplier();
+        diff *= this.state.observerMultiplier / this.state.targetMultiplier;
+        let newObserverPlanet = (this.state.observerPlanetAngle + diff);
         if (newObserverPlanet >= Math.PI) {
             newObserverPlanet = -Math.PI;
         } else if (newObserverPlanet <= -Math.PI) {
             newObserverPlanet = Math.PI;
         }
 
-       this.setState({
+        this.setState({
             isPlaying: false,
             targetPlanetAngle: newAngle,
             observerPlanetAngle: newObserverPlanet
@@ -249,13 +284,13 @@ class PlanetaryConfigSim extends React.Component {
     }
 
     updateMultiplier() {
-      let newObserver = Math.pow(this.state.radiusObserverPlanet, -1.5);
-      let newTarget = Math.pow(this.state.radiusTargetPlanet, -1.5);
+        let newObserver = Math.pow(this.state.radiusObserverPlanet, -1.5);
+        let newTarget = Math.pow(this.state.radiusTargetPlanet, -1.5);
 
-      this.setState({
-                     targetMultiplier: newTarget,
-                     observerMultiplier: newObserver,
-                     });
+        this.setState({
+            targetMultiplier: newTarget,
+            observerMultiplier: newObserver,
+        });
     }
 
     onAnimationRateChange(e) {
@@ -263,8 +298,83 @@ class PlanetaryConfigSim extends React.Component {
             animationRate: forceNumber(e.target.value)
         });
     }
+
+    onPresetSelectTarget(e) {
+        this.setState({
+            optionTarget: e.target.value,
+        });
+
+        let name = "";
+
+        if (e.target.value == 0) {
+            this.onTargetPlanetRadiusChange(2.4);
+            name = "target planet";
+        } else if (e.target.value == 1) {
+            this.onTargetPlanetRadiusChange(0.39);
+            name = "mercury";
+        } else if (e.target.value == 2) {
+            this.onTargetPlanetRadiusChange(0.72);
+            name = "venus";
+        } else if (e.target.value == 3) {
+            this.onTargetPlanetRadiusChange(1.00);
+            name = "earth";
+        } else if (e.target.value == 4) {
+            this.onTargetPlanetRadiusChange(1.52);
+            name = "mars";
+        } else if (e.target.value == 5) {
+            this.onTargetPlanetRadiusChange(5.20);
+            name = "jupiter";
+        } else if (e.target.value == 6) {
+            this.onTargetPlanetRadiusChange(9.54);
+            name = "saturn";
+        }
+
+        this.setState({
+            targetName: name,
+        });
+    }
+
+    onPresetSelectObserver(e) {
+        this.setState({
+            optionObserver: e.target.value
+        });
+
+        if (e.target.value == 0) {
+            this.onObserverPlanetRadiusChange(1.0);
+            name = "observer planet";
+        } else if (e.target.value == 1) {
+            this.onObserverPlanetRadiusChange(0.39);
+            name = "mercury";
+        } else if (e.target.value == 2) {
+            this.onObserverPlanetRadiusChange(0.72);
+            name = "venus";
+        } else if (e.target.value == 3) {
+            this.onObserverPlanetRadiusChange(1.00);
+            name = "earth";
+        } else if (e.target.value == 4) {
+            this.onObserverPlanetRadiusChange(1.52);
+            name = "mars";
+        } else if (e.target.value == 5) {
+            this.onObserverPlanetRadiusChange(5.20);
+            name = "jupiter";
+        } else if (e.target.value == 6) {
+            this.onObserverPlanetRadiusChange(9.54);
+            name = "saturn";
+        }
+
+        this.setState({
+            observerName: name,
+        });
+
+    }
+
     onObserverPlanetRadiusChange(e) {
-	let au = e.target.value;
+        let au = 0;
+        if (typeof(e) === 'object') {
+    	    au = e.target.value;
+        } else {
+            au = e;
+        }
 
 	if (this.state.radiusObserverPlanet >= this.state.radiusTargetPlanet) {
 	    this.changeTarget(au);
@@ -276,7 +386,6 @@ class PlanetaryConfigSim extends React.Component {
                 radiusPixelTarget: 400,
             });
 	}
-
         this.updateMultiplier();
     }
     changeTarget(au) {
@@ -289,7 +398,13 @@ class PlanetaryConfigSim extends React.Component {
         });
     }
     onTargetPlanetRadiusChange(e) {
-        let au = e.target.value;
+
+        let au = 0;
+        if (typeof(e) === 'object') {
+    	    au = e.target.value;
+        } else {
+            au = e;
+        }
 
         if (this.state.radiusTargetPlanet >= this.state.radiusObserverPlanet) {
             this.changeObserver(au);
