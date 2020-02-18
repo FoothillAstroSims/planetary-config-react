@@ -2,12 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import MainView from './MainView';
 import ZodiacStrip from './ZodiacStrip';
-import { RangeStepInput } from 'react-range-step-input';
-import { forceNumber, radToDeg, degToRad } from './utils';
+import {RangeStepInput} from 'react-range-step-input';
+import {forceNumber, radToDeg, degToRad} from './utils';
 import { maxHeaderSize } from 'http';
 
 class PlanetaryConfigSim extends React.Component {
-
     constructor(props) {
 	super(props);
 	this.initialState = {
@@ -34,7 +33,6 @@ class PlanetaryConfigSim extends React.Component {
 
 	this.stopAnimation = this.stopAnimation.bind(this);
     }
-
     render() {
         let startBtnText = 'Play animation';
         if (this.state.isPlaying) {
@@ -182,13 +180,11 @@ class PlanetaryConfigSim extends React.Component {
     }
     incrementObserverPlanetAngle(n, inc) {
         const newAngle = n + (this.state.observerMultiplier * inc);
-
         if (newAngle > Math.PI) {
             return newAngle * -1;
         }
         return newAngle;
     }
-
     incrementTargetPlanetAngle(n, inc) {
         const newAngle = n + (this.state.targetMultiplier * inc);
         if (newAngle > Math.PI) {
@@ -196,7 +192,6 @@ class PlanetaryConfigSim extends React.Component {
         }
         return newAngle;
     }
-
     animate() {
         this.updateMultiplier();
         const me = this;
@@ -207,7 +202,6 @@ class PlanetaryConfigSim extends React.Component {
 
         this.raf = requestAnimationFrame(this.animate.bind(this));
     }
-
     onStartClick() {
         if (!this.state.isPlaying) {
             this.raf = requestAnimationFrame(this.animate.bind(this));
@@ -257,7 +251,6 @@ class PlanetaryConfigSim extends React.Component {
             targetPlanetAngle: newTargetPlanet
         });
     }
-
     onTargetPlanetAngleUpdate(newAngle) {
         this.stopAnimation();
         let diff = 0;
@@ -269,7 +262,6 @@ class PlanetaryConfigSim extends React.Component {
             diff = -(Math.abs(newAng - Math.PI) + Math.abs(-Math.PI - prevObserverPlanetAng));
         } else if (prevObserverPlanetAng >= (Math.PI / 2) && prevObserverPlanetAng <= Math.PI
                    && newAng >= -Math.PI && newAng <= (-Math.PI / 2)) {
-
             diff = (Math.abs(prevObserverPlanetAng - Math.PI) + Math.abs(-Math.PI - newAng));
         } else {
             diff = newAng - this.state.targetPlanetAngle;
@@ -277,7 +269,6 @@ class PlanetaryConfigSim extends React.Component {
 
         this.updateMultiplier();
         diff *= this.state.observerMultiplier / this.state.targetMultiplier;
-
         let newObserverPlanet = (this.state.observerPlanetAngle + diff);
         if (newObserverPlanet >= Math.PI) {
             newObserverPlanet = -Math.PI;
@@ -286,7 +277,6 @@ class PlanetaryConfigSim extends React.Component {
         }
 
         this.setState({
-
             isPlaying: false,
             targetPlanetAngle: newAngle,
             observerPlanetAngle: newObserverPlanet
@@ -386,19 +376,18 @@ class PlanetaryConfigSim extends React.Component {
             au = e;
         }
 
-        if (this.state.radiusObserverPlanet >= this.state.radiusTargetPlanet) {
-            this.changeTarget(au);
-        } else {
+	if (this.state.radiusObserverPlanet >= this.state.radiusTargetPlanet) {
+	    this.changeTarget(au);
+	} else {
             let ratio = (au / this.state.radiusTargetPlanet) * 400;
-            this.setState({
-                radiusPixelObserver: forceNumber(ratio),
+	    this.setState({
+		radiusPixelObserver: forceNumber(ratio),
                 radiusObserverPlanet: forceNumber(au),
                 radiusPixelTarget: 400,
             });
 	}
         this.updateMultiplier();
     }
-
     changeTarget(au) {
         let ratio = (this.state.radiusTargetPlanet / au) * 400;
 
@@ -408,7 +397,6 @@ class PlanetaryConfigSim extends React.Component {
             radiusPixelObserver: 400,
         });
     }
-
     onTargetPlanetRadiusChange(e) {
 
         let au = 0;
@@ -431,7 +419,6 @@ class PlanetaryConfigSim extends React.Component {
 
         this.updateMultiplier();
     }
-
     changeObserver(au) {
         let ratio = (this.state.radiusObserverPlanet / au) * 400;
 
@@ -441,11 +428,9 @@ class PlanetaryConfigSim extends React.Component {
             radiusPixelTarget: 400,
         });
     }
-
     stopAnimation() {
         cancelAnimationFrame(this.raf);
     }
-
     onResetClick(e) {
         e.preventDefault();
         this.stopAnimation();
