@@ -4,6 +4,7 @@ import * as PIXI from 'pixi.js';
 
 const getPlanetPos = function(radius, phase) {
     return new PIXI.Point(
+        // these magic numbers come from this.orbitCenter
         radius * Math.cos(-phase) + 600,
         radius * Math.sin(-phase) + 460
     );
@@ -13,7 +14,6 @@ export default class MainView extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            isHoveringOnEarth: false,
             isHoveringOnObserverPlanet: false,
             isHoveringOnTargetPlanet: false
         };
@@ -29,17 +29,18 @@ export default class MainView extends React.Component {
         this.onDragStart = this.onDragStart.bind(this);
         this.onDragEnd = this.onDragEnd.bind(this);
 
-        this.onEarthMove = this.onEarthMove.bind(this);
         this.onObserverPlanetMove = this.onObserverPlanetMove.bind(this);
         this.onTargetPlanetMove = this.onTargetPlanetMove.bind(this);
         this.sprite = null;
     }
+
     render() {
         return (
             <div className="MainView"
                  ref={(thisDiv) => {this.el = thisDiv;}} />
         );
     }
+
     componentDidMount() {
         this.app = new PIXI.Application({
             // Size of canvas
@@ -61,7 +62,7 @@ export default class MainView extends React.Component {
         this.app.loader.load((loader, resources) => {
             me.resources = resources;
 
-            me.earth = me.drawEarth(
+            me.earth = me.drawSun(
                 resources.earth);
 
             me.observerPlanetOrbitContainer = me.drawObserverPlanetOrbit();
@@ -108,24 +109,31 @@ export default class MainView extends React.Component {
             me.start();
         });
     }
+
     componentWillUnmount() {
         this.app.stop();
     }
-    componentDidUpdate(prevProps) {
-    }
+
+    // componentDidUpdate(prevProps) {}
+
     start() {
         if (!this.frameId) {
             this.frameId = requestAnimationFrame(this.animate);
         }
     }
+
     stop() {
         cancelAnimationFrame(this.frameId);
     }
+
     animate() {
         this.updateObserverPlanetOrbit();
         this.updateTargetPlanetOrbit();
 
         this.updateText();
+
+        this.updateObserverPlanetOrbit();
+        this.updateTargetPlanetOrbit();
 
         this.observerPlanetContainer.position = getPlanetPos(
             this.props.radiusObserverPlanet,
@@ -138,8 +146,6 @@ export default class MainView extends React.Component {
         );
 
         // this.sprite.texture = PIXI.Texture.from('img/earth.svg');
-        console.log(this.sprite.texture.resource);
-
 
         this.updateArrows ();
         this.updateArc();
@@ -308,29 +314,47 @@ export default class MainView extends React.Component {
     updateObserverPlanetOrbit() {
         this.observerPlanetOrbitContainer.clear();
         this.observerPlanetOrbitContainer.lineStyle(2, 0xffffff);
-        this.observerPlanetOrbitContainer.drawCircle(this.orbitCenter.x, this.orbitCenter.y, this.props.radiusObserverPlanet);
+        this.observerPlanetOrbitContainer.drawCircle(
+            this.orbitCenter.x, 
+            this.orbitCenter.y, 
+            this.props.radiusObserverPlanet
+        );
     }
 
     updateTargetPlanetOrbit() {
         this.targetPlanetOrbitContainer.clear();
         this.targetPlanetOrbitContainer.lineStyle(2, 0xffffff);
-        this.targetPlanetOrbitContainer.drawCircle(this.orbitCenter.x, this.orbitCenter.y, this.props.radiusTargetPlanet);
+        this.targetPlanetOrbitContainer.drawCircle(
+            this.orbitCenter.x, 
+            this.orbitCenter.y, 
+            this.props.radiusTargetPlanet
+            );
     }
 
     drawObserverPlanetOrbit() {
         const graphicsObserverPlanet = new PIXI.Graphics();
         graphicsObserverPlanet.lineStyle(2, 0xffffff);
-        graphicsObserverPlanet.drawCircle(this.orbitCenter.x, this.orbitCenter.y, this.props.radiusObserverPlanet);
+        graphicsObserverPlanet.drawCircle(
+            this.orbitCenter.x, 
+            this.orbitCenter.y, 
+            this.props.radiusObserverPlanet
+        );
         this.app.stage.addChild(graphicsObserverPlanet);
         return graphicsObserverPlanet;
     }
+
     drawTargetPlanetOrbit() {
         const graphicsTargetPlanet = new PIXI.Graphics();
         graphicsTargetPlanet.lineStyle(2, 0xffffff);
-        graphicsTargetPlanet.drawCircle(this.orbitCenter.x, this.orbitCenter.y, this.props.radiusTargetPlanet);
+        graphicsTargetPlanet.drawCircle(
+            this.orbitCenter.x, 
+            this.orbitCenter.y, 
+            this.props.radiusTargetPlanet
+        );
         this.app.stage.addChild(graphicsTargetPlanet);
         return graphicsTargetPlanet;
     }
+
     drawObserverPlanet(observerPlanetResource, highlightResource) {
         const observerPlanetContainer = new PIXI.Container();
         observerPlanetContainer.name = 'observerPlanet';
@@ -356,6 +380,7 @@ export default class MainView extends React.Component {
         this.app.stage.addChild(observerPlanetContainer);
         return observerPlanetContainer;
     }
+
     drawTargetPlanet(targetPlanetResource, highlightResource) {
         const targetPlanetContainer = new PIXI.Container();
         targetPlanetContainer.name = 'targetPlanet';
@@ -380,65 +405,52 @@ export default class MainView extends React.Component {
         this.app.stage.addChild(targetPlanetContainer);
         return targetPlanetContainer;
     }
-    drawEarth(earthResource) {
-        const earthContainer = new PIXI.Container();
-        earthContainer.pivot = this.orbitCenter;
-        earthContainer.name = 'earth';
-        earthContainer.buttonMode = true;
-        earthContainer.interactive = true;
-        earthContainer.position = this.orbitCenter;
 
-        const earth = new PIXI.Sprite(earthResource.texture);
-        earth.width = 40 * 2;
-        earth.height = 40 * 2;
-        earth.position = this.orbitCenter;
-        earth.anchor.set(0.5);
-        earth.rotation = -0.9;
-        earthContainer.addChild(earth);
+    drawSun(sunResource) {
+        const sunContainer = new PIXI.Container();
+        sunContainer.pivot = this.orbitCenter;
+        sunContainer.name = 'sun';
+        sunContainer.position = this.orbitCenter;
 
-        this.app.stage.addChild(earthContainer);
-        return earthContainer;
+        const sun = new PIXI.Sprite(sunResource.texture);
+        sun.width = 40 * 2;
+        sun.height = 40 * 2;
+        sun.position = this.orbitCenter;
+        sun.anchor.set(0.5);
+        sun.rotation = -0.9;
+        sunContainer.addChild(sun);
+
+        this.app.stage.addChild(sunContainer);
+        return sunContainer;
     }
+
     onDragStart(event) {
         this.props.stopAnimation();
 
         this.data = event.data;
         this.dragStartPos = this.data.getLocalPosition(this.app.stage);
 
-        if (event.target.name === 'earth') {
-            this.draggingEarth = true;
-        } else if (event.target.name === 'observerPlanet') {
+        if (event.target.name === 'observerPlanet') {
             this.draggingObserverPlanet = true;
-        } else if (event.target.name === 'targetPlanet') {
+        } 
+        if (event.target.name === 'targetPlanet') {
             this.draggingTargetPlanet = true;
         }
     }
+
     onDragEnd() {
-        this.draggingEarth = false;
         this.draggingObserverPlanet = false;
         this.draggingTargetPlanet = false;
         // set the interaction data to null
         this.data = null;
     }
-    onEarthMove(e) {
-        if (e.target && e.target.name === 'earth' &&
-            !this.state.isHoveringOnEarth &&
-            !this.draggingObserverPlanet &&
-            !this.draggingTargetPlanet
-        ) {
-            this.setState({isHoveringOnEarth: true});
-        }
-        if (!e.target && this.state.isHoveringOnEarth) {
-            this.setState({isHoveringOnEarth: false});
-        }
-    }
+
     onObserverPlanetMove(e) {
         if (e.target && e.target.name === 'observerPlanet' &&
-            !this.state.isHoveringOnObserverPlanet &&
-            !this.draggingEarth
-        ) {
+            !this.state.isHoveringOnObserverPlanet) {
             this.setState({isHoveringOnObserverPlanet: true});
         }
+
         if (!e.target && this.state.isHoveringOnObserverPlanet) {
             this.setState({isHoveringOnObserverPlanet: false});
         }
@@ -456,13 +468,13 @@ export default class MainView extends React.Component {
             this.props.onObserverPlanetAngleUpdate(vAngle);
         }
     }
+
     onTargetPlanetMove(e) {
         if (e.target && e.target.name === 'targetPlanet' &&
-            !this.state.isHoveringOnTargetPlanet &&
-            !this.draggingEarth
-        ) {
+            !this.state.isHoveringOnTargetPlanet) {
             this.setState({isHoveringOnTargetPlanet: true});
         }
+
         if (!e.target && this.state.isHoveringOnTargetPlanet) {
             this.setState({isHoveringOnTargetPlanet: false});
         }
