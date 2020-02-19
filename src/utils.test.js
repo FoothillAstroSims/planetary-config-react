@@ -1,6 +1,6 @@
 /* eslint-env jest */
 
-import {degToRad, getPercentIlluminated, getPhaseSlot} from './utils';
+import { degToRad, getPercentIlluminated, getPhaseSlot } from './utils';
 
 test('degToRad computes radians correctly', () => {
     expect(degToRad(180)).toBe(Math.PI);

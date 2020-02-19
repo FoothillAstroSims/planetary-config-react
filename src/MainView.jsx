@@ -34,28 +34,30 @@ export default class MainView extends React.Component {
         this.onTargetPlanetMove = this.onTargetPlanetMove.bind(this);
         this.sprite = null;
     }
+
     render() {
         return (
             <div className="MainView"
-                 ref={(thisDiv) => {this.el = thisDiv;}} />
+                ref={(thisDiv) => { this.el = thisDiv; }} />
         );
     }
+
     componentDidMount() {
         this.app = new PIXI.Application({
             // Size of canvas
             width: 600 * 2,
             height: 460 * 2,
 
-            antialias: true,
+            antialias: true
         });
 
         this.el.appendChild(this.app.view);
 
         // Loads all the images
         this.app.loader.add('observerPlanet', 'img/earth.svg')
-        .add('earth', 'img/sun.png')
-	.add('targetPlanet', 'img/mars.png')
-        .add('highlight', 'img/circle-highlight.svg');
+            .add('earth', 'img/sun.png')
+            .add('targetPlanet', 'img/mars.png')
+            .add('highlight', 'img/circle-highlight.svg');
 
         const me = this;
         this.app.loader.load((loader, resources) => {
@@ -97,30 +99,34 @@ export default class MainView extends React.Component {
                 .on('mousemove', me.onTargetPlanetMove)
                 .on('touchmove', me.onTargetPlanetMove);
 
-
-            me.arrowToSun = me.drawArrows ();
-            me.arrowToTarget = me.drawArrows ();
+            me.arrowToSun = me.drawArrows();
+            me.arrowToTarget = me.drawArrows();
             me.elongationArc = me.drawArc();
 
-            me.observerPlanetName = me.drawText (this.props.observerName, me.props.radiusObserverPlanet, false);
-            me.targetPlanetName = me.drawText (this.props.targetName, me.props.radiusTargetPlanet, true);
+            me.observerPlanetName = me.drawText(this.props.observerName, me.props.radiusObserverPlanet, false);
+            me.targetPlanetName = me.drawText(this.props.targetName, me.props.radiusTargetPlanet, true);
 
             me.start();
         });
     }
+
     componentWillUnmount() {
         this.app.stop();
     }
+
     componentDidUpdate(prevProps) {
     }
+
     start() {
         if (!this.frameId) {
             this.frameId = requestAnimationFrame(this.animate);
         }
     }
+
     stop() {
         cancelAnimationFrame(this.frameId);
     }
+
     animate() {
         this.updateObserverPlanetOrbit();
         this.updateTargetPlanetOrbit();
@@ -140,8 +146,7 @@ export default class MainView extends React.Component {
         // this.sprite.texture = PIXI.Texture.from('img/earth.svg');
         console.log(this.sprite.texture.resource);
 
-
-        this.updateArrows ();
+        this.updateArrows();
         this.updateArc();
 
         if (this.state.isHoveringOnObserverPlanet || this.draggingObserverPlanet) {
@@ -182,11 +187,11 @@ export default class MainView extends React.Component {
     }
 
     updateText() {
-        let observerNameY = this.props.radiusObserverPlanet + 8;
-        let targetNameY = this.props.radiusTargetPlanet * -1 - 60;
+        const observerNameY = this.props.radiusObserverPlanet + 8;
+        const targetNameY = this.props.radiusTargetPlanet * -1 - 60;
 
-        let observerNameX = this.observerPlanetName.width;
-        let targetNameX = this.targetPlanetName.width;
+        const observerNameX = this.observerPlanetName.width;
+        const targetNameX = this.targetPlanetName.width;
 
         this.observerPlanetName.x = 600 - 30;
         this.targetPlanetName.x = 600 - 30;
@@ -195,8 +200,8 @@ export default class MainView extends React.Component {
         this.targetPlanetName.y = 475 + targetNameY;
     }
 
-    drawArc () {
-        const elongArc = new PIXI.Graphics ();
+    drawArc() {
+        const elongArc = new PIXI.Graphics();
         elongArc.visible = true;
 
         elongArc.clear();
@@ -251,7 +256,7 @@ export default class MainView extends React.Component {
             differenceInAngles += 2 * Math.PI;
         }
 
-        let num = Math.round(differenceInAngles * 180 / Math.PI * 10) / 10;
+        const num = Math.round(differenceInAngles * 180 / Math.PI * 10) / 10;
 
         if (num > 180) {
             return true;
@@ -260,7 +265,7 @@ export default class MainView extends React.Component {
         return false;
     }
 
-    drawArrows () {
+    drawArrows() {
         const g = new PIXI.Graphics();
         g.visible = false;
 
@@ -272,7 +277,7 @@ export default class MainView extends React.Component {
         return g;
     }
 
-    updateArrows () {
+    updateArrows() {
         this.arrowToSun.clear();
         this.arrowToTarget.clear();
 
@@ -324,6 +329,7 @@ export default class MainView extends React.Component {
         this.app.stage.addChild(graphicsObserverPlanet);
         return graphicsObserverPlanet;
     }
+
     drawTargetPlanetOrbit() {
         const graphicsTargetPlanet = new PIXI.Graphics();
         graphicsTargetPlanet.lineStyle(2, 0xffffff);
@@ -331,6 +337,7 @@ export default class MainView extends React.Component {
         this.app.stage.addChild(graphicsTargetPlanet);
         return graphicsTargetPlanet;
     }
+
     drawObserverPlanet(observerPlanetResource, highlightResource) {
         const observerPlanetContainer = new PIXI.Container();
         observerPlanetContainer.name = 'observerPlanet';
@@ -356,6 +363,7 @@ export default class MainView extends React.Component {
         this.app.stage.addChild(observerPlanetContainer);
         return observerPlanetContainer;
     }
+
     drawTargetPlanet(targetPlanetResource, highlightResource) {
         const targetPlanetContainer = new PIXI.Container();
         targetPlanetContainer.name = 'targetPlanet';
@@ -380,6 +388,7 @@ export default class MainView extends React.Component {
         this.app.stage.addChild(targetPlanetContainer);
         return targetPlanetContainer;
     }
+
     drawEarth(earthResource) {
         const earthContainer = new PIXI.Container();
         earthContainer.pivot = this.orbitCenter;
@@ -399,6 +408,7 @@ export default class MainView extends React.Component {
         this.app.stage.addChild(earthContainer);
         return earthContainer;
     }
+
     onDragStart(event) {
         this.props.stopAnimation();
 
@@ -413,6 +423,7 @@ export default class MainView extends React.Component {
             this.draggingTargetPlanet = true;
         }
     }
+
     onDragEnd() {
         this.draggingEarth = false;
         this.draggingObserverPlanet = false;
@@ -420,27 +431,29 @@ export default class MainView extends React.Component {
         // set the interaction data to null
         this.data = null;
     }
+
     onEarthMove(e) {
         if (e.target && e.target.name === 'earth' &&
             !this.state.isHoveringOnEarth &&
             !this.draggingObserverPlanet &&
             !this.draggingTargetPlanet
         ) {
-            this.setState({isHoveringOnEarth: true});
+            this.setState({ isHoveringOnEarth: true });
         }
         if (!e.target && this.state.isHoveringOnEarth) {
-            this.setState({isHoveringOnEarth: false});
+            this.setState({ isHoveringOnEarth: false });
         }
     }
+
     onObserverPlanetMove(e) {
         if (e.target && e.target.name === 'observerPlanet' &&
             !this.state.isHoveringOnObserverPlanet &&
             !this.draggingEarth
         ) {
-            this.setState({isHoveringOnObserverPlanet: true});
+            this.setState({ isHoveringOnObserverPlanet: true });
         }
         if (!e.target && this.state.isHoveringOnObserverPlanet) {
-            this.setState({isHoveringOnObserverPlanet: false});
+            this.setState({ isHoveringOnObserverPlanet: false });
         }
 
         if (this.draggingObserverPlanet) {
@@ -449,22 +462,23 @@ export default class MainView extends React.Component {
             // This angle starts at the center of the orbit. It's the
             // difference, in radians, between where the cursor was and
             // where it is now.
-            let vAngle =
+            const vAngle =
                 -1 * Math.atan2(newPosition.y - this.orbitCenter.y,
-                           newPosition.x - this.orbitCenter.x);
+                    newPosition.x - this.orbitCenter.x);
 
             this.props.onObserverPlanetAngleUpdate(vAngle);
         }
     }
+
     onTargetPlanetMove(e) {
         if (e.target && e.target.name === 'targetPlanet' &&
             !this.state.isHoveringOnTargetPlanet &&
             !this.draggingEarth
         ) {
-            this.setState({isHoveringOnTargetPlanet: true});
+            this.setState({ isHoveringOnTargetPlanet: true });
         }
         if (!e.target && this.state.isHoveringOnTargetPlanet) {
-            this.setState({isHoveringOnTargetPlanet: false});
+            this.setState({ isHoveringOnTargetPlanet: false });
         }
 
         if (this.draggingTargetPlanet) {
@@ -472,7 +486,7 @@ export default class MainView extends React.Component {
 
             const vAngle =
                 -1 * Math.atan2(newPosition.y - this.orbitCenter.y,
-                           newPosition.x - this.orbitCenter.x);
+                    newPosition.x - this.orbitCenter.x);
 
             this.props.onTargetPlanetAngleUpdate(vAngle);
         }
