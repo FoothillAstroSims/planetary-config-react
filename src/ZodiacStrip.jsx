@@ -243,7 +243,7 @@ export default class ZodiacStrip extends React.Component {
     }
 
     updateZodiacBodyPos(longitude, body, width) {
-     	let angle = longitude / (2 * Math.PI);
+        let angle = longitude / (2 * Math.PI);
 
         if (longitude >= -Math.PI && longitude < 0) {
             angle = longitude + (2 * Math.PI);
