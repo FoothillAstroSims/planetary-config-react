@@ -144,7 +144,6 @@ export default class MainView extends React.Component {
         );
 
         // this.sprite.texture = PIXI.Texture.from('img/earth.svg');
-        console.log(this.sprite.texture.resource);
 
         this.updateArrows();
         this.updateArc();
@@ -182,7 +181,7 @@ export default class MainView extends React.Component {
         text.position.x = 600 - (text.width / 2);
         text.position.y = 460 + radius;
         this.app.stage.addChild(text);
-        console.log('issa meee', text.width, text.height);
+        // console.log('issa meee', text.width, text.height);
         return text;
     }
 
