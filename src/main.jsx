@@ -3,8 +3,7 @@ import ReactDOM from 'react-dom';
 import MainView from './MainView';
 import ZodiacStrip from './ZodiacStrip';
 import { RangeStepInput } from 'react-range-step-input';
-import { forceNumber, radToDeg, degToRad } from './utils';
-import { maxHeaderSize } from 'http';
+import { forceNumber } from './utils';
 
 class PlanetaryConfigSim extends React.Component {
     constructor(props) {
@@ -80,7 +79,7 @@ class PlanetaryConfigSim extends React.Component {
 
                         <div className="radObserver">
                             <form className="form-inline">
-                                <label htmlFor="radObserverPlanetRange">Radius of observer planet's orbit</label>
+                                <label htmlFor="radObserverPlanetRange">Radius of observer planet&aposs orbit</label>
                                 <div className="radius-forms">
                                     <input type="number" size="4"
                                         className="inputs"
@@ -115,7 +114,7 @@ class PlanetaryConfigSim extends React.Component {
 
                         <div className="radTarget">
                             <form className="form-inline">
-                                <label htmlFor="radTargetPlanetRange">Radius of target planet's orbit</label>
+                                <label htmlFor="radTargetPlanetRange">Radius of target planet&aposs orbit</label>
                                 <div className="radius-forms">
                                     <input type="number" size="4"
                                         className="inputs"
@@ -343,6 +342,8 @@ class PlanetaryConfigSim extends React.Component {
         this.setState({
             optionObserver: e.target.value
         });
+
+        let name = '';
 
         if (e.target.value == 0) {
             this.onObserverPlanetRadiusChange(1.0);

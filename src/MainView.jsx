@@ -72,30 +72,24 @@ export default class MainView extends React.Component {
             me.observerPlanetContainer = me.drawObserverPlanet(
                 resources.observerPlanet, resources.highlight);
             me.observerPlanetContainer
-            // events for drag start
                 .on('mousedown', me.onDragStart)
                 .on('touchstart', me.onDragStart)
-            // events for drag end
                 .on('mouseup', me.onDragEnd)
                 .on('mouseupoutside', me.onDragEnd)
                 .on('touchend', me.onDragEnd)
                 .on('touchendoutside', me.onDragEnd)
-            // events for drag move
                 .on('mousemove', me.onObserverPlanetMove)
                 .on('touchmove', me.onObserverPlanetMove);
 
             me.targetPlanetContainer = me.drawTargetPlanet(
                 resources.targetPlanet, resources.highlight);
             me.targetPlanetContainer
-            // events for drag start
                 .on('mousedown', me.onDragStart)
                 .on('touchstart', me.onDragStart)
-            // events for drag end
                 .on('mouseup', me.onDragEnd)
                 .on('mouseupoutside', me.onDragEnd)
                 .on('touchend', me.onDragEnd)
                 .on('touchendoutside', me.onDragEnd)
-            // events for drag move
                 .on('mousemove', me.onTargetPlanetMove)
                 .on('touchmove', me.onTargetPlanetMove);
 
@@ -114,8 +108,8 @@ export default class MainView extends React.Component {
         this.app.stop();
     }
 
-    componentDidUpdate(prevProps) {
-    }
+    // componentDidUpdate(prevProps) {
+    // }
 
     start() {
         if (!this.frameId) {
@@ -189,8 +183,8 @@ export default class MainView extends React.Component {
         const observerNameY = this.props.radiusObserverPlanet + 8;
         const targetNameY = this.props.radiusTargetPlanet * -1 - 60;
 
-        const observerNameX = this.observerPlanetName.width;
-        const targetNameX = this.targetPlanetName.width;
+        // const observerNameX = this.observerPlanetName.width;
+        // const targetNameX = this.targetPlanetName.width;
 
         this.observerPlanetName.x = 600 - 30;
         this.targetPlanetName.x = 600 - 30;
@@ -493,11 +487,17 @@ export default class MainView extends React.Component {
 }
 
 MainView.propTypes = {
-    observerPlanetAngle: PropTypes.number.isRequired,
-    targetPlanetAngle: PropTypes.number.isRequired,
+    observerName: PropTypes.string.isRequired,
+    targetName:   PropTypes.string.isRequired,
+
+    observerPlanetAngle:  PropTypes.number.isRequired,
+    targetPlanetAngle:    PropTypes.number.isRequired,
     radiusObserverPlanet: PropTypes.number.isRequired,
-    radiusTargetPlanet: PropTypes.number.isRequired,
+    radiusTargetPlanet:   PropTypes.number.isRequired,
+    sunAngle:             PropTypes.number.isRequired,
+    targetAngle:          PropTypes.number.isRequired,
+
     onObserverPlanetAngleUpdate: PropTypes.func.isRequired,
-    onTargetPlanetAngleUpdate: PropTypes.func.isRequired,
-    stopAnimation: PropTypes.func.isRequired
+    onTargetPlanetAngleUpdate:   PropTypes.func.isRequired,
+    stopAnimation:               PropTypes.func.isRequired,
 };

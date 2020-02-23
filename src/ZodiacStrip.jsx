@@ -1,5 +1,6 @@
 import React from 'react';
 import * as PIXI from 'pixi.js';
+import PropTypes from 'prop-types';
 
 const getPlanetPos = function(radius, phase) {
     return new PIXI.Point(
@@ -168,8 +169,8 @@ export default class ZodiacStrip extends React.Component {
         let targetPlanetAngle = Math.atan2(targetPos.y - observerPos.y, targetPos.x - observerPos.x);
         let sunAngle = Math.atan2(sunPos.y - observerPos.y, sunPos.x - observerPos.x);
 
-        const r = targetPlanetAngle * 180 / Math.PI;
-        const p = sunAngle * 180 / Math.PI;
+        // const r = targetPlanetAngle * 180 / Math.PI;
+        // const p = sunAngle * 180 / Math.PI;
 
         this.targetPlanetLongitude = targetPlanetAngle;
         this.sunLongitude = sunAngle;
@@ -192,13 +193,6 @@ export default class ZodiacStrip extends React.Component {
         }
 
         return elongAngle;
-    }
-
-    getDistance(targetPos, observerPos) {
-        const diffX = Math.pow((targetPos.x - observerPos.x), 2);
-        const diffY = Math.pow((targetPos.y - observerPos.y), 2);
-
-        return Math.pow((diffX + diffY), 0.5);
     }
 
     updateLine(elongationAngle) {
@@ -281,7 +275,6 @@ export default class ZodiacStrip extends React.Component {
     getDistance(firstBody, secondBody) {
         const diffX = Math.pow(firstBody.x - secondBody.x, 2);
         const diffY = Math.pow(firstBody.y - secondBody.y, 2);
-
         return Math.pow((diffX + diffY), 0.5);
     }
 
@@ -311,11 +304,17 @@ export default class ZodiacStrip extends React.Component {
 
         this.updateText(textNum);
 
-    	this.frameId = requestAnimationFrame(this.animate);
+        this.frameId = requestAnimationFrame(this.animate);
     }
 }
 
-// ZodiacStrip.propTypes = {
-//     deltaAngle: Proptypes.number.isRequired,
-//     getElongationAngle: Proptypes.func.isRequired
-// };
+ZodiacStrip.propTypes = {
+    deltaAngle:           PropTypes.number.isRequired,
+    radiusObserverPlanet: PropTypes.number.isRequired,
+    radiusTargetPlanet:   PropTypes.number.isRequired,
+    targetPlanetAngle:    PropTypes.number.isRequired,
+    observerPlanetAngle:  PropTypes.number.isRequired,
+
+    getElongationAngle: PropTypes.func.isRequired,
+    updateAngles:       PropTypes.func.isRequired,
+};
