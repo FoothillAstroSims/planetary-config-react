@@ -134,8 +134,8 @@ export default class ZodiacStrip extends React.Component {
 
         const sunZodiac = new PIXI.Sprite(PIXI.Texture.from('img/sun-circle.png'));
         sunZodiac.anchor.set(0.5);
-        sunZodiac.width = 40;
-        sunZodiac.height = 40;
+        sunZodiac.width = 20;
+        sunZodiac.height = 20;
         sunZodiacContainer.addChild(sunZodiac);
 
         this.app.stage.addChild(sunZodiacContainer);
@@ -149,10 +149,10 @@ export default class ZodiacStrip extends React.Component {
         targetPlanetContainer.name = 'targetPlanetZodiac';
         targetPlanetContainer.position = new PIXI.Point(3 * 600 / 4, 48.5 + 50);
 
-        const targetPlanetImage = new PIXI.Sprite(PIXI.Texture.from('img/grey_circle.png'));
+        const targetPlanetImage = new PIXI.Sprite(PIXI.Texture.from('img/grey-circle.png'));
         targetPlanetImage.anchor.set(0.5);
-        targetPlanetImage.width = 30;
-        targetPlanetImage.height = 30;
+        targetPlanetImage.width = 15;
+        targetPlanetImage.height = 15;
         targetPlanetContainer.addChild(targetPlanetImage);
 
 
@@ -197,7 +197,6 @@ export default class ZodiacStrip extends React.Component {
         this.targetPlanetLongitude = targetPlanetAngle;
         this.sunLongitude = sunAngle;
 
-        // console.log('I AM DOOM', targetPlanetAngle, sunAngle);
         this.props.updateAngles(targetPlanetAngle, sunAngle);
 
         if (-Math.PI < sunAngle && sunAngle < 0) {
@@ -353,8 +352,8 @@ export default class ZodiacStrip extends React.Component {
         let elongationAngle = this.getElongationAngle();
 
         // The 0s are for the width value of the body
-        this.updateZodiacBodyPos(this.sunLongitude, this.sunZodiacContainer, 0); // should be 20
-        this.updateZodiacBodyPos(this.targetPlanetLongitude, this.targetPlanetZodiacContainer, 0); // should be 15
+        this.updateZodiacBodyPos(this.sunLongitude, this.sunZodiacContainer, 0);  // should be 20
+        this.updateZodiacBodyPos(this.targetPlanetLongitude, this.targetPlanetZodiacContainer, 0);  // should be 15
 
         let num = elongationAngle * 180 / Math.PI;
         this.updateLine(num);
