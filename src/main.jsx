@@ -42,7 +42,7 @@ class PlanetaryConfigSim extends React.Component {
 
     render() {
         return <React.Fragment>
-                 <nav className="navbar navbar-expand-md navbar-light bg-light d-flex justify-content-between">  
+                 <nav className="navbar navbar-expand-md navbar-light bg-light d-flex justify-content-between">
                    <span className="navbar-brand mb-0 h1">Planetary Configurations Simulator</span>
 
                    <ul className="navbar-nav">
