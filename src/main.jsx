@@ -29,7 +29,7 @@ class PlanetaryConfigSim extends React.Component {
             holdTarget: 2.40,
             showElongation: false,
             labelOrbits: false,
-            zoomOut: false,
+            zoomOut: true,
 	};
 
 	this.state = this.initialState;
@@ -85,6 +85,7 @@ class PlanetaryConfigSim extends React.Component {
                        <div className="observerText">
                          <label htmlFor="radObserverPlanetRange">radius of observer planet's orbit:</label>
                        </div>
+
                        <div className="observerInput">
                          <form onSubmit={this.onSubmitObserver.bind(this)}>
                            <input
@@ -215,6 +216,32 @@ class PlanetaryConfigSim extends React.Component {
                            Label Orbits
                          </label>
                        </div>
+
+
+                       <div className="">
+                         <form onSubmit={this.onSubmitObserver.bind(this)}>
+                           <input
+                             className="input"
+                             type="number"
+                             min={100}
+                             max={450}
+                             step={0.01}
+                             value={this.state.maximumPixelRadius}
+                           />
+                         </form>
+                       </div>
+
+                       <div className="">
+                         <input
+                           type="range"
+                           min={100}
+                           max={450}
+                           step={0.01}
+                           value={this.state.maximumPixelRadius}
+                           onChange={this.displayZoomOut.bind(this)}
+                         />
+                       </div>
+
 
                        <div className="custom-control custom-checkbox">
                          <input type="checkbox"
@@ -546,12 +573,14 @@ class PlanetaryConfigSim extends React.Component {
 
     displayZoomOut(e) {
         let newRad = 400;
-        if (!this.state.zoomOut) {
-            newRad = 300;
-        }
+        // if (!this.state.zoomOut) {
+        //     newRad = e.target.value;
+        // }
+
+        newRad = e.target.value;
 
         this.setState({
-            zoomOut: !this.state.zoomOut,
+            // zoomOut: !this.state.zoomOut,
             maximumPixelRadius: newRad,
         });
 
