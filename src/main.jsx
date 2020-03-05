@@ -15,7 +15,7 @@ class PlanetaryConfigSim extends React.Component {
             radiusTargetPlanet: 2.40,
             radiusPixelObserver: 166.66,
             radiusPixelTarget: 400,
-            maximumPixelRadius: 400,
+            maximumPixelRadius: 175,
             observerMultiplier: Math.pow(1.0, -1.5),
             targetMultiplier:  Math.pow(2.4, -1.5),
             animationRate: 1.5,
@@ -28,8 +28,8 @@ class PlanetaryConfigSim extends React.Component {
             holdObserver: 1.00,
             holdTarget: 2.40,
             showElongation: false,
-            labelOrbits: false,
-            zoomOut: true,
+            labelOrbits: true,
+            zoomOut: false,
 	};
 
 	this.state = this.initialState;
@@ -216,32 +216,6 @@ class PlanetaryConfigSim extends React.Component {
                            Label Orbits
                          </label>
                        </div>
-
-
-                       <div className="">
-                         <form onSubmit={this.onSubmitObserver.bind(this)}>
-                           <input
-                             className="input"
-                             type="number"
-                             min={100}
-                             max={450}
-                             step={0.01}
-                             value={this.state.maximumPixelRadius}
-                           />
-                         </form>
-                       </div>
-
-                       <div className="">
-                         <input
-                           type="range"
-                           min={100}
-                           max={450}
-                           step={0.01}
-                           value={this.state.maximumPixelRadius}
-                           onChange={this.displayZoomOut.bind(this)}
-                         />
-                       </div>
-
 
                        <div className="custom-control custom-checkbox">
                          <input type="checkbox"
@@ -573,14 +547,12 @@ class PlanetaryConfigSim extends React.Component {
 
     displayZoomOut(e) {
         let newRad = 400;
-        // if (!this.state.zoomOut) {
-        //     newRad = e.target.value;
-        // }
-
-        newRad = e.target.value;
+        if (!this.state.zoomOut) {
+            newRad = 175;
+        }
 
         this.setState({
-            // zoomOut: !this.state.zoomOut,
+            zoomOut: !this.state.zoomOut,
             maximumPixelRadius: newRad,
         });
 
