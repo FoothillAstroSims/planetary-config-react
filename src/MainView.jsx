@@ -60,8 +60,8 @@ export default class MainView extends React.Component {
         // Loads all the images
         this.app.loader
             .add('sun', 'img/sun-circle.png')
-            .add('observerPlanet', 'img/blue_circle.png')
-	    .add('targetPlanet', 'img/grey_circle.png')
+            .add('observerPlanet', 'img/blue-circle.png')
+	        .add('targetPlanet', 'img/grey-circle.png')
             .add('highlight', 'img/circle-highlight.svg');
 
         const me = this;
@@ -112,18 +112,18 @@ export default class MainView extends React.Component {
             me.targetPlanetName = me.drawText (this.props.targetName, me.props.radiusTargetPlanet, true);
 
 
-            me.c1 = me.drawConstellation(Math.PI / 12, 'img/pisces.png', 'Pisces');
-            me.c2 = me.drawConstellation(Math.PI / 4, 'img/capricorn.png', 'Capricorn');
-            me.c3 = me.drawConstellation(5 * Math.PI / 12, 'img/taurus.png', 'Taurus');
-            me.c4 = me.drawConstellation(7 * Math.PI / 12, 'img/gemini.png', 'Gemini');
-            me.c5 = me.drawConstellation(3 * Math.PI / 4, 'img/cancer.png', 'Cancer');
-            me.c6 = me.drawConstellation(11 * Math.PI / 12, 'img/aquarius.png', 'Aquarius');
-            me.c7 = me.drawConstellation(13 * Math.PI / 12, 'img/virgo.png', 'Virgo');
-            me.c8 = me.drawConstellation(5 * Math.PI / 4, 'img/libra.png', 'Libra');
-            me.c9 = me.drawConstellation(17 * Math.PI / 12, 'img/leo.png', 'Leo');
-            me.c10 = me.drawConstellation(19 * Math.PI / 12, 'img/sagittarius.png', 'Sagittarius');
-            me.c11 = me.drawConstellation(7 * Math.PI / 4, 'img/aries.png', 'Aries');
-            me.c12 = me.drawConstellation(23 * Math.PI / 12, 'img/scorpio.png', 'Scorpio');
+            me.c1 = me.drawConstellation(0, 'img/pisces.png', 'Pisces');
+            me.c2 = me.drawConstellation(Math.PI / 6, 'img/aries.png', 'Aries');
+            me.c3 = me.drawConstellation(Math.PI / 3, 'img/taurus.png', 'Taurus');
+            me.c4 = me.drawConstellation(Math.PI / 2, 'img/gemini.png', 'Gemini');
+            me.c5 = me.drawConstellation(2 * Math.PI / 3, 'img/cancer.png', 'Cancer');
+            me.c6 = me.drawConstellation(5 * Math.PI / 6, 'img/leo.png', 'Leo');
+            me.c7 = me.drawConstellation(Math.PI, 'img/virgo.png', 'Virgo');
+            me.c8 = me.drawConstellation(7 * Math.PI / 6, 'img/libra.png', 'Libra');
+            me.c9 = me.drawConstellation(4 * Math.PI / 3, 'img/scorpio.png', 'Scorpio');
+            me.c10 = me.drawConstellation(3 * Math.PI / 2, 'img/sagittarius.png', 'Sagittarius');
+            me.c11 = me.drawConstellation(5 * Math.PI / 3, 'img/capricorn.png', 'Capricorn');
+            me.c12 = me.drawConstellation(11 * Math.PI / 6, 'img/aquarius.png', 'Aquarius');
             this.constellations.push(me.c1, me.c2, me.c3, me.c4, me.c5, me.c6, me.c7, me.c8, me.c9, me.c10, me.c11, me.c12);
             for (let index = 0; index < this.constellations.length; index++) {
                 this.constellations[index]
@@ -279,10 +279,6 @@ export default class MainView extends React.Component {
         );
 
         this.updateArcArrow(east);
-
-        // let tar = this.props.targetAngle * 180 / Math.PI;
-        // let sunn = this.props.sunAngle * 180 / Math.PI;
-        // console.log('mars and sun angles: ', tar, sunn);
     }
 
     updateArcArrow(east) {
@@ -625,7 +621,6 @@ export default class MainView extends React.Component {
         if (e.target && !this.state.isHoveringOnConstellation) {
             for (let index = 0; index < this.constellationsText.length; index++) {
                 let constellation = this.constellations[index];
-                console.log('names:', e.target.name, constellation.name);
                 if (e.target.name === constellation.name) {
                     this.constellationsText[index].visible = true;
                     this.setState({isHoveringOnConstellation: true});

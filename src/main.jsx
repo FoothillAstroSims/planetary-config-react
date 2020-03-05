@@ -45,7 +45,7 @@ class PlanetaryConfigSim extends React.Component {
         }
 
         return <React.Fragment>
-                 <nav className="navbar navbar-expand-md navbar-light bg-light d-flex justify-content-between">  {/*bg-light*/}
+                 <nav className="navbar navbar-expand-md navbar-light bg-light d-flex justify-content-between">  
                    <span className="navbar-brand mb-0 h1">Planetary Configurations Simulator</span>
 
                    <ul className="navbar-nav">
@@ -82,8 +82,8 @@ class PlanetaryConfigSim extends React.Component {
                    <div className="rowx">
                      <div className="col">
                        <h4>Orbit Sizes</h4>
-                       <div className="observerText">
-                         <label htmlFor="radObserverPlanetRange">radius of observer planet's orbit:</label>
+                       <div className="radiusText">
+                         <label htmlFor="radObserverPlanetRange">Radius of observer planet's orbit (AU):</label>
                        </div>
 
                        <div className="observerInput">
@@ -126,8 +126,8 @@ class PlanetaryConfigSim extends React.Component {
                          </select>
                        </div>
 
-                       <div className="targetText">
-                         <label htmlFor="radTargetPlanetRange">radius of target planet's orbit:</label>
+                       <div className="radiusText">
+                         <label htmlFor="radTargetPlanetRange" >Radius of target planet's orbit (AU):</label>
                        </div>
                        <div className="targetInput">
                          <form onSubmit={this.onSubmitTarget.bind(this)}>
@@ -172,7 +172,7 @@ class PlanetaryConfigSim extends React.Component {
                      <div className="col">
                        <h4>Animation Control</h4>
                        <div className="animationText">
-                         <label htmlFor="diamRange">speed:</label>
+                         <label htmlFor="diamRange">Speed:</label>
                        </div>
                        <div className="animationSlider">
                          <input
@@ -195,17 +195,6 @@ class PlanetaryConfigSim extends React.Component {
 
                      <div className="controls">
 
-                       <div className="custom-control custom-checkbox">
-                         <input type="checkbox"
-                                onChange={this.showElongationAngle.bind(this)}
-                                checked={this.state.showElongation}
-                                id="angle-display"
-                         />
-                         <label className="" htmlFor="angle-display">
-                           Show Elongation Angle
-                         </label>
-                       </div>
-
                        <div className="custom-control custom-checkboxes">
                          <input type="checkbox"
                                 onChange={this.showOrbits.bind(this)}
@@ -214,6 +203,17 @@ class PlanetaryConfigSim extends React.Component {
                          />
                          <label className="" htmlFor="orbits-display">
                            Label Orbits
+                         </label>
+                       </div>
+
+                       <div className="custom-control custom-checkbox">
+                         <input type="checkbox"
+                                onChange={this.showElongationAngle.bind(this)}
+                                checked={this.state.showElongation}
+                                id="angle-display"
+                         />
+                         <label className="" htmlFor="angle-display">
+                           Show Elongation Angle
                          </label>
                        </div>
 
