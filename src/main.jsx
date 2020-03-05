@@ -15,7 +15,7 @@ class PlanetaryConfigSim extends React.Component {
             radiusTargetPlanet: 2.40,
             radiusPixelObserver: 166.66,
             radiusPixelTarget: 400,
-            maximumPixelRadius: 400,
+            maximumPixelRadius: 175,
             observerMultiplier: Math.pow(1.0, -1.5),
             targetMultiplier:  Math.pow(2.4, -1.5),
             animationRate: 1.5,
@@ -28,7 +28,7 @@ class PlanetaryConfigSim extends React.Component {
             holdObserver: 1.00,
             holdTarget: 2.40,
             showElongation: false,
-            labelOrbits: false,
+            labelOrbits: true,
             zoomOut: false,
 	};
 
@@ -85,6 +85,7 @@ class PlanetaryConfigSim extends React.Component {
                        <div className="radiusText">
                          <label htmlFor="radObserverPlanetRange">Radius of observer planet's orbit (AU):</label>
                        </div>
+
                        <div className="observerInput">
                          <form onSubmit={this.onSubmitObserver.bind(this)}>
                            <input
@@ -547,7 +548,7 @@ class PlanetaryConfigSim extends React.Component {
     displayZoomOut(e) {
         let newRad = 400;
         if (!this.state.zoomOut) {
-            newRad = 300;
+            newRad = 175;
         }
 
         this.setState({
