@@ -13,9 +13,10 @@ export default class MainView extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            isHoveringOnEarth: false,
+            isHoveringOnSun: false,
             isHoveringOnObserverPlanet: false,
-            isHoveringOnTargetPlanet: false
+            isHoveringOnTargetPlanet: false,
+            isHoveringOnConstellation: false
         };
 
         this.resources = {};
@@ -29,16 +30,19 @@ export default class MainView extends React.Component {
         this.onDragStart = this.onDragStart.bind(this);
         this.onDragEnd = this.onDragEnd.bind(this);
 
-        this.onEarthMove = this.onEarthMove.bind(this);
+        this.onSunMove = this.onSunMove.bind(this);
         this.onObserverPlanetMove = this.onObserverPlanetMove.bind(this);
         this.onTargetPlanetMove = this.onTargetPlanetMove.bind(this);
+        this.onConstellationMove = this.onConstellationMove.bind(this);
+        this.constellationsText = [];
+        this.constellations = [];
         this.sprite = null;
     }
 
     render() {
         return (
             <div className="MainView"
-                ref={(thisDiv) => { this.el = thisDiv; }} />
+                 ref={(thisDiv) => {this.el = thisDiv;}} />
         );
     }
 
@@ -47,27 +51,32 @@ export default class MainView extends React.Component {
             // Size of canvas
             width: 600 * 2,
             height: 460 * 2,
-
-            antialias: true
+            backgroundColor: 0x241B23,
+            antialias: true,
         });
 
         this.el.appendChild(this.app.view);
 
         // Loads all the images
-        this.app.loader.add('observerPlanet', 'img/earth.svg')
-            .add('earth', 'img/sun.png')
-            .add('targetPlanet', 'img/mars.png')
+        this.app.loader
+            .add('sun', 'img/sun-circle.png')
+            .add('observerPlanet', 'img/blue_circle.png')
+	    .add('targetPlanet', 'img/grey_circle.png')
             .add('highlight', 'img/circle-highlight.svg');
 
         const me = this;
         this.app.loader.load((loader, resources) => {
             me.resources = resources;
 
-            me.earth = me.drawEarth(
-                resources.earth);
+            me.arrowToSun = me.drawArrows();
+            me.arrowToTarget = me.drawArrows();
+            me.elongationArc = me.drawArc();
 
-            me.observerPlanetOrbitContainer = me.drawObserverPlanetOrbit();
+            me.sun = me.drawSun(resources.sun);
+
+
             me.targetPlanetOrbitContainer = me.drawTargetPlanetOrbit();
+            me.observerPlanetOrbitContainer = me.drawObserverPlanetOrbit();
 
             me.observerPlanetContainer = me.drawObserverPlanet(
                 resources.observerPlanet, resources.highlight);
@@ -99,12 +108,28 @@ export default class MainView extends React.Component {
                 .on('mousemove', me.onTargetPlanetMove)
                 .on('touchmove', me.onTargetPlanetMove);
 
-            me.arrowToSun = me.drawArrows();
-            me.arrowToTarget = me.drawArrows();
-            me.elongationArc = me.drawArc();
+            me.observerPlanetName = me.drawText (this.props.observerName, me.props.radiusObserverPlanet, false);
+            me.targetPlanetName = me.drawText (this.props.targetName, me.props.radiusTargetPlanet, true);
 
-            me.observerPlanetName = me.drawText(this.props.observerName, me.props.radiusObserverPlanet, false);
-            me.targetPlanetName = me.drawText(this.props.targetName, me.props.radiusTargetPlanet, true);
+
+            me.c1 = me.drawConstellation(Math.PI / 12, 'img/pisces.png', 'Pisces');
+            me.c2 = me.drawConstellation(Math.PI / 4, 'img/capricorn.png', 'Capricorn');
+            me.c3 = me.drawConstellation(5 * Math.PI / 12, 'img/taurus.png', 'Taurus');
+            me.c4 = me.drawConstellation(7 * Math.PI / 12, 'img/gemini.png', 'Gemini');
+            me.c5 = me.drawConstellation(3 * Math.PI / 4, 'img/cancer.png', 'Cancer');
+            me.c6 = me.drawConstellation(11 * Math.PI / 12, 'img/aquarius.png', 'Aquarius');
+            me.c7 = me.drawConstellation(13 * Math.PI / 12, 'img/virgo.png', 'Virgo');
+            me.c8 = me.drawConstellation(5 * Math.PI / 4, 'img/libra.png', 'Libra');
+            me.c9 = me.drawConstellation(17 * Math.PI / 12, 'img/leo.png', 'Leo');
+            me.c10 = me.drawConstellation(19 * Math.PI / 12, 'img/sagittarius.png', 'Sagittarius');
+            me.c11 = me.drawConstellation(7 * Math.PI / 4, 'img/aries.png', 'Aries');
+            me.c12 = me.drawConstellation(23 * Math.PI / 12, 'img/scorpio.png', 'Scorpio');
+            this.constellations.push(me.c1, me.c2, me.c3, me.c4, me.c5, me.c6, me.c7, me.c8, me.c9, me.c10, me.c11, me.c12);
+            for (let index = 0; index < this.constellations.length; index++) {
+                this.constellations[index]
+                    .on('mousemove', me.onConstellationMove)
+                    .on('touchmove', me.onConstellationMove);
+            }
 
             me.start();
         });
@@ -112,9 +137,6 @@ export default class MainView extends React.Component {
 
     componentWillUnmount() {
         this.app.stop();
-    }
-
-    componentDidUpdate(prevProps) {
     }
 
     start() {
@@ -143,10 +165,9 @@ export default class MainView extends React.Component {
             this.props.targetPlanetAngle
         );
 
-        // this.sprite.texture = PIXI.Texture.from('img/earth.svg');
-
         this.updateArrows();
         this.updateArc();
+        this.updateConstellation();
 
         if (this.state.isHoveringOnObserverPlanet || this.draggingObserverPlanet) {
             this.observerPlanetHighlight.visible = true;
@@ -167,7 +188,7 @@ export default class MainView extends React.Component {
         const text = new PIXI.Text(name, {
             fontFamily: 'Garamond',
             fontSize: 45,
-            fill: 0x39696,
+            fill: 0x3BBA9C,
             align: 'center'
         });
 
@@ -181,60 +202,129 @@ export default class MainView extends React.Component {
         text.position.x = 600 - (text.width / 2);
         text.position.y = 460 + radius;
         this.app.stage.addChild(text);
-        // console.log('issa meee', text.width, text.height);
+
         return text;
     }
 
     updateText() {
-        const observerNameY = this.props.radiusObserverPlanet + 8;
-        const targetNameY = this.props.radiusTargetPlanet * -1 - 60;
 
-        const observerNameX = this.observerPlanetName.width;
-        const targetNameX = this.targetPlanetName.width;
+        if (!this.props.labelOrbits) {
+            this.observerPlanetName.text = "";
+            this.targetPlanetName.text = "";
+            return;
+        }
 
-        this.observerPlanetName.x = 600 - 30;
-        this.targetPlanetName.x = 600 - 30;
+        this.observerPlanetName.text = this.props.observerName;
+        this.targetPlanetName.text = this.props.targetName;
 
-        this.observerPlanetName.y = 475 + observerNameY;
-        this.targetPlanetName.y = 475 + targetNameY;
+        let observerNameY = this.props.radiusObserverPlanet + 8;
+        let targetNameY = this.props.radiusTargetPlanet * -1 - 60;
+
+        let observerNameX = this.observerPlanetName.width / 2;
+        let targetNameX = this.targetPlanetName.width / 2;
+
+        this.observerPlanetName.x = 600 - observerNameX;
+        this.targetPlanetName.x = 600 - targetNameX;
+
+        this.observerPlanetName.y = 460 + observerNameY;
+        this.targetPlanetName.y = 460 + targetNameY;
     }
 
     drawArc() {
-        const elongArc = new PIXI.Graphics();
-        elongArc.visible = true;
+        const elongationArc = new PIXI.Graphics();
+        elongationArc.visible = true;
 
-        elongArc.clear();
-        elongArc.lineStyle(2, 0x00FFD2);
-        elongArc.beginFill(0x90f599, 0.7);
-        elongArc.arc(
-            this.observerPlanetContainer.x,
-            this.observerPlanetContainer.y,
+        elongationArc.clear();
+        elongationArc.lineStyle(2, 0xe8c3c3);
+        elongationArc.beginFill(0x99c9ac, 0.7);
+        elongationArc.arc(
+            600,
+            460,
             45,
             this.props.targetAngle,
             this.props.sunAngle,
             true
         );
 
-        this.app.stage.addChild(elongArc);
-        return elongArc;
+        this.app.stage.addChild(elongationArc);
+        return elongationArc;
     }
 
     updateArc() {
+
         this.elongationArc.clear();
-        this.elongationArc.lineStyle(2, 0x00FFD2);
-        this.elongationArc.beginFill(0x90f599, 0.7);
+        if (!this.props.showElongation) {
+            return;
+        }
+
+        this.elongationArc.clear();
+        this.elongationArc.lineStyle(3.5, 0xa64e4e);
         this.elongationArc.moveTo(this.observerPlanetContainer.x, this.observerPlanetContainer.y);
+        let east = this.greaterThan180();
         this.elongationArc.arc(
             this.observerPlanetContainer.x,
             this.observerPlanetContainer.y,
             45,
             -this.props.targetAngle,
             -this.props.sunAngle,
-            this.greaterThan180()
+            east
         );
+
+        this.updateArcArrow(east);
+
         // let tar = this.props.targetAngle * 180 / Math.PI;
         // let sunn = this.props.sunAngle * 180 / Math.PI;
         // console.log('mars and sun angles: ', tar, sunn);
+    }
+
+    updateArcArrow(east) {
+        if (east) {
+            this.halfArrow(-0.18, -10.2, 77);
+            this.halfArrow(-0.18, 10.2, 103);
+        } else {
+            this.halfArrow(0.18, 10.2, 77);
+            this.halfArrow(0.18, -10.2, 103);
+        }
+    }
+
+    halfArrow(angleShift, angleReverse, rad) {
+
+        this.elongationArc.lineStyle(3.5, 0xa64e4e);
+        let smt = getPlanetPos(
+            this.props.radiusObserverPlanet,
+            this.props.observerPlanetAngle
+        );
+
+        let startX = smt.x;
+        let startY = smt.y;
+
+        let receive = this.closerY(angleShift, rad);
+        let endX = receive.x;
+        let endY = receive.y;
+
+        let centrePointX = ((startX + endX) / 2.0);
+        let centrePointY = ((startY + endY) / 2.0);
+
+        let angle = Math.atan2(endY - startY, endX - startX) + angleReverse;
+        let dist = 10;
+
+        this.elongationArc.moveTo((Math.sin(angle) * dist + centrePointX), (-Math.cos(angle) * dist + centrePointY));
+        this.elongationArc.lineTo((-Math.sin(angle) * dist + centrePointX), (Math.cos(angle) * dist + centrePointY));
+    }
+
+    closerY (angleShift, rad) {
+        let smt = getPlanetPos(
+            this.props.radiusTargetPlanet,
+            this.props.targetPlanetAngle
+        );
+
+        let angle = Math.atan2(smt.y - this.observerPlanetContainer.y, smt.x - this.observerPlanetContainer.x) + angleShift;
+
+        let radius = rad;
+        let y = radius * Math.sin(angle);
+        let x = radius * Math.cos(angle);
+
+        return new PIXI.Point(this.observerPlanetContainer.x + x, this.observerPlanetContainer.y + y);
     }
 
     greaterThan180() {
@@ -255,7 +345,7 @@ export default class MainView extends React.Component {
             differenceInAngles += 2 * Math.PI;
         }
 
-        const num = Math.round(differenceInAngles * 180 / Math.PI * 10) / 10;
+        let num = Math.round(differenceInAngles * 180 / Math.PI * 10) / 10;
 
         if (num > 180) {
             return true;
@@ -264,21 +354,25 @@ export default class MainView extends React.Component {
         return false;
     }
 
-    drawArrows() {
+    drawArrows () {
         const g = new PIXI.Graphics();
         g.visible = false;
 
         g.clear();
-        g.lineStyle(2, 0x00FFD2);
-        g.beginFill(0xffe200, 0.7);
+        g.lineStyle(4.0, 0xedb7b7);
+        g.beginFill(0x99c9ac, 0.7);
 
         this.app.stage.addChild(g);
         return g;
     }
 
-    updateArrows() {
+    updateArrows () {
         this.arrowToSun.clear();
         this.arrowToTarget.clear();
+
+        if (!this.props.showElongation) {
+            return;
+        }
 
         this.arrowToTarget.moveTo(
             this.observerPlanetContainer.x,
@@ -291,12 +385,12 @@ export default class MainView extends React.Component {
         );
 
         this.arrowToTarget.visible = true;
-        this.arrowToTarget.lineStyle(2, 0x00f2ff);
-        this.arrowToTarget.beginFill(0x00f2ff, 0.7);
+        this.arrowToTarget.lineStyle(3.5, 0xa64e4e);
+        // this.arrowToTarget.beginFill(0x99c9ac, 0.7);
 
         this.arrowToSun.visible = true;
-        this.arrowToSun.lineStyle(2, 0x00f2ff);
-        this.arrowToSun.beginFill(0x00f2ff, 0.7);
+        this.arrowToSun.lineStyle(3.5, 0xa64e4e);
+        // this.arrowToSun.beginFill(0x99c9ac, 0.7);
 
         this.arrowToTarget.lineTo(
             this.targetPlanetContainer.x,
@@ -304,8 +398,8 @@ export default class MainView extends React.Component {
         );
 
         this.arrowToSun.lineTo(
-            this.earth.x,
-            this.earth.y
+            this.sun.x,
+            this.sun.y
         );
     }
 
@@ -328,7 +422,6 @@ export default class MainView extends React.Component {
         this.app.stage.addChild(graphicsObserverPlanet);
         return graphicsObserverPlanet;
     }
-
     drawTargetPlanetOrbit() {
         const graphicsTargetPlanet = new PIXI.Graphics();
         graphicsTargetPlanet.lineStyle(2, 0xffffff);
@@ -388,24 +481,57 @@ export default class MainView extends React.Component {
         return targetPlanetContainer;
     }
 
-    drawEarth(earthResource) {
-        const earthContainer = new PIXI.Container();
-        earthContainer.pivot = this.orbitCenter;
-        earthContainer.name = 'earth';
-        earthContainer.buttonMode = true;
-        earthContainer.interactive = true;
-        earthContainer.position = this.orbitCenter;
+    drawSun(sunResource) {
+        const sunContainer = new PIXI.Container();
+        sunContainer.pivot = this.orbitCenter;
+        sunContainer.name = 'sun';
+        sunContainer.position = this.orbitCenter;
 
-        const earth = new PIXI.Sprite(earthResource.texture);
-        earth.width = 40 * 2;
-        earth.height = 40 * 2;
-        earth.position = this.orbitCenter;
-        earth.anchor.set(0.5);
-        earth.rotation = -0.9;
-        earthContainer.addChild(earth);
+        const sun = new PIXI.Sprite(sunResource.texture);
+        sun.width = 40 * 2;
+        sun.height = 40 * 2;
+        sun.position = this.orbitCenter;
+        sun.anchor.set(0.5);
+        sun.rotation = -0.9;
+        sunContainer.addChild(sun);
 
-        this.app.stage.addChild(earthContainer);
-        return earthContainer;
+        this.app.stage.addChild(sunContainer);
+        return sunContainer;
+    }
+
+    drawConstellation(angle, img, name) {
+        const constellation = new PIXI.Sprite(PIXI.Texture.from(img));
+        constellation.name = name;
+        // constellation.buttonMode = true;
+        constellation.interactive = true;
+        constellation.width = 50 * 2;
+        constellation.height = 40 * 2;
+        constellation.anchor.set(0.5);
+
+        const constellationName = new PIXI.Text(name, {
+            fontFamily: 'Garamond',
+            fontSize: 400,
+            // fill: 0xe4d1a0,
+            fill: 0xFFD700
+        });
+
+        constellationName.visible = false;
+        constellationName.anchor.set(0.5);
+        constellationName.position.x = 350;
+        constellationName.position.y = 200;
+        this.constellationsText.push(constellationName);
+        constellation.addChild(constellationName);
+
+        constellation.position = getPlanetPos(420, angle);
+
+        this.app.stage.addChild(constellation);
+        return constellation;
+    }
+
+    updateConstellation() {
+        for (let index = 0; index < this.constellations.length; index++) {
+            this.constellations[index].visible = this.props.zoomOut;
+        }
     }
 
     onDragStart(event) {
@@ -414,8 +540,8 @@ export default class MainView extends React.Component {
         this.data = event.data;
         this.dragStartPos = this.data.getLocalPosition(this.app.stage);
 
-        if (event.target.name === 'earth') {
-            this.draggingEarth = true;
+        if (event.target.name === 'sun') {
+            this.draggingSun = true;
         } else if (event.target.name === 'observerPlanet') {
             this.draggingObserverPlanet = true;
         } else if (event.target.name === 'targetPlanet') {
@@ -424,35 +550,34 @@ export default class MainView extends React.Component {
     }
 
     onDragEnd() {
-        this.draggingEarth = false;
+        this.draggingSun = false;
         this.draggingObserverPlanet = false;
         this.draggingTargetPlanet = false;
         // set the interaction data to null
         this.data = null;
     }
 
-    onEarthMove(e) {
-        if (e.target && e.target.name === 'earth' &&
-            !this.state.isHoveringOnEarth &&
+    onSunMove(e) {
+        if (e.target && e.target.name === 'sun' &&
+            !this.state.isHoveringOnSun &&
             !this.draggingObserverPlanet &&
             !this.draggingTargetPlanet
-        ) {
-            this.setState({ isHoveringOnEarth: true });
+           ) {
+            this.setState({isHoveringOnSun: true});
         }
-        if (!e.target && this.state.isHoveringOnEarth) {
-            this.setState({ isHoveringOnEarth: false });
+        if (!e.target && this.state.isHoveringOnSun) {
+            this.setState({isHoveringOnSun: false});
         }
     }
 
     onObserverPlanetMove(e) {
         if (e.target && e.target.name === 'observerPlanet' &&
-            !this.state.isHoveringOnObserverPlanet &&
-            !this.draggingEarth
-        ) {
-            this.setState({ isHoveringOnObserverPlanet: true });
+            !this.state.isHoveringOnObserverPlanet
+           ) {
+            this.setState({isHoveringOnObserverPlanet: true});
         }
         if (!e.target && this.state.isHoveringOnObserverPlanet) {
-            this.setState({ isHoveringOnObserverPlanet: false });
+            this.setState({isHoveringOnObserverPlanet: false});
         }
 
         if (this.draggingObserverPlanet) {
@@ -461,9 +586,9 @@ export default class MainView extends React.Component {
             // This angle starts at the center of the orbit. It's the
             // difference, in radians, between where the cursor was and
             // where it is now.
-            const vAngle =
+            let vAngle =
                 -1 * Math.atan2(newPosition.y - this.orbitCenter.y,
-                    newPosition.x - this.orbitCenter.x);
+                                newPosition.x - this.orbitCenter.x);
 
             this.props.onObserverPlanetAngleUpdate(vAngle);
         }
@@ -471,23 +596,43 @@ export default class MainView extends React.Component {
 
     onTargetPlanetMove(e) {
         if (e.target && e.target.name === 'targetPlanet' &&
-            !this.state.isHoveringOnTargetPlanet &&
-            !this.draggingEarth
-        ) {
-            this.setState({ isHoveringOnTargetPlanet: true });
+            !this.state.isHoveringOnTargetPlanet
+           ) {
+            this.setState({isHoveringOnTargetPlanet: true});
         }
         if (!e.target && this.state.isHoveringOnTargetPlanet) {
-            this.setState({ isHoveringOnTargetPlanet: false });
+            this.setState({isHoveringOnTargetPlanet: false});
         }
 
         if (this.draggingTargetPlanet) {
             const newPosition = this.data.getLocalPosition(this.app.stage);
 
             const vAngle =
-                -1 * Math.atan2(newPosition.y - this.orbitCenter.y,
-                    newPosition.x - this.orbitCenter.x);
+                  -1 * Math.atan2(newPosition.y - this.orbitCenter.y,
+                                  newPosition.x - this.orbitCenter.x);
 
             this.props.onTargetPlanetAngleUpdate(vAngle);
+        }
+    }
+
+    onConstellationMove(e) {
+        if (e.target && !this.state.isHoveringOnConstellation) {
+            for (let index = 0; index < this.constellationsText.length; index++) {
+                let constellation = this.constellations[index];
+                console.log('names:', e.target.name, constellation.name);
+                if (e.target.name === constellation.name) {
+                    this.constellationsText[index].visible = true;
+                    this.setState({isHoveringOnConstellation: true});
+                    break;
+                }
+            }
+        }
+
+        if (!e.target && this.state.isHoveringOnConstellation) {
+            this.setState({isHoveringOnConstellation: false});
+            for (let index = 0; index < this.constellationsText.length; index++) {
+                this.constellationsText[index].visible = false;
+            }
         }
     }
 }

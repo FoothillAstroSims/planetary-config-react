@@ -10,57 +10,128 @@
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" rel="stylesheet" />
     <style type="text/css">
         html {
-            background: rgb(17, 62, 68);
+            background:rgb(123,134,164);
         }
 
         body>.container {
-            background: rgb(17, 62, 68);
+            background: rgb(123,134,164);
             width: 960px;
         }
 
         #sim-container {
-            background: rgb(17, 62, 68);
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            -khtml-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
+            background: rgb(123,134,164);
             user-select: none;
             width: 930px;
         }
 
         .rowx {
-            background: rgb(17, 62, 68);
+            background: rgb(123,134,164);
             display: inline-block;
-            width: 250px;
+            width: 307px;
+        }
+
+        .controls {
+            background: rgb(153, 201,172);
+            margin-bottom: 15px;
+            border: 2px solid rgb(5, 37, 56)
         }
 
         .col {
-            background: rgb(120, 165, 110);
+            background: rgb(153, 201,172);
             margin-bottom: 10px;
-            border: 3px solid rgb(5, 37, 56);
+            border: 2px solid rgb(5, 37, 56);
+        }
+
+        .col .presets .controls {
+
+            display: inline-block;
         }
 
         .bot {
             position: relative;
             left: 16px;
-            color: rgb(255, 80, 80);
         }
 
-        .col .presets {
+        .input[type="number"] {
+            width: 52px;
+            border-radius: 2px;
+        }
+
+        .observerInput {
+            display: inline-block;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            max-width: 30%;
+        }
+
+        .observerSlider {
+            display: inline-block;
+            margin-left: 5px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            max-width: 30%;
+        }
+
+        .observerPresets {
+            display: inline-block;
+            margin-left: 50px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            max-width: 30%;
+        }
+
+        .targetInput {
+            display: inline-block;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            max-width: 30%;
+        }
+
+        .targetSlider {
+            display: inline-block;
+            margin-left: 5px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            max-width: 30%;
+        }
+
+        .targetPresets {
+            display: inline-block;
+            margin-left: 50px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            max-width: 30%;
+        }
+
+        .animationText {
+            display: inline-block;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            max-width: 30%;
+        }
+
+        .animationSlider {
+            display: inline-block;
+            margin-left: 5px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            max-width: 30%;
+        }
+
+        .animationButton {
+            display: inline-block;
+            margin-left: 50px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            max-width: 30%;
+        }
+
+        #radP #radText {
             display: inline-block;
         }
-
-/*	.form-inline {
-	    display: inline-block;
-	} */
-
-	#radP #radText {
-	    display: inline-block;
-	}
-	
+        
         body {
-            background: rgb(17, 62, 68);
+            background: rgb(123,134,164);
         }
 
         /* .increment-area button {
@@ -69,32 +140,13 @@
        } */
 
         .MainView>canvas {
-
             background: rgb(20, 20, 170);
             width: 600px;
             height: 460px;
         }
+        
 
-        .floating_debug_table {
-            position: fixed;
-            top: 0;
-            left: 0;
-            border: 2px solid white;
-            opacity: 0.7;
-            background: darkred;
-            color: white;
-            font-family: monospace;
-        }
-        .floating_debug_th {
-            text-align: center;
-        }
-        .floating_debug_td {
-            padding: 0em 0.5em;
-            border: 1px solid white;
-        }
-        .floating_debug_td_values {
-            text-align: right;
-        }
+        
     </style>
 </head>
 
