@@ -214,6 +214,14 @@ export default class MainView extends React.Component {
             return;
         }
 
+        if (this.props.zoomOut) {
+            this.observerPlanetName.style.fontSize = 25;
+            this.targetPlanetName.style.fontSize = 25;
+        } else {
+            this.observerPlanetName.style.fontSize = 45;
+            this.targetPlanetName.style.fontSize = 45;
+        }
+
         this.observerPlanetName.text = this.props.observerName;
         this.targetPlanetName.text = this.props.targetName;
 
@@ -502,7 +510,6 @@ export default class MainView extends React.Component {
     drawConstellation(angle, img, name) {
         const constellation = new PIXI.Sprite(PIXI.Texture.from(img));
         constellation.name = name;
-        // constellation.buttonMode = true;
         constellation.interactive = true;
         constellation.width = 50 * 2;
         constellation.height = 40 * 2;
@@ -511,14 +518,13 @@ export default class MainView extends React.Component {
         const constellationName = new PIXI.Text(name, {
             fontFamily: 'Garamond',
             fontSize: 400,
-            // fill: 0xe4d1a0,
             fill: 0xFFD700
         });
 
         constellationName.visible = false;
         constellationName.anchor.set(0.5);
-        constellationName.position.x = 350;
-        constellationName.position.y = 200;
+        constellationName.position.x = 0;
+        constellationName.position.y = 0;
         this.constellationsText.push(constellationName);
         constellation.addChild(constellationName);
 
