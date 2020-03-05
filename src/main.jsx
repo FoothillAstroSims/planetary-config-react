@@ -15,7 +15,7 @@ class PlanetaryConfigSim extends React.Component {
             radiusTargetPlanet: 2.40,
             radiusPixelObserver: 166.66,
             radiusPixelTarget: 400,
-            maximumPixelRadius: 175,
+            maximumPixelRadius: 400,
             observerMultiplier: Math.pow(1.0, -1.5),
             targetMultiplier:  Math.pow(2.4, -1.5),
             animationRate: 1.5,
