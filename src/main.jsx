@@ -15,7 +15,7 @@ class PlanetaryConfigSim extends React.Component {
             radiusTargetPlanet: 2.40,
             radiusPixelObserver: 166.66,
             radiusPixelTarget: 400,
-            maximumPixelRadius: 175,
+            maximumPixelRadius: 400,
             observerMultiplier: Math.pow(1.0, -1.5),
             targetMultiplier:  Math.pow(2.4, -1.5),
             animationRate: 1.5,
@@ -30,6 +30,8 @@ class PlanetaryConfigSim extends React.Component {
             showElongation: false,
             labelOrbits: true,
             zoomOut: false,
+            startBtnText: 'start animation',
+            isPlaying: false,
 	};
 
 	this.state = this.initialState;
@@ -39,13 +41,8 @@ class PlanetaryConfigSim extends React.Component {
     }
 
     render() {
-        let startBtnText = 'start animation';
-        if (this.state.isPlaying) {
-            startBtnText = 'stop animation';
-        }
-
         return <React.Fragment>
-                 <nav className="navbar navbar-expand-md navbar-light bg-light d-flex justify-content-between">  
+                 <nav className="navbar navbar-expand-md navbar-light bg-light d-flex justify-content-between">
                    <span className="navbar-brand mb-0 h1">Planetary Configurations Simulator</span>
 
                    <ul className="navbar-nav">
@@ -188,7 +185,7 @@ class PlanetaryConfigSim extends React.Component {
                          <button type="button"
                                  className="btn btn-primary btn-sm"
                                  onClick={this.onStartClick.bind(this)}>
-                           {startBtnText}
+                           {this.state.startBtnText}
                          </button>
                        </div>
                      </div>
@@ -278,10 +275,16 @@ class PlanetaryConfigSim extends React.Component {
     onStartClick() {
         if (!this.state.isPlaying) {
             this.raf = requestAnimationFrame(this.animate.bind(this));
-            this.setState({isPlaying: true});
+            this.setState({
+                isPlaying: true,
+                startBtnText: 'stop animation'
+            });
         } else {
             this.stopAnimation();
-            this.setState({isPlaying: false});
+            this.setState({
+                isPlaying: false,
+                startBtnText: 'start animation'
+            });
         }
     }
 
