@@ -54,7 +54,7 @@ export default class ZodiacStrip extends React.Component {
         me.directLine = me.drawLine();
         me.wrapAroundLine = me.drawLine();
 
-        me.text = me.drawText();
+        me.angleText = me.drawAngleText();
         me.sunName = me.drawPlanetText('Sun', me.sunZodiacContainer.x, me.sunZodiacContainer.y);
         me.targetName = me.drawPlanetText('Planet', me.targetPlanetZodiacContainer.x, me.targetPlanetZodiacContainer.y);
         me.zodiacText = me.drawZodiac();
@@ -84,6 +84,7 @@ export default class ZodiacStrip extends React.Component {
         });
 
         // angleText.rotation = degToRad(-90);
+        planetText.resolution = 3;
         planetText.anchor.set(0.5);
         planetText.position.x = x;
         planetText.position.y = y - 60;
@@ -93,7 +94,7 @@ export default class ZodiacStrip extends React.Component {
 
     }
 
-    drawText() {
+    drawAngleText() {
         const angleText = new PIXI.Text('Angle', {
             fontFamily: 'Garamond',
             fontSize: 42,
@@ -101,6 +102,7 @@ export default class ZodiacStrip extends React.Component {
             // fill: 0xFFD700, // gold
         });
 
+        angleText.resolution = 2;
         angleText.anchor.set(0.5);
         angleText.position.x = 300;
         angleText.position.y = 175;
@@ -118,7 +120,7 @@ export default class ZodiacStrip extends React.Component {
             // fill: 0xFFD700, // gold
         });
 
-        // angleText.rotation = degToRad(-90);
+        zodiacText.resolution = 2;
         zodiacText.anchor.set(0.5);
         zodiacText.position.x = 300;
         zodiacText.position.y = 15;
@@ -263,22 +265,22 @@ export default class ZodiacStrip extends React.Component {
             this.drawElongationArrow(this.directLine, 20, 1, size);
         }
 
-        // Does top vertical line for target planet
+        // Does bottom vertical line for target planet
         this.directLine.lineStyle(2, 0xa64e4e);
-        this.directLine.moveTo(this.targetPlanetZodiacContainer.x, this.targetPlanetZodiacContainer.y + 25);
-        this.directLine.lineTo(this.targetPlanetZodiacContainer.x, this.targetPlanetZodiacContainer.y + 50);
+        this.directLine.moveTo(this.targetPlanetZodiacContainer.x, this.targetPlanetZodiacContainer.y + 20);
+        this.directLine.lineTo(this.targetPlanetZodiacContainer.x, this.targetPlanetZodiacContainer.y + 65);
 
-        // Does bottom vertical line for sun planet
+        // Does bottom vertical line for sun 
         this.directLine.lineStyle(2, 0xa64e4e);
         this.directLine.moveTo(this.sunZodiacContainer.x, this.sunZodiacContainer.y + 25);
-        this.directLine.lineTo(this.sunZodiacContainer.x, this.sunZodiacContainer.y + 50);
+        this.directLine.lineTo(this.sunZodiacContainer.x, this.sunZodiacContainer.y + 65);
 
         // Does top vertical line for target planet
         this.directLine.lineStyle(2, 0xa64e4e);
         this.directLine.moveTo(this.targetPlanetZodiacContainer.x, this.targetPlanetZodiacContainer.y - 20);
         this.directLine.lineTo(this.targetPlanetZodiacContainer.x, this.targetPlanetZodiacContainer.y - 35);
 
-        // Does bottom vertical line for sun
+        // Does top vertical line for sun
         this.directLine.lineStyle(2, 0xa64e4e);
         this.directLine.moveTo(this.sunZodiacContainer.x, this.sunZodiacContainer.y - 25);
         this.directLine.lineTo(this.sunZodiacContainer.x, this.sunZodiacContainer.y - 50);
@@ -302,9 +304,11 @@ export default class ZodiacStrip extends React.Component {
         line.moveTo(this.targetPlanetZodiacContainer.x + actualXShift, this.targetPlanetZodiacContainer.y - downShift + (yShift * 10));
         line.lineTo(this.targetPlanetZodiacContainer.x, this.targetPlanetZodiacContainer.y - downShift+ (-1 * yShift));
     }
+
     updateText(newAngle) {
-        this.text.text = newAngle;
+        this.angleText.text = newAngle;
     }
+
     updateZodiacBodyPos(longitude, body, width) {
      	let angle = longitude / (2 * Math.PI);
 

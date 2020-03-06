@@ -51,7 +51,7 @@ export default class MainView extends React.Component {
             // Size of canvas
             width: 600 * 2,
             height: 460 * 2,
-            backgroundColor: 0x241B23,
+            backgroundColor: 0x241b23,
             antialias: true,
         });
 
@@ -187,8 +187,8 @@ export default class MainView extends React.Component {
     drawText(name, bodyRadius, target) {
         const text = new PIXI.Text(name, {
             fontFamily: 'Garamond',
-            fontSize: 45,
-            fill: 0x3BBA9C,
+            fontSize: 42,
+            fill: 0x99c9ac,
             align: 'center'
         });
 
@@ -199,6 +199,7 @@ export default class MainView extends React.Component {
             radius -= 60;
         }
 
+        text.resolution = 2;
         text.position.x = 600 - (text.width / 2);
         text.position.y = 460 + radius;
         this.app.stage.addChild(text);
@@ -215,11 +216,11 @@ export default class MainView extends React.Component {
         }
 
         if (this.props.zoomOut) {
-            this.observerPlanetName.style.fontSize = 25;
-            this.targetPlanetName.style.fontSize = 25;
+            this.observerPlanetName.style.fontSize = 30;
+            this.targetPlanetName.style.fontSize = 30;
         } else {
-            this.observerPlanetName.style.fontSize = 45;
-            this.targetPlanetName.style.fontSize = 45;
+            this.observerPlanetName.style.fontSize = 42;
+            this.targetPlanetName.style.fontSize = 42;
         }
 
         this.observerPlanetName.text = this.props.observerName;
@@ -244,7 +245,7 @@ export default class MainView extends React.Component {
 
         elongationArc.clear();
         elongationArc.lineStyle(2, 0xe8c3c3);
-        elongationArc.beginFill(0x99c9ac, 0.7);
+        // elongationArc.beginFill(0x99c9ac, 0.7);
         elongationArc.arc(
             600,
             460,
@@ -364,7 +365,7 @@ export default class MainView extends React.Component {
 
         g.clear();
         g.lineStyle(4.0, 0xedb7b7);
-        g.beginFill(0x99c9ac, 0.7);
+        // g.beginFill(0x99c9ac, 0.7);
 
         this.app.stage.addChild(g);
         return g;
@@ -397,13 +398,13 @@ export default class MainView extends React.Component {
         // this.arrowToSun.beginFill(0x99c9ac, 0.7);
 
         this.arrowToTarget.lineTo(
-            this.targetPlanetContainer.x,
-            this.targetPlanetContainer.y
+            this.targetPlanetContainer.x, 
+            this.targetPlanetContainer.y,
         );
 
         this.arrowToSun.lineTo(
             this.sun.x,
-            this.sun.y
+            this.sun.y,
         );
     }
 
@@ -509,24 +510,24 @@ export default class MainView extends React.Component {
         constellation.interactive = true;
         constellation.width = 50 * 2;
         constellation.height = 40 * 2;
+        constellation.alpha = 0.5;  // opacity
         constellation.anchor.set(0.5);
+        this.app.stage.addChild(constellation);
 
         const constellationName = new PIXI.Text(name, {
+            align: 'center',
+            fontSize: 36,
             fontFamily: 'Garamond',
-            fontSize: 400,
-            fill: 0xFFD700
+            fill: 0xffd700,
         });
-
         constellationName.visible = false;
+        constellationName.resolution = 2;
         constellationName.anchor.set(0.5);
-        constellationName.position.x = 0;
-        constellationName.position.y = 0;
-        this.constellationsText.push(constellationName);
-        constellation.addChild(constellationName);
-
         constellation.position = getPlanetPos(420, angle);
+        constellationName.position = getPlanetPos(320, angle);
+        this.constellationsText.push(constellationName);
+        this.app.stage.addChild(constellationName);
 
-        this.app.stage.addChild(constellation);
         return constellation;
     }
 
