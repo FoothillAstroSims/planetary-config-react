@@ -21,13 +21,14 @@ class PlanetaryConfigSim extends React.Component {
             animationRate: 1.5,
             targetAngle: 0,
             sunAngle: -Math.PI,
+            elongAng: -Math.PI,
             optionObserver: 0,
             optionTarget: 0,
             observerName: 'observer planet',
             targetName: 'target planet',
             holdObserver: 1.00,
             holdTarget: 2.40,
-            showElongation: false,
+            showElongation: true,
             labelOrbits: true,
             zoomOut: false,
             startBtnText: 'start animation',
@@ -69,6 +70,7 @@ class PlanetaryConfigSim extends React.Component {
                        stopAnimation={this.stopAnimation}
                        targetAngle={this.state.targetAngle}
                        sunAngle={this.state.sunAngle}
+                       elongAng={this.state.elongAng}
                        targetName={this.state.targetName}
                        observerName={this.state.observerName}
                        labelOrbits={this.state.labelOrbits}
@@ -288,10 +290,11 @@ class PlanetaryConfigSim extends React.Component {
         }
     }
 
-    updateAngles(targetAng, sunAng) {
+    updateAngles(targetAng, sunAng, elongAng) {
         this.setState({
             targetAngle: targetAng,
             sunAngle: sunAng,
+            elongAng: elongAng
         });
     }
 
@@ -397,7 +400,10 @@ class PlanetaryConfigSim extends React.Component {
         } else if (e.target.value == 6) {
             this.onObserverPlanetRadiusChange(9.54);
             name = "observer (saturn)";
+        } else {
+            name = "observer planet";
         }
+
 
         this.setState({
             observerName: name,
@@ -430,6 +436,8 @@ class PlanetaryConfigSim extends React.Component {
         } else if (e.target.value == 6) {
             this.onTargetPlanetRadiusChange(9.54);
             name = "target (saturn)";
+        } else if (e.target.value == 7) {
+            name = "target planet";
         }
 
         this.setState({

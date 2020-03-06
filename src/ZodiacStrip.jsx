@@ -172,7 +172,6 @@ export default class ZodiacStrip extends React.Component {
         cancelAnimationFrame(this.frameId);
     }
     getElongationAngle() {
-
         let observerPos = getPlanetPos(this.props.radiusObserverPlanet, this.props.observerPlanetAngle);
         let targetPos = getPlanetPos(this.props.radiusTargetPlanet, this.props.targetPlanetAngle);
         let sunPos = new PIXI.Point(0, 0);
@@ -197,7 +196,8 @@ export default class ZodiacStrip extends React.Component {
         this.targetPlanetLongitude = targetPlanetAngle;
         this.sunLongitude = sunAngle;
 
-        this.props.updateAngles(targetPlanetAngle, sunAngle);
+        let holdSunAng = sunAngle;
+        let holdTargetPlanetAng = targetPlanetAngle;
 
         if (-Math.PI < sunAngle && sunAngle < 0) {
             sunAngle += 2 * Math.PI;
@@ -213,6 +213,15 @@ export default class ZodiacStrip extends React.Component {
             elongationAngle += 2 * Math.PI;
         }
 
+        let propsElongAngle = elongationAngle;
+
+        if (propsElongAngle > Math.PI) {
+            let temp = propsElongAngle - Math.PI;
+            propsElongAngle -= temp * 2;
+        }
+
+        this.props.updateAngles(holdSunAng, holdTargetPlanetAng, propsElongAngle);
+
         return elongationAngle;
     }
     getDistance(targetPos, observerPos) {
@@ -225,7 +234,8 @@ export default class ZodiacStrip extends React.Component {
     updateLine(elongationAngle) {
         this.wrapAroundLine.clear();
         this.directLine.clear();
-        let downShift = -50;
+        let downShift = -40;
+        let xS = 17;
 
         this.directLine.moveTo(this.sunZodiacContainer.x, this.sunZodiacContainer.y - downShift);
         this.directLine.visible = true;
@@ -238,6 +248,7 @@ export default class ZodiacStrip extends React.Component {
         let sunX = this.sunZodiacContainer.x;
 
         if (elongationAngle >= 180) {
+
             if (sunX < targetX) {
                 this.directLine.lineTo(this.targetPlanetZodiacContainer.x, this.targetPlanetZodiacContainer.y - downShift);
             } else if (sunX > targetX) {
@@ -247,8 +258,8 @@ export default class ZodiacStrip extends React.Component {
                 this.wrapAroundLine.lineTo(this.targetPlanetZodiacContainer.x, this.targetPlanetZodiacContainer.y - downShift);
             }
             let size = Math.abs(sunX - targetX);
-            this.drawElongationArrow(this.directLine, -20, 1, size);
-            this.drawElongationArrow(this.directLine, -20, -1, size);
+            this.drawElongationArrow(this.directLine, -xS, 1, size);
+            this.drawElongationArrow(this.directLine, -xS, -1, size);
         } else if (elongationAngle < 180) {
             if (sunX > targetX) {
                 this.directLine.lineTo(this.targetPlanetZodiacContainer.x, this.targetPlanetZodiacContainer.y - downShift);
@@ -259,28 +270,28 @@ export default class ZodiacStrip extends React.Component {
                 this.wrapAroundLine.lineTo(this.targetPlanetZodiacContainer.x, this.targetPlanetZodiacContainer.y - downShift);
             }
             let size = Math.abs(sunX - targetX);
-            this.drawElongationArrow(this.directLine, 20, -1, size);
-            this.drawElongationArrow(this.directLine, 20, 1, size);
+            this.drawElongationArrow(this.directLine, xS, -1, size);
+            this.drawElongationArrow(this.directLine, xS, 1, size);
         }
 
         // Does top vertical line for target planet
         this.directLine.lineStyle(2, 0xa64e4e);
-        this.directLine.moveTo(this.targetPlanetZodiacContainer.x, this.targetPlanetZodiacContainer.y + 25);
-        this.directLine.lineTo(this.targetPlanetZodiacContainer.x, this.targetPlanetZodiacContainer.y + 50);
+        this.directLine.moveTo(this.targetPlanetZodiacContainer.x, this.targetPlanetZodiacContainer.y + 15);
+        this.directLine.lineTo(this.targetPlanetZodiacContainer.x, this.targetPlanetZodiacContainer.y + 57);
 
         // Does bottom vertical line for sun planet
         this.directLine.lineStyle(2, 0xa64e4e);
-        this.directLine.moveTo(this.sunZodiacContainer.x, this.sunZodiacContainer.y + 25);
-        this.directLine.lineTo(this.sunZodiacContainer.x, this.sunZodiacContainer.y + 50);
+        this.directLine.moveTo(this.sunZodiacContainer.x, this.sunZodiacContainer.y + 15);
+        this.directLine.lineTo(this.sunZodiacContainer.x, this.sunZodiacContainer.y + 57);
 
         // Does top vertical line for target planet
         this.directLine.lineStyle(2, 0xa64e4e);
-        this.directLine.moveTo(this.targetPlanetZodiacContainer.x, this.targetPlanetZodiacContainer.y - 20);
+        this.directLine.moveTo(this.targetPlanetZodiacContainer.x, this.targetPlanetZodiacContainer.y - 15);
         this.directLine.lineTo(this.targetPlanetZodiacContainer.x, this.targetPlanetZodiacContainer.y - 35);
 
         // Does bottom vertical line for sun
         this.directLine.lineStyle(2, 0xa64e4e);
-        this.directLine.moveTo(this.sunZodiacContainer.x, this.sunZodiacContainer.y - 25);
+        this.directLine.moveTo(this.sunZodiacContainer.x, this.sunZodiacContainer.y - 15);
         this.directLine.lineTo(this.sunZodiacContainer.x, this.sunZodiacContainer.y - 50);
 
         this.sunName.x = this.sunZodiacContainer.x;
@@ -293,13 +304,13 @@ export default class ZodiacStrip extends React.Component {
     drawElongationArrow(line, xShift, yShift, size) {
         let actualXShift = xShift;
         let thicc = 2.0;
-        let downShift = -50;
+        let downShift = -40;
         if (size < 30){
             actualXShift = size / 30 * xShift;
             thicc = (size / 30) * 2.0;
         }
         line.lineStyle(thicc, 0xa64e4e);
-        line.moveTo(this.targetPlanetZodiacContainer.x + actualXShift, this.targetPlanetZodiacContainer.y - downShift + (yShift * 10));
+        line.moveTo(this.targetPlanetZodiacContainer.x + actualXShift, this.targetPlanetZodiacContainer.y - downShift + (yShift * 7));
         line.lineTo(this.targetPlanetZodiacContainer.x, this.targetPlanetZodiacContainer.y - downShift+ (-1 * yShift));
     }
     updateText(newAngle) {

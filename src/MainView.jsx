@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import * as PIXI from 'pixi.js';
+import { radToDeg } from './utils';
 
 const getPlanetPos = function(radius, phase) {
     return new PIXI.Point(
@@ -61,7 +62,7 @@ export default class MainView extends React.Component {
         this.app.loader
             .add('sun', 'img/sun-circle.png')
             .add('observerPlanet', 'img/blue-circle.png')
-	        .add('targetPlanet', 'img/grey-circle.png')
+	    .add('targetPlanet', 'img/grey-circle.png')
             .add('highlight', 'img/circle-highlight.svg');
 
         const me = this;
@@ -70,10 +71,9 @@ export default class MainView extends React.Component {
 
             me.arrowToSun = me.drawArrows();
             me.arrowToTarget = me.drawArrows();
-            me.elongationArc = me.drawArc();
 
             me.sun = me.drawSun(resources.sun);
-
+            me.elongationArc = me.drawArc();
 
             me.targetPlanetOrbitContainer = me.drawTargetPlanetOrbit();
             me.observerPlanetOrbitContainer = me.drawObserverPlanetOrbit();
@@ -282,7 +282,7 @@ export default class MainView extends React.Component {
     }
 
     updateArcArrow(east) {
-        if (east) {
+        if (!east) {
             this.halfArrow(-0.18, -10.2, 77);
             this.halfArrow(-0.18, 10.2, 103);
         } else {
@@ -370,7 +370,7 @@ export default class MainView extends React.Component {
         return g;
     }
 
-    updateArrows () {
+    updateArrows() {
         this.arrowToSun.clear();
         this.arrowToTarget.clear();
 
@@ -390,21 +390,107 @@ export default class MainView extends React.Component {
 
         this.arrowToTarget.visible = true;
         this.arrowToTarget.lineStyle(3.5, 0xa64e4e);
-        // this.arrowToTarget.beginFill(0x99c9ac, 0.7);
 
         this.arrowToSun.visible = true;
         this.arrowToSun.lineStyle(3.5, 0xa64e4e);
-        // this.arrowToSun.beginFill(0x99c9ac, 0.7);
 
         this.arrowToTarget.lineTo(
             this.targetPlanetContainer.x,
-            this.targetPlanetContainer.y
+            this.targetPlanetContainer.y,
         );
 
         this.arrowToSun.lineTo(
             this.sun.x,
-            this.sun.y
+            this.sun.y,
         );
+
+        // -----------------------------------------------
+        // Logic for all the arrows through the planets
+
+        // let throughTarget = this.getThroughTarget();
+
+        // this.arrowToTarget.lineTo(throughTarget.x, throughTarget.y);
+
+        // let throughSun = this.arrowThroughBody (
+        //     this.sun.x,
+        //     this.sun.y,
+        //     this.observerPlanetContainer.x,
+        //     this.observerPlanetContainer.y,
+        //     460
+        // )
+
+        // this.arrowToSun.lineTo(
+        //     throughSun.x,
+        //     throughSun.y
+        // );
+    }
+
+    getThroughTarget() {
+        let radTarget = this.props.radiusTargetPlanet;
+        let radObs = this.props.radiusObserverPlanet;
+        if (radTarget > radObs) {
+            return this.arrowThroughBody (
+                this.targetPlanetContainer.x,
+                this.targetPlanetContainer.y,
+                this.observerPlanetContainer.x,
+                this.observerPlanetContainer.y,
+                60
+            );
+        }
+
+        let dZ = 460;
+        let obsX = this.observerPlanetContainer.x - 600;
+        let obsY = this.observerPlanetContainer.y - 460;
+        obsY *= -1;
+
+        let targetX = this.targetPlanetContainer.x - 600;
+        let targetY = this.targetPlanetContainer.y - 460;
+        targetY *= -1;
+
+        let sunX = 0;
+        let sunY = 0;
+
+        let elongationAngle = Math.abs(this.props.elongAng);
+
+        let angleE = Math.abs(Math.atan2(obsY, obsX));
+        let angleP = Math.abs(Math.atan2(targetY, targetX));
+
+        let anglePE = Math.abs(angleP - angleE);
+        let angleSE = Math.abs(Math.PI - anglePE - elongationAngle);
+
+        let dP = Math.pow((Math.pow(targetX, 2) + Math.pow(targetY, 2)), 0.5);
+        let dPE = Math.abs((Math.sin(Math.abs(anglePE)) / Math.sin(elongationAngle)) * dP);
+
+
+        let angleSZ = Math.abs(Math.PI - angleSE);
+
+        let angleSP = Math.abs(Math.abs(Math.asin((dP / dZ)) * Math.abs(Math.sin(angleSZ))));
+        let angleZP = Math.abs(Math.PI - angleSP - angleSZ);
+
+        let dZP = Math.abs((Math.abs(Math.sin(angleZP)) / Math.abs(Math.sin(angleSZ))) * dZ);
+
+        console.log('fuck fuck', (dZP + dPE), dPE, dZP, 'anglepe', anglePE, 'elong', radToDeg(elongationAngle), 'dp', dP, 'angleZP', 'angleSZ', 'angleSE', angleSE);
+
+        // console.log('fuck', dZP, dPE);
+
+        let eclipticLongitude = Math.atan2(
+            this.observerPlanetContainer.y - this.targetPlanetContainer.y,
+            this.observerPlanetContainer.x - this.targetPlanetContainer.x
+        );
+
+        let xZ = -(dZP + dPE) * Math.cos(eclipticLongitude) + this.observerPlanetContainer.x;
+        let yZ = -(dZP + dPE) * Math.sin(eclipticLongitude) + this.observerPlanetContainer.y;
+
+        return new PIXI.Point(xZ, yZ);
+    }
+
+    arrowThroughBody(firstX, firstY, secondX, secondY, scaling) {
+        let ang = Math.atan2((firstY - secondY), (firstX - secondX));
+
+        let finalX = scaling * Math.cos(ang) + firstX;
+        let finalY = scaling * Math.sin(ang) + firstY;
+
+        return new PIXI.Point(finalX, finalY);
     }
 
     updateObserverPlanetOrbit() {
