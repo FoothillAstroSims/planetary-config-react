@@ -128,6 +128,7 @@ export default class ZodiacStrip extends React.Component {
 
         return zodiacText;
     }
+
     drawSunZodiac() {
 
         const sunZodiacContainer = new PIXI.Container();
@@ -145,6 +146,7 @@ export default class ZodiacStrip extends React.Component {
         return sunZodiacContainer;
 
     }
+
     drawTargetPlanetZodiac() {
 
         const targetPlanetContainer = new PIXI.Container();
@@ -162,17 +164,21 @@ export default class ZodiacStrip extends React.Component {
 
         return targetPlanetContainer;
     }
+
     componentWillUnmount() {
         this.app.stop();
     }
+
     start() {
         if (!this.frameId) {
             this.frameId = requestAnimationFrame(this.animate);
         }
     }
+
     stop() {
         cancelAnimationFrame(this.frameId);
     }
+
     getElongationAngle() {
         let observerPos = getPlanetPos(this.props.radiusObserverPlanet, this.props.observerPlanetAngle);
         let targetPos = getPlanetPos(this.props.radiusTargetPlanet, this.props.targetPlanetAngle);
@@ -226,6 +232,7 @@ export default class ZodiacStrip extends React.Component {
 
         return elongationAngle;
     }
+
     getDistance(targetPos, observerPos) {
         let diffX = Math.pow((targetPos.x - observerPos.x), 2);
         let diffY = Math.pow((targetPos.y - observerPos.y), 2);
@@ -335,6 +342,7 @@ export default class ZodiacStrip extends React.Component {
         angle *= -1;
         body.x = 450 + (angle * (600 + width));
     }
+
     updateZIndex(observer, target) {
 
         if (this.props.radiusObserverPlanet < this.props.radiusTargetPlanet) {
@@ -354,13 +362,6 @@ export default class ZodiacStrip extends React.Component {
             this.app.stage.setChildIndex(this.sunZodiacContainer, 1);
             this.app.stage.setChildIndex(this.targetPlanetZodiacContainer, 2);
         }
-    }
-
-    getDistance(firstBody, secondBody) {
-        let diffX = Math.pow(firstBody.x - secondBody.x, 2);
-        let diffY = Math.pow(firstBody.y - secondBody.y, 2);
-
-        return Math.pow((diffX + diffY), 0.5);
     }
 
     animate() {
