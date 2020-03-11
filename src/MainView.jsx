@@ -112,19 +112,18 @@ export default class MainView extends React.Component {
             me.targetPlanetName = me.drawText (this.props.targetName, me.props.radiusTargetPlanet, true);
 
 
-            me.c1 = me.drawConstellation(0, 'img/pisces.png', 'Pisces');
-            me.c2 = me.drawConstellation(Math.PI / 6, 'img/aries.png', 'Aries');
-            me.c3 = me.drawConstellation(Math.PI / 3, 'img/taurus.png', 'Taurus');
-            me.c4 = me.drawConstellation(Math.PI / 2, 'img/gemini.png', 'Gemini');
-            me.c5 = me.drawConstellation(2 * Math.PI / 3, 'img/cancer.png', 'Cancer');
-            me.c6 = me.drawConstellation(5 * Math.PI / 6, 'img/leo.png', 'Leo');
-            me.c7 = me.drawConstellation(Math.PI, 'img/virgo.png', 'Virgo');
-            me.c8 = me.drawConstellation(7 * Math.PI / 6, 'img/libra.png', 'Libra');
-            me.c9 = me.drawConstellation(4 * Math.PI / 3, 'img/scorpio.png', 'Scorpio');
-            me.c10 = me.drawConstellation(3 * Math.PI / 2, 'img/sagittarius.png', 'Sagittarius');
-            me.c11 = me.drawConstellation(5 * Math.PI / 3, 'img/capricorn.png', 'Capricorn');
-            me.c12 = me.drawConstellation(11 * Math.PI / 6, 'img/aquarius.png', 'Aquarius');
-            this.constellations.push(me.c1, me.c2, me.c3, me.c4, me.c5, me.c6, me.c7, me.c8, me.c9, me.c10, me.c11, me.c12);
+            me.constellations.push(me.drawConstellation(0, 'img/pisces.png', 'Pisces'));
+            me.constellations.push(me.drawConstellation(Math.PI / 6, 'img/aries.png', 'Aries'));
+            me.constellations.push(me.drawConstellation(Math.PI / 3, 'img/taurus.png', 'Taurus'));
+            me.constellations.push(me.drawConstellation(Math.PI / 2, 'img/gemini.png', 'Gemini'));
+            me.constellations.push(me.drawConstellation(2 * Math.PI / 3, 'img/cancer.png', 'Cancer'));
+            me.constellations.push(me.drawConstellation(5 * Math.PI / 6, 'img/leo.png', 'Leo'));
+            me.constellations.push(me.drawConstellation(Math.PI, 'img/virgo.png', 'Virgo'));
+            me.constellations.push(me.drawConstellation(7 * Math.PI / 6, 'img/libra.png', 'Libra'));
+            me.constellations.push(me.drawConstellation(4 * Math.PI / 3, 'img/scorpio.png', 'Scorpio'));
+            me.constellations.push(me.drawConstellation(3 * Math.PI / 2, 'img/sagittarius.png', 'Sagittarius'));
+            me.constellations.push(me.drawConstellation(5 * Math.PI / 3, 'img/capricorn.png', 'Capricorn'));
+            me.constellations.push(me.drawConstellation(11 * Math.PI / 6, 'img/aquarius.png', 'Aquarius'));
             for (let index = 0; index < this.constellations.length; index++) {
                 this.constellations[index]
                     .on('mousemove', me.onConstellationMove)
@@ -316,7 +315,7 @@ export default class MainView extends React.Component {
         this.elongationArc.lineTo((-Math.sin(angle) * dist + centrePointX), (Math.cos(angle) * dist + centrePointY));
     }
 
-    closerY (angleShift, rad) {
+    closerY(angleShift, rad) {
         let smt = getPlanetPos(
             this.props.radiusTargetPlanet,
             this.props.targetPlanetAngle
@@ -358,7 +357,7 @@ export default class MainView extends React.Component {
         return false;
     }
 
-    drawArrows () {
+    drawArrows() {
         const g = new PIXI.Graphics();
         g.visible = false;
 
@@ -371,6 +370,13 @@ export default class MainView extends React.Component {
     }
 
     updateArrows() {
+
+        let arrowRadius = 450;
+        let zoomArrowRad = 50;
+        if (this.props.zoomOut) {
+            arrowRadius = 250;
+            zoomArrowRad = 75;
+        }
         this.arrowToSun.clear();
         this.arrowToTarget.clear();
 
@@ -394,94 +400,105 @@ export default class MainView extends React.Component {
         this.arrowToSun.visible = true;
         this.arrowToSun.lineStyle(3.5, 0xa64e4e);
 
-        // this.arrowToTarget.lineTo(
-        //     this.targetPlanetContainer.x,
-        //     this.targetPlanetContainer.y,
-        // );
+        let throughTarget = this.getThroughTarget(arrowRadius, zoomArrowRad);
 
-        // this.arrowToSun.lineTo(
-        //     this.sun.x,
-        //     this.sun.y,
-        // );
-
-        // -----------------------------------------------
-        // Logic for all the arrows through the planets
-
-        let throughTarget = this.getThroughTarget();
-
-        this.arrowToTarget.lineTo(
-            throughTarget.x, 
-            throughTarget.y
-        );
+        this.arrowToTarget.lineTo(throughTarget.x, throughTarget.y);
 
         let throughSun = this.arrowThroughBody (
             this.sun.x,
             this.sun.y,
             this.observerPlanetContainer.x,
             this.observerPlanetContainer.y,
-            450
+            arrowRadius
         )
 
         this.arrowToSun.lineTo(
             throughSun.x,
             throughSun.y
         );
+
+        let xS = 17;
+
+        // this.drawArrow(this.arrowToSun, throughSun, xS, 1);
+        // this.drawArrow(this.arrowToSun, throughSun, xS, -1);
+
+        // this.drawArrow(this.arrowToTarget, throughTarget, -xS, 1);
+        // this.drawArrow(this.arrowToTarget, throughTarget, -xS, -1);
+
+        // this.drawArrow(this.arrowToTarget, throughTarget, 0.18, 10.2, 77);
+        // this.drawArrow(this.arrowToTarget, throughTarget, 0.18, -10.2, 103);
     }
 
-    getThroughTarget() {
+    drawArrow(line, point, angleShift, angleReverse, rad) {
+        line.lineStyle(3.5, 0xa64e4e);
+
+        let startX = point.x;
+        let startY = point.y;
+
+        let receive = this.closer(point, angleShift, rad);
+        let endX = receive.x;
+        let endY = receive.y;
+
+        let centrePointX = ((startX + endX) / 2.0);
+        let centrePointY = ((startY + endY) / 2.0);
+
+        let angle = Math.atan2(endY - startY, endX - startX) + angleReverse;
+        let dist = 10;
+
+        line.moveTo((Math.sin(angle) * dist + centrePointX), (-Math.cos(angle) * dist + centrePointY));
+        line.lineTo((-Math.sin(angle) * dist + centrePointX), (Math.cos(angle) * dist + centrePointY));
+    }
+
+    closer(point, angleShift, rad) {
+        let angle = Math.atan2(this.targetPlanetContainer.y, this.targetPlanetContainer.x) + angleShift;
+
+        let radius = rad;
+        let y = radius * Math.sin(angle);
+        let x = radius * Math.cos(angle);
+
+        return new PIXI.Point(point.x + x, point.y + y);
+    }
+
+    getThroughTarget(arrowRadius, zoomedArrowRadius) {
         let radTarget = this.props.radiusTargetPlanet;
         let radObs = this.props.radiusObserverPlanet;
+        let Xe = this.observerPlanetContainer.x;
+        let Ye = this.observerPlanetContainer.y;
+        let Xt = this.targetPlanetContainer.x;
+        let Yt = this.targetPlanetContainer.y;
         if (radTarget > radObs) {
             return this.arrowThroughBody (
-                this.targetPlanetContainer.x,
-                this.targetPlanetContainer.y,
-                this.observerPlanetContainer.x,
-                this.observerPlanetContainer.y,
-                50
+                Xt,
+                Yt,
+                Xe,
+                Ye,
+                zoomedArrowRadius
             );
         }
+        Xe = Xe - 600;
+        Ye = 460 - Ye;
+        Xt = Xt - 600;
+        Yt = 460 - Yt;
+        let slope = (Yt - Ye) / (Xt - Xe);
+        let b = (Ye - (slope * Xe));
+        let results = this.quadraticEquation(
+            Math.pow(slope, 2) + 1,
+            2 * slope * b,
+            Math.pow(b, 2) - Math.pow(arrowRadius, 2)
+        );
 
-        // let dZ = 460;
-        // let obsX = this.observerPlanetContainer.x - 600;
-        // let obsY = this.observerPlanetContainer.y - 460;
-        // obsY *= -1;
+        let actualX  = results[1];
+        if (this.targetPlanetContainer.x > this.observerPlanetContainer.x) {
+            actualX = results[0];
+        }
+        let actualY = slope * actualX + b;
+        return new PIXI.Point(600 + actualX, 460 - actualY);
+    }
 
-        // let targetX = this.targetPlanetContainer.x - 600;
-        // let targetY = this.targetPlanetContainer.y - 460;
-        // targetY *= -1;
-
-        // let elongationAngle = Math.abs(this.props.elongAng);
-
-        // let angleE = Math.abs(Math.atan2(obsY, obsX));
-        // let angleP = Math.abs(Math.atan2(targetY, targetX));
-
-        // let anglePE = Math.abs(angleP - angleE);
-        // let angleSE = Math.abs(Math.PI - anglePE - elongationAngle);
-
-        // let dP = Math.pow((Math.pow(targetX, 2) + Math.pow(targetY, 2)), 0.5);
-        // let dPE = Math.abs((Math.sin(Math.abs(anglePE)) / Math.sin(elongationAngle)) * dP);
-
-
-        // let angleSZ = Math.abs(Math.PI - angleSE);
-
-        // let angleSP = Math.abs(Math.abs(Math.asin((dP / dZ)) * Math.abs(Math.sin(angleSZ))));
-        // let angleZP = Math.abs(Math.PI - angleSP - angleSZ);
-
-        // let dZP = Math.abs((Math.abs(Math.sin(angleZP)) / Math.abs(Math.sin(angleSZ))) * dZ);
-
-        // console.log('fuck fuck', (dZP + dPE), dPE, dZP, 'anglepe', anglePE, 'elong', radToDeg(elongationAngle), 'dp', dP, 'angleZP', 'angleSZ', 'angleSE', angleSE);
-
-        // // console.log('fuck', dZP, dPE);
-
-        // let eclipticLongitude = Math.atan2(
-        //     this.observerPlanetContainer.y - this.targetPlanetContainer.y,
-        //     this.observerPlanetContainer.x - this.targetPlanetContainer.x
-        // );
-
-        // let xZ = -(dZP + dPE) * Math.cos(eclipticLongitude) + this.observerPlanetContainer.x;
-        // let yZ = -(dZP + dPE) * Math.sin(eclipticLongitude) + this.observerPlanetContainer.y;
-
-        // return new PIXI.Point(xZ, yZ);
+    quadraticEquation(a, b, c) {
+        let result = (-1 * b + Math.sqrt(Math.pow(b, 2) - (4 * a * c))) / (2 * a);
+        let result2 = (-1 * b - Math.sqrt(Math.pow(b, 2) - (4 * a * c))) / (2 * a);
+        return [result, result2];
     }
 
     arrowThroughBody(firstX, firstY, secondX, secondY, scaling) {
@@ -731,5 +748,6 @@ MainView.propTypes = {
     radiusTargetPlanet: PropTypes.number.isRequired,
     onObserverPlanetAngleUpdate: PropTypes.func.isRequired,
     onTargetPlanetAngleUpdate: PropTypes.func.isRequired,
-    stopAnimation: PropTypes.func.isRequired
+    stopAnimation: PropTypes.func.isRequired,
+    showElongation: PropTypes.func.isRequired
 };
