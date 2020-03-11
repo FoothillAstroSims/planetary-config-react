@@ -612,7 +612,7 @@ export default class MainView extends React.Component {
         constellation.interactive = true;
         constellation.width = 50 * 2;
         constellation.height = 40 * 2;
-        constellation.alpha = 0.75;  // opacity
+        constellation.alpha = 0.64;  // opacity
         constellation.anchor.set(0.5);
         this.app.stage.addChild(constellation);
 
