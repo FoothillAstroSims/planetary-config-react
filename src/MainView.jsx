@@ -62,7 +62,7 @@ export default class MainView extends React.Component {
         this.app.loader
             .add('sun', 'img/sun-circle.png')
             .add('observerPlanet', 'img/blue-circle.png')
-	    .add('targetPlanet', 'img/grey-circle.png')
+	        .add('targetPlanet', 'img/grey-circle.png')
             .add('highlight', 'img/circle-highlight.svg');
 
         const me = this;
@@ -208,7 +208,6 @@ export default class MainView extends React.Component {
     }
 
     updateText() {
-
         if (!this.props.labelOrbits) {
             this.observerPlanetName.text = "";
             this.targetPlanetName.text = "";
@@ -395,35 +394,38 @@ export default class MainView extends React.Component {
         this.arrowToSun.visible = true;
         this.arrowToSun.lineStyle(3.5, 0xa64e4e);
 
-        this.arrowToTarget.lineTo(
-            this.targetPlanetContainer.x,
-            this.targetPlanetContainer.y,
-        );
+        // this.arrowToTarget.lineTo(
+        //     this.targetPlanetContainer.x,
+        //     this.targetPlanetContainer.y,
+        // );
 
-        this.arrowToSun.lineTo(
-            this.sun.x,
-            this.sun.y,
-        );
+        // this.arrowToSun.lineTo(
+        //     this.sun.x,
+        //     this.sun.y,
+        // );
 
         // -----------------------------------------------
         // Logic for all the arrows through the planets
 
-        // let throughTarget = this.getThroughTarget();
+        let throughTarget = this.getThroughTarget();
 
-        // this.arrowToTarget.lineTo(throughTarget.x, throughTarget.y);
+        this.arrowToTarget.lineTo(
+            throughTarget.x, 
+            throughTarget.y
+        );
 
-        // let throughSun = this.arrowThroughBody (
-        //     this.sun.x,
-        //     this.sun.y,
-        //     this.observerPlanetContainer.x,
-        //     this.observerPlanetContainer.y,
-        //     460
-        // )
+        let throughSun = this.arrowThroughBody (
+            this.sun.x,
+            this.sun.y,
+            this.observerPlanetContainer.x,
+            this.observerPlanetContainer.y,
+            450
+        )
 
-        // this.arrowToSun.lineTo(
-        //     throughSun.x,
-        //     throughSun.y
-        // );
+        this.arrowToSun.lineTo(
+            throughSun.x,
+            throughSun.y
+        );
     }
 
     getThroughTarget() {
@@ -435,54 +437,51 @@ export default class MainView extends React.Component {
                 this.targetPlanetContainer.y,
                 this.observerPlanetContainer.x,
                 this.observerPlanetContainer.y,
-                60
+                50
             );
         }
 
-        let dZ = 460;
-        let obsX = this.observerPlanetContainer.x - 600;
-        let obsY = this.observerPlanetContainer.y - 460;
-        obsY *= -1;
+        // let dZ = 460;
+        // let obsX = this.observerPlanetContainer.x - 600;
+        // let obsY = this.observerPlanetContainer.y - 460;
+        // obsY *= -1;
 
-        let targetX = this.targetPlanetContainer.x - 600;
-        let targetY = this.targetPlanetContainer.y - 460;
-        targetY *= -1;
+        // let targetX = this.targetPlanetContainer.x - 600;
+        // let targetY = this.targetPlanetContainer.y - 460;
+        // targetY *= -1;
 
-        let sunX = 0;
-        let sunY = 0;
+        // let elongationAngle = Math.abs(this.props.elongAng);
 
-        let elongationAngle = Math.abs(this.props.elongAng);
+        // let angleE = Math.abs(Math.atan2(obsY, obsX));
+        // let angleP = Math.abs(Math.atan2(targetY, targetX));
 
-        let angleE = Math.abs(Math.atan2(obsY, obsX));
-        let angleP = Math.abs(Math.atan2(targetY, targetX));
+        // let anglePE = Math.abs(angleP - angleE);
+        // let angleSE = Math.abs(Math.PI - anglePE - elongationAngle);
 
-        let anglePE = Math.abs(angleP - angleE);
-        let angleSE = Math.abs(Math.PI - anglePE - elongationAngle);
-
-        let dP = Math.pow((Math.pow(targetX, 2) + Math.pow(targetY, 2)), 0.5);
-        let dPE = Math.abs((Math.sin(Math.abs(anglePE)) / Math.sin(elongationAngle)) * dP);
+        // let dP = Math.pow((Math.pow(targetX, 2) + Math.pow(targetY, 2)), 0.5);
+        // let dPE = Math.abs((Math.sin(Math.abs(anglePE)) / Math.sin(elongationAngle)) * dP);
 
 
-        let angleSZ = Math.abs(Math.PI - angleSE);
+        // let angleSZ = Math.abs(Math.PI - angleSE);
 
-        let angleSP = Math.abs(Math.abs(Math.asin((dP / dZ)) * Math.abs(Math.sin(angleSZ))));
-        let angleZP = Math.abs(Math.PI - angleSP - angleSZ);
+        // let angleSP = Math.abs(Math.abs(Math.asin((dP / dZ)) * Math.abs(Math.sin(angleSZ))));
+        // let angleZP = Math.abs(Math.PI - angleSP - angleSZ);
 
-        let dZP = Math.abs((Math.abs(Math.sin(angleZP)) / Math.abs(Math.sin(angleSZ))) * dZ);
+        // let dZP = Math.abs((Math.abs(Math.sin(angleZP)) / Math.abs(Math.sin(angleSZ))) * dZ);
 
-        console.log('fuck fuck', (dZP + dPE), dPE, dZP, 'anglepe', anglePE, 'elong', radToDeg(elongationAngle), 'dp', dP, 'angleZP', 'angleSZ', 'angleSE', angleSE);
+        // console.log('fuck fuck', (dZP + dPE), dPE, dZP, 'anglepe', anglePE, 'elong', radToDeg(elongationAngle), 'dp', dP, 'angleZP', 'angleSZ', 'angleSE', angleSE);
 
-        // console.log('fuck', dZP, dPE);
+        // // console.log('fuck', dZP, dPE);
 
-        let eclipticLongitude = Math.atan2(
-            this.observerPlanetContainer.y - this.targetPlanetContainer.y,
-            this.observerPlanetContainer.x - this.targetPlanetContainer.x
-        );
+        // let eclipticLongitude = Math.atan2(
+        //     this.observerPlanetContainer.y - this.targetPlanetContainer.y,
+        //     this.observerPlanetContainer.x - this.targetPlanetContainer.x
+        // );
 
-        let xZ = -(dZP + dPE) * Math.cos(eclipticLongitude) + this.observerPlanetContainer.x;
-        let yZ = -(dZP + dPE) * Math.sin(eclipticLongitude) + this.observerPlanetContainer.y;
+        // let xZ = -(dZP + dPE) * Math.cos(eclipticLongitude) + this.observerPlanetContainer.x;
+        // let yZ = -(dZP + dPE) * Math.sin(eclipticLongitude) + this.observerPlanetContainer.y;
 
-        return new PIXI.Point(xZ, yZ);
+        // return new PIXI.Point(xZ, yZ);
     }
 
     arrowThroughBody(firstX, firstY, secondX, secondY, scaling) {
@@ -596,7 +595,7 @@ export default class MainView extends React.Component {
         constellation.interactive = true;
         constellation.width = 50 * 2;
         constellation.height = 40 * 2;
-        constellation.alpha = 0.5;  // opacity
+        constellation.alpha = 0.75;  // opacity
         constellation.anchor.set(0.5);
         this.app.stage.addChild(constellation);
 

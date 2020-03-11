@@ -21,7 +21,7 @@ class PlanetaryConfigSim extends React.Component {
             animationRate: 1.5,
             targetAngle: 0,
             sunAngle: -Math.PI,
-            elongAng: -Math.PI,
+            elongationAngle: -Math.PI,
             optionObserver: 0,
             optionTarget: 0,
             observerName: 'observer planet',
@@ -43,18 +43,18 @@ class PlanetaryConfigSim extends React.Component {
 
     render() {
         return <React.Fragment>
-                 <nav className="navbar navbar-expand-md navbar-light bg-light d-flex justify-content-between">
-                   <span className="navbar-brand mb-0 h1">Planetary Configurations Simulator</span>
+                 <nav className="navbar navbar-expand-md navbar-light bg-dark d-flex justify-content-between">
+                   <span className="navbar-brand mb-0 text-light h1">Planetary Configurations Simulator</span>
 
                    <ul className="navbar-nav">
                      <li className="nav-item">
-                       <a className="nav-link" href="#" onClick={this.onResetClick.bind(this)}>Reset</a>
+                       <a className="nav-link text-light" href="#" onClick={this.onResetClick.bind(this)}>Reset</a>
                      </li>
                      <li className="nav-item">
-                       <a className="nav-link" href="#" data-toggle="modal" data-target="#helpModal">Help</a>
+                       <a className="nav-link text-light" href="#" data-toggle="modal" data-target="#helpModal">Help</a>
                      </li>
                      <li className="nav-item">
-                       <a className="nav-link" href="#" data-toggle="modal" data-target="#aboutModal">About</a>
+                       <a className="nav-link text-light" href="#" data-toggle="modal" data-target="#aboutModal">About</a>
                      </li>
                    </ul>
                  </nav>
@@ -70,7 +70,7 @@ class PlanetaryConfigSim extends React.Component {
                        stopAnimation={this.stopAnimation}
                        targetAngle={this.state.targetAngle}
                        sunAngle={this.state.sunAngle}
-                       elongAng={this.state.elongAng}
+                       elongationAngle={this.state.elongationAngle}
                        targetName={this.state.targetName}
                        observerName={this.state.observerName}
                        labelOrbits={this.state.labelOrbits}
@@ -80,9 +80,9 @@ class PlanetaryConfigSim extends React.Component {
                    </div>
                    <div className="rowx">
                      <div className="col">
-                       <h4>Orbit Sizes</h4>
+                       <h4 id="text">Orbit Sizes</h4>
                        <div className="radiusText">
-                         <label htmlFor="radObserverPlanetRange">Radius of observer planet's orbit (AU):</label>
+                         <label htmlFor="radObserverPlanetRange" id="text">Radius of observer planet's orbit (AU):</label>
                        </div>
 
                        <div className="observerInput">
@@ -126,7 +126,7 @@ class PlanetaryConfigSim extends React.Component {
                        </div>
 
                        <div className="radiusText">
-                         <label htmlFor="radTargetPlanetRange" >Radius of target planet's orbit (AU):</label>
+                         <label htmlFor="radTargetPlanetRange" id="text">Radius of target planet's orbit (AU):</label>
                        </div>
                        <div className="targetInput">
                          <form onSubmit={this.onSubmitTarget.bind(this)}>
@@ -169,9 +169,9 @@ class PlanetaryConfigSim extends React.Component {
                      </div>
 
                      <div className="col">
-                       <h4>Animation Control</h4>
+                       <h4 id="text">Animation Control</h4>
                        <div className="animationText">
-                         <label htmlFor="diamRange">Speed:</label>
+                         <label htmlFor="diamRange" id="text">Speed:</label>
                        </div>
                        <div className="animationSlider">
                          <input
@@ -200,7 +200,7 @@ class PlanetaryConfigSim extends React.Component {
                                 checked={this.state.labelOrbits}
                                 id="orbits-display"
                          />
-                         <label className="" htmlFor="orbits-display">
+                         <label className="" htmlFor="orbits-display" id="text">
                            Label Orbits
                          </label>
                        </div>
@@ -211,7 +211,7 @@ class PlanetaryConfigSim extends React.Component {
                                 checked={this.state.showElongation}
                                 id="angle-display"
                          />
-                         <label className="" htmlFor="angle-display">
+                         <label className="" htmlFor="angle-display" id="text">
                            Show Elongation Angle
                          </label>
                        </div>
@@ -222,11 +222,18 @@ class PlanetaryConfigSim extends React.Component {
                                 checked={this.state.zoomOut}
                                 id="zoom-out-display"
                          />
-                         <label className="" htmlFor="zoom-out-display">
+                         <label className="" htmlFor="zoom-out-display" id="text">
                            Zoom Out to View Constellations
                          </label>
                        </div>
 
+                     </div>
+                     <div className="survey">
+                         <a href="https://forms.office.com/Pages/ResponsePage.aspx?id=n7L3RQCxQUyAT7NBighZStjAWTIFlutChq8ZZEGLLMdUNTJOMEw5TkRPWUExTUREQzRLR0FDV0FBVi4u" 
+                         target="_blank" 
+                         rel="noopener noreferrer">
+                             <button type="button" className="btn btn-warning">Give us feedback!</button>
+                         </a>
                      </div>
 
                    </div>
@@ -290,11 +297,11 @@ class PlanetaryConfigSim extends React.Component {
         }
     }
 
-    updateAngles(targetAng, sunAng, elongAng) {
+    updateAngles(targetAng, sunAng, elongationAng) {
         this.setState({
             targetAngle: targetAng,
             sunAngle: sunAng,
-            elongAng: elongAng
+            elongationAngle: elongationAng
         });
     }
 
