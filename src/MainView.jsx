@@ -62,7 +62,7 @@ export default class MainView extends React.Component {
         this.app.loader
             .add('sun', 'img/sun-circle.png')
             .add('observerPlanet', 'img/blue-circle.png')
-	    .add('targetPlanet', 'img/grey-circle.png')
+	        .add('targetPlanet', 'img/grey-circle.png')
             .add('highlight', 'img/circle-highlight.svg');
 
         const me = this;
@@ -207,7 +207,6 @@ export default class MainView extends React.Component {
     }
 
     updateText() {
-
         if (!this.props.labelOrbits) {
             this.observerPlanetName.text = "";
             this.targetPlanetName.text = "";
@@ -613,7 +612,7 @@ export default class MainView extends React.Component {
         constellation.interactive = true;
         constellation.width = 50 * 2;
         constellation.height = 40 * 2;
-        constellation.alpha = 0.5;  // opacity
+        constellation.alpha = 0.64;  // opacity
         constellation.anchor.set(0.5);
         this.app.stage.addChild(constellation);
 
