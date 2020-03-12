@@ -288,7 +288,7 @@ export default class ZodiacStrip extends React.Component {
         this.directLine.moveTo(this.targetPlanetZodiacContainer.x, this.targetPlanetZodiacContainer.y + 15);
         this.directLine.lineTo(this.targetPlanetZodiacContainer.x, this.targetPlanetZodiacContainer.y + 57);
 
-        // Does bottom vertical line for sun 
+        // Does bottom vertical line for sun
         this.directLine.lineStyle(2, 0xa64e4e);
         this.directLine.moveTo(this.sunZodiacContainer.x, this.sunZodiacContainer.y + 15);
         this.directLine.lineTo(this.sunZodiacContainer.x, this.sunZodiacContainer.y + 57);
