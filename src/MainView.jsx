@@ -1,12 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import * as PIXI from 'pixi.js';
-import { radToDeg } from './utils';
+
+// The coordinates for the center of the canvas
+// REMINDER: (0,0) is at the top left corner and
+// the positive Y direction is DOWN, not UP.
+const ORBIT_CENTER_X = 600;
+const ORBIT_CENTER_Y = 460;
 
 const getPlanetPos = function(radius, phase) {
     return new PIXI.Point(
-        radius * Math.cos(-phase) + 600,
-        radius * Math.sin(-phase) + 460
+        radius * Math.cos(-phase) + ORBIT_CENTER_X,
+        radius * Math.sin(-phase) + ORBIT_CENTER_Y
     );
 };
 
@@ -22,7 +27,7 @@ export default class MainView extends React.Component {
 
         this.resources = {};
 
-        this.orbitCenter = new PIXI.Point(600, 460);
+        this.orbitCenter = new PIXI.Point(ORBIT_CENTER_X, ORBIT_CENTER_Y);
 
         this.start = this.start.bind(this);
         this.stop = this.stop.bind(this);
@@ -31,10 +36,11 @@ export default class MainView extends React.Component {
         this.onDragStart = this.onDragStart.bind(this);
         this.onDragEnd = this.onDragEnd.bind(this);
 
-        this.onSunMove = this.onSunMove.bind(this);
+        // this.onSunMove = this.onSunMove.bind(this);
         this.onObserverPlanetMove = this.onObserverPlanetMove.bind(this);
         this.onTargetPlanetMove = this.onTargetPlanetMove.bind(this);
         this.onConstellationMove = this.onConstellationMove.bind(this);
+
         this.constellationsText = [];
         this.constellations = [];
         this.sprite = null;
@@ -50,10 +56,9 @@ export default class MainView extends React.Component {
     componentDidMount() {
         this.app = new PIXI.Application({
             // Size of canvas
-            width: 600 * 2,
-            height: 460 * 2,
+            width: ORBIT_CENTER_X * 2,
+            height: ORBIT_CENTER_Y * 2,
             backgroundColor: 0x241b23,
-            antialias: true,
         });
 
         this.el.appendChild(this.app.view);
@@ -62,17 +67,19 @@ export default class MainView extends React.Component {
         this.app.loader
             .add('sun', 'img/sun-circle.png')
             .add('observerPlanet', 'img/blue-circle.png')
-	        .add('targetPlanet', 'img/grey-circle.png')
+            .add('targetPlanet', 'img/grey-circle.png')
             .add('highlight', 'img/circle-highlight.svg');
 
         const me = this;
         this.app.loader.load((loader, resources) => {
             me.resources = resources;
 
+            me.sun = me.drawSun(resources.sun);
+
             me.arrowToSun = me.drawArrows();
             me.arrowToTarget = me.drawArrows();
 
-            me.sun = me.drawSun(resources.sun);
+
             me.elongationArc = me.drawArc();
 
             me.targetPlanetOrbitContainer = me.drawTargetPlanetOrbit();
@@ -110,7 +117,6 @@ export default class MainView extends React.Component {
 
             me.observerPlanetName = me.drawText (this.props.observerName, me.props.radiusObserverPlanet, false);
             me.targetPlanetName = me.drawText (this.props.targetName, me.props.radiusTargetPlanet, true);
-
 
             me.constellations.push(me.drawConstellation(0, 'img/pisces.png', 'Pisces'));
             me.constellations.push(me.drawConstellation(Math.PI / 6, 'img/aries.png', 'Aries'));
@@ -199,8 +205,8 @@ export default class MainView extends React.Component {
         }
 
         text.resolution = 2;
-        text.position.x = 600 - (text.width / 2);
-        text.position.y = 460 + radius;
+        text.position.x = ORBIT_CENTER_X - (text.width / 2);
+        text.position.y = ORBIT_CENTER_Y + radius;
         this.app.stage.addChild(text);
 
         return text;
@@ -230,11 +236,11 @@ export default class MainView extends React.Component {
         let observerNameX = this.observerPlanetName.width / 2;
         let targetNameX = this.targetPlanetName.width / 2;
 
-        this.observerPlanetName.x = 600 - observerNameX;
-        this.targetPlanetName.x = 600 - targetNameX;
+        this.observerPlanetName.x = ORBIT_CENTER_X - observerNameX;
+        this.targetPlanetName.x = ORBIT_CENTER_X - targetNameX;
 
-        this.observerPlanetName.y = 460 + observerNameY;
-        this.targetPlanetName.y = 460 + targetNameY;
+        this.observerPlanetName.y = ORBIT_CENTER_Y + observerNameY;
+        this.targetPlanetName.y = ORBIT_CENTER_Y + targetNameY;
     }
 
     drawArc() {
@@ -245,8 +251,8 @@ export default class MainView extends React.Component {
         elongationArc.lineStyle(2, 0xe8c3c3);
         // elongationArc.beginFill(0x99c9ac, 0.7);
         elongationArc.arc(
-            600,
-            460,
+            ORBIT_CENTER_X,
+            ORBIT_CENTER_Y,
             45,
             this.props.targetAngle,
             this.props.sunAngle,
@@ -271,7 +277,7 @@ export default class MainView extends React.Component {
         this.elongationArc.arc(
             this.observerPlanetContainer.x,
             this.observerPlanetContainer.y,
-            45,
+            80,
             -this.props.targetAngle,
             -this.props.sunAngle,
             east
@@ -282,16 +288,17 @@ export default class MainView extends React.Component {
 
     updateArcArrow(east) {
         if (!east) {
-            this.halfArrow(-0.18, -10.2, 77);
-            this.halfArrow(-0.18, 10.2, 103);
+            this.halfArrow(-0.09, -10.2, 149);
+            this.halfArrow(-0.09, 10.2, 172);
+            // this.halfArrow(-0.18, -10.2, 77);
+            // this.halfArrow(-0.18, 10.2, 103);
         } else {
-            this.halfArrow(0.18, 10.2, 77);
-            this.halfArrow(0.18, -10.2, 103);
+            this.halfArrow(0.085, 10.2, 149);
+            this.halfArrow(0.085, -10.2, 172);
         }
     }
 
     halfArrow(angleShift, angleReverse, rad) {
-
         this.elongationArc.lineStyle(3.5, 0xa64e4e);
         let smt = getPlanetPos(
             this.props.radiusObserverPlanet,
@@ -475,10 +482,10 @@ export default class MainView extends React.Component {
                 zoomedArrowRadius
             );
         }
-        Xe = Xe - 600;
-        Ye = 460 - Ye;
-        Xt = Xt - 600;
-        Yt = 460 - Yt;
+        Xe = Xe - ORBIT_CENTER_X;
+        Ye = ORBIT_CENTER_Y - Ye;
+        Xt = Xt - ORBIT_CENTER_X;
+        Yt = ORBIT_CENTER_Y - Yt;
         let slope = (Yt - Ye) / (Xt - Xe);
         let b = (Ye - (slope * Xe));
         let results = this.quadraticEquation(
@@ -492,7 +499,7 @@ export default class MainView extends React.Component {
             actualX = results[0];
         }
         let actualY = slope * actualX + b;
-        return new PIXI.Point(600 + actualX, 460 - actualY);
+        return new PIXI.Point(ORBIT_CENTER_X + actualX, ORBIT_CENTER_Y - actualY);
     }
 
     quadraticEquation(a, b, c) {
@@ -595,8 +602,8 @@ export default class MainView extends React.Component {
         sunContainer.position = this.orbitCenter;
 
         const sun = new PIXI.Sprite(sunResource.texture);
-        sun.width = 40 * 2;
-        sun.height = 40 * 2;
+        sun.width = 34 * 2;
+        sun.height = 34 * 2;
         sun.position = this.orbitCenter;
         sun.anchor.set(0.5);
         sun.rotation = -0.9;
@@ -741,13 +748,24 @@ export default class MainView extends React.Component {
     }
 }
 
+// These are all the parameters that MUST be passed
+// Into MainView by main.jsx
 MainView.propTypes = {
     observerPlanetAngle: PropTypes.number.isRequired,
     targetPlanetAngle: PropTypes.number.isRequired,
     radiusObserverPlanet: PropTypes.number.isRequired,
     radiusTargetPlanet: PropTypes.number.isRequired,
+    targetAngle: PropTypes.number.isRequired,
+    sunAngle: PropTypes.number.isRequired,
+
+    showElongation: PropTypes.bool.isRequired,
+    labelOrbits: PropTypes.bool.isRequired,
+    zoomOut: PropTypes.bool.isRequired,
+
+    observerName: PropTypes.string.isRequired,
+    targetName: PropTypes.string.isRequired,
+
     onObserverPlanetAngleUpdate: PropTypes.func.isRequired,
     onTargetPlanetAngleUpdate: PropTypes.func.isRequired,
     stopAnimation: PropTypes.func.isRequired,
-    showElongation: PropTypes.func.isRequired
 };

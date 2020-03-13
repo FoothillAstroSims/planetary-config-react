@@ -28,8 +28,8 @@ class PlanetaryConfigSim extends React.Component {
             targetName: 'target planet',
             holdObserver: 1.00,
             holdTarget: 2.40,
-            showElongation: false,
             labelOrbits: true,
+            showElongation: false,
             zoomOut: false,
             startBtnText: 'start animation',
             isPlaying: false,
@@ -386,6 +386,7 @@ class PlanetaryConfigSim extends React.Component {
     }
 
     onPresetSelectObserver(e) {
+        let name = "";
         if (e.target.value == 0) {
             this.onObserverPlanetRadiusChange(1.00);
             name = "observer planet";
@@ -410,7 +411,6 @@ class PlanetaryConfigSim extends React.Component {
         } else {
             name = "observer planet";
         }
-
 
         this.setState({
             observerName: name,

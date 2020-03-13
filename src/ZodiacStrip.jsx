@@ -1,5 +1,6 @@
 import React from 'react';
 import * as PIXI from 'pixi.js';
+import PropTypes from 'prop-types';
 
 const getPlanetPos = function(radius, phase) {
     return new PIXI.Point(
@@ -55,6 +56,7 @@ export default class ZodiacStrip extends React.Component {
         me.wrapAroundLine = me.drawLine();
 
         me.angleText = me.drawAngleText();
+        me.angleDirectionText = me.drawAngleDirectionText();
         me.sunName = me.drawPlanetText('Sun', me.sunZodiacContainer.x, me.sunZodiacContainer.y);
         me.targetName = me.drawPlanetText('Planet', me.targetPlanetZodiacContainer.x, me.targetPlanetZodiacContainer.y);
         me.zodiacText = me.drawZodiac();
@@ -109,6 +111,22 @@ export default class ZodiacStrip extends React.Component {
         this.app.stage.addChild(angleText);
 
         return angleText;
+    }
+
+    drawAngleDirectionText() {
+        const angleDirectionText = new PIXI.Text('W', {
+            fontFamily: 'Garamond',
+            fontSize: 42,
+            fill: 0xe4d1a0,
+        });
+
+        angleDirectionText.resolution = 2;
+        angleDirectionText.anchor.set(0.5);
+        angleDirectionText.position.x = 375;
+        angleDirectionText.position.y = 175;
+        this.app.stage.addChild(angleDirectionText);
+
+        return angleDirectionText;
     }
 
     drawZodiac() {
@@ -197,9 +215,6 @@ export default class ZodiacStrip extends React.Component {
 
         let targetPlanetAngle = Math.atan2(targetPos.y - observerPos.y, targetPos.x - observerPos.x);
         let sunAngle = Math.atan2(sunPos.y - observerPos.y, sunPos.x - observerPos.x);
-
-        let r = targetPlanetAngle * 180 / Math.PI;
-        let p = sunAngle * 180 / Math.PI;
 
         this.targetPlanetLongitude = targetPlanetAngle;
         this.sunLongitude = sunAngle;
@@ -327,6 +342,10 @@ export default class ZodiacStrip extends React.Component {
         this.angleText.text = newAngle;
     }
 
+    updateDirection(direction) {
+        this.angleDirectionText.text = direction;
+    }
+
     updateZodiacBodyPos(longitude, body, width) {
      	let angle = longitude / (2 * Math.PI);
 
@@ -374,28 +393,35 @@ export default class ZodiacStrip extends React.Component {
         let num = elongationAngle * 180 / Math.PI;
         this.updateLine(num);
 
-        let direction = '° E ';
+        let direction = 'E';
         if (num > 180) {
             let temp = num - 180;
             num -= temp * 2;
-            direction = '° W ';
+            direction = 'W ';
         }
 
         if (num == 0 || num == 180) {
-            direction = '° ';
+            direction = '';
         }
 
-        let textNum = String(" " + num.toFixed(2)).slice(-6);
-        textNum += direction;
+        let textNum = String(" " + num.toFixed(0)).slice(-6);
+        textNum += '°';
 
         this.updateText(textNum);
+        this.updateDirection(direction);
 
-    	this.frameId = requestAnimationFrame(this.animate);
+        this.frameId = requestAnimationFrame(this.animate);
 
     }
 }
 
-// ZodiacStrip.propTypes = {
-//     deltaAngle: Proptypes.number.isRequired,
-//     getElongationAngle: Proptypes.func.isRequired
-// };
+// These are all the parameters that MUST be passed
+// Into ZodiacStrip by main.jsx
+ZodiacStrip.propTypes = {
+    radiusObserverPlanet: PropTypes.number.isRequired,
+    observerPlanetAngle: PropTypes.number.isRequired,
+    radiusTargetPlanet: PropTypes.number.isRequired,
+    targetPlanetAngle: PropTypes.number.isRequired,
+
+    updateAngles: PropTypes.func.isRequired
+};

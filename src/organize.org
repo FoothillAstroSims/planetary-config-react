@@ -1,23 +1,12 @@
-* Features:
-
-Done --> 1. Fix bug with dragging and multiplier not changing.
-Done --> 2. Create Zodiac container
-3. Label orbits
-4. Choose planets
-5. Show display for the AU from Sun
-7. Move line drawing to bottom and add the angle
-8. Outer radius fixed
-9. Show elongation angle
 * Emacs commands
 ** Navigation
-M-m                     First word of line
 C-m                     Next line
-M-n, M-p                Cycles through occurrences of word throughout file
 ** Marks:
 C-x r SPC               Store point in register
 C-x r j                 Go to mark in register
 C-<SPC> C-<SPC>         Set the mark, pushing it onto the mark ring, without activating it.
 C-u C-<SPC>             Move point to where the mark was, and restore the mark from the ring of former marks.
+C-x C-/                 Move to previous changed location
 ** Bookmarks:
 C-x r m                 Store a named bookmark
 C-x r b                 Go to a named bookmark
