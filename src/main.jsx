@@ -31,7 +31,7 @@ class PlanetaryConfigSim extends React.Component {
             labelOrbits: true,
             showElongation: false,
             zoomOut: false,
-            startBtnText: 'start animation',
+            startBtnText: 'play animation',
             isPlaying: false,
             days: 0
         };
@@ -229,13 +229,13 @@ class PlanetaryConfigSim extends React.Component {
                         </div>
                     </div>
 
-                    <div className="controls">
+                    <div className="controls" id="days">
                         <div className="custom-control custom-checkboxes">
-                            <p>Earth Days Elapsed: {this.state.days.toFixed(0).slice(-6)}</p>
+                            <p>Earth Days Elapsed: {this.state.days.toFixed(0)}</p>
                         </div>
                     </div>
 
-                    <div className="survey">
+                    <div id="survey">
                         <a href="https://forms.office.com/Pages/ResponsePage.aspx?id=n7L3RQCxQUyAT7NBighZStjAWTIFlutChq8ZZEGLLMdUNTJOMEw5TkRPWUExTUREQzRLR0FDV0FBVi4u"
                            target="_blank"
                            rel="noopener noreferrer">
@@ -279,9 +279,10 @@ class PlanetaryConfigSim extends React.Component {
 
     incrementDays(delta) {
         let newDaysPassed = 0.665 * delta * this.state.observerMultiplier;
-        console.log('angle', this.state.observerPlanetAngle * 180 / Math.PI);
-        console.log('new days passed', newDaysPassed);
-        return  newDaysPassed;
+        console.log('obs multiplier:', this.state.observerMultiplier);
+        console.log('delta:', delta); 
+        console.log('new days passed:', newDaysPassed);
+        return newDaysPassed;
     }
 
     animate() {
@@ -301,13 +302,13 @@ class PlanetaryConfigSim extends React.Component {
             this.raf = requestAnimationFrame(this.animate.bind(this));
             this.setState({
                 isPlaying: true,
-                startBtnText: 'stop animation'
+                startBtnText: 'pause animation'
             });
         } else {
             this.stopAnimation();
             this.setState({
                 isPlaying: false,
-                startBtnText: 'start animation'
+                startBtnText: 'play animation'
             });
         }
     }
