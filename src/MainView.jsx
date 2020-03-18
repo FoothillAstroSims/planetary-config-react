@@ -75,10 +75,8 @@ export default class MainView extends React.Component {
             me.resources = resources;
 
             me.sun = me.drawSun(resources.sun);
-
             me.arrowToSun = me.drawArrows();
             me.arrowToTarget = me.drawArrows();
-
 
             me.elongationArc = me.drawArc();
 
@@ -86,38 +84,17 @@ export default class MainView extends React.Component {
             me.observerPlanetOrbitContainer = me.drawObserverPlanetOrbit();
 
             me.observerPlanetContainer = me.drawObserverPlanet(
-                resources.observerPlanet, resources.highlight);
-            me.observerPlanetContainer
-            // events for drag start
-                .on('mousedown', me.onDragStart)
-                .on('touchstart', me.onDragStart)
-            // events for drag end
-                .on('mouseup', me.onDragEnd)
-                .on('mouseupoutside', me.onDragEnd)
-                .on('touchend', me.onDragEnd)
-                .on('touchendoutside', me.onDragEnd)
-            // events for drag move
-                .on('mousemove', me.onObserverPlanetMove)
-                .on('touchmove', me.onObserverPlanetMove);
+                resources.observerPlanet, resources.highlight
+            );
 
             me.targetPlanetContainer = me.drawTargetPlanet(
                 resources.targetPlanet, resources.highlight);
-            me.targetPlanetContainer
-            // events for drag start
-                .on('mousedown', me.onDragStart)
-                .on('touchstart', me.onDragStart)
-            // events for drag end
-                .on('mouseup', me.onDragEnd)
-                .on('mouseupoutside', me.onDragEnd)
-                .on('touchend', me.onDragEnd)
-                .on('touchendoutside', me.onDragEnd)
-            // events for drag move
-                .on('mousemove', me.onTargetPlanetMove)
-                .on('touchmove', me.onTargetPlanetMove);
 
             me.observerPlanetName = me.drawText (this.props.observerName, me.props.radiusObserverPlanet, false);
             me.targetPlanetName = me.drawText (this.props.targetName, me.props.radiusTargetPlanet, true);
 
+            // Creating all the constellation sprites and placing them inside the
+            // constellations array
             me.constellations.push(me.drawConstellation(0, 'img/pisces.png', 'Pisces'));
             me.constellations.push(me.drawConstellation(Math.PI / 6, 'img/aries.png', 'Aries'));
             me.constellations.push(me.drawConstellation(Math.PI / 3, 'img/taurus.png', 'Taurus'));
@@ -130,11 +107,6 @@ export default class MainView extends React.Component {
             me.constellations.push(me.drawConstellation(3 * Math.PI / 2, 'img/sagittarius.png', 'Sagittarius'));
             me.constellations.push(me.drawConstellation(5 * Math.PI / 3, 'img/capricorn.png', 'Capricorn'));
             me.constellations.push(me.drawConstellation(11 * Math.PI / 6, 'img/aquarius.png', 'Aquarius'));
-            for (let index = 0; index < this.constellations.length; index++) {
-                this.constellations[index]
-                    .on('mousemove', me.onConstellationMove)
-                    .on('touchmove', me.onConstellationMove);
-            }
 
             me.start();
         });
@@ -213,12 +185,16 @@ export default class MainView extends React.Component {
     }
 
     updateText() {
+        // If the user deselects the box for labelling
+        // the orbits, then just display nothing
         if (!this.props.labelOrbits) {
             this.observerPlanetName.text = "";
             this.targetPlanetName.text = "";
             return;
         }
 
+        // If we're in zoomed out state, the size of the
+        // text needs to be smaller
         if (this.props.zoomOut) {
             this.observerPlanetName.style.fontSize = 30;
             this.targetPlanetName.style.fontSize = 30;
@@ -227,9 +203,12 @@ export default class MainView extends React.Component {
             this.targetPlanetName.style.fontSize = 42;
         }
 
+        // Set the name of the planet to what the user selected
+        // From the drop down menu (defaults to 'observer' or 'target')
         this.observerPlanetName.text = this.props.observerName;
         this.targetPlanetName.text = this.props.targetName;
 
+        // Positions of the text changes based on orbit radius
         let observerNameY = this.props.radiusObserverPlanet + 8;
         let targetNameY = this.props.radiusTargetPlanet * -1 - 60;
 
@@ -249,7 +228,6 @@ export default class MainView extends React.Component {
 
         elongationArc.clear();
         elongationArc.lineStyle(2, 0xe8c3c3);
-        // elongationArc.beginFill(0x99c9ac, 0.7);
         elongationArc.arc(
             ORBIT_CENTER_X,
             ORBIT_CENTER_Y,
@@ -264,13 +242,13 @@ export default class MainView extends React.Component {
     }
 
     updateArc() {
-
         this.elongationArc.clear();
+        // If the user deselects the box for showing
+        // elongation arc, then simply return
         if (!this.props.showElongation) {
             return;
         }
 
-        this.elongationArc.clear();
         this.elongationArc.lineStyle(3.5, 0xa64e4e);
         this.elongationArc.moveTo(this.observerPlanetContainer.x, this.observerPlanetContainer.y);
         let east = this.greaterThan180();
@@ -290,8 +268,6 @@ export default class MainView extends React.Component {
         if (!east) {
             this.halfArrow(-0.09, -10.2, 149);
             this.halfArrow(-0.09, 10.2, 172);
-            // this.halfArrow(-0.18, -10.2, 77);
-            // this.halfArrow(-0.18, 10.2, 103);
         } else {
             this.halfArrow(0.085, 10.2, 149);
             this.halfArrow(0.085, -10.2, 172);
@@ -370,7 +346,6 @@ export default class MainView extends React.Component {
 
         g.clear();
         g.lineStyle(4.0, 0xedb7b7);
-        // g.beginFill(0x99c9ac, 0.7);
 
         this.app.stage.addChild(g);
         return g;
@@ -417,53 +392,58 @@ export default class MainView extends React.Component {
             this.observerPlanetContainer.x,
             this.observerPlanetContainer.y,
             arrowRadius
-        )
+        );
 
         this.arrowToSun.lineTo(
             throughSun.x,
             throughSun.y
         );
 
-        let xS = 17;
+        let angleShift = 30;
 
-        // this.drawArrow(this.arrowToSun, throughSun, xS, 1);
-        // this.drawArrow(this.arrowToSun, throughSun, xS, -1);
+        this.drawArrow(this.arrowToTarget, throughTarget, angleShift);
+        this.drawArrow(this.arrowToTarget, throughTarget, -angleShift);
 
-        // this.drawArrow(this.arrowToTarget, throughTarget, -xS, 1);
-        // this.drawArrow(this.arrowToTarget, throughTarget, -xS, -1);
-
-        // this.drawArrow(this.arrowToTarget, throughTarget, 0.18, 10.2, 77);
-        // this.drawArrow(this.arrowToTarget, throughTarget, 0.18, -10.2, 103);
+        this.drawArrow(this.arrowToSun, throughSun, angleShift);
+        this.drawArrow(this.arrowToSun, throughSun, -angleShift);
     }
 
-    drawArrow(line, point, angleShift, angleReverse, rad) {
+    drawArrow(line, point, angleShift) {
         line.lineStyle(3.5, 0xa64e4e);
+        let tip = new PIXI.Point(point.x - this.observerPlanetContainer.x, this.observerPlanetContainer.y - point.y);
 
-        let startX = point.x;
-        let startY = point.y;
+        let angle = Math.atan2(tip.y, tip.x);
+        let length = 25;
 
-        let receive = this.closer(point, angleShift, rad);
-        let endX = receive.x;
-        let endY = receive.y;
+        let cv = this.convert(angle);
 
-        let centrePointX = ((startX + endX) / 2.0);
-        let centrePointY = ((startY + endY) / 2.0);
+        let shift = cv + angleShift;
 
-        let angle = Math.atan2(endY - startY, endX - startX) + angleReverse;
-        let dist = 10;
+        let xDiff = length * Math.cos(this.convertBack(shift));
+        let yDiff = length * Math.sin(this.convertBack(shift));
 
-        line.moveTo((Math.sin(angle) * dist + centrePointX), (-Math.cos(angle) * dist + centrePointY));
-        line.lineTo((-Math.sin(angle) * dist + centrePointX), (Math.cos(angle) * dist + centrePointY));
+        let halfX = tip.x + xDiff;
+        let halfY = tip.y + yDiff;
+
+        halfX = halfX + this.observerPlanetContainer.x;
+        halfY = this.observerPlanetContainer.y - halfY;
+
+        line.moveTo(point.x, point.y);
+        line.lineTo(halfX, halfY);
     }
 
-    closer(point, angleShift, rad) {
-        let angle = Math.atan2(this.targetPlanetContainer.y, this.targetPlanetContainer.x) + angleShift;
+    convert(ang) {
+        let angle = ang;
+        if (angle < 0) {
+            let difference = Math.PI + angle;
+            angle = Math.PI + difference;
+        }
 
-        let radius = rad;
-        let y = radius * Math.sin(angle);
-        let x = radius * Math.cos(angle);
+        return ((angle * 180 / Math.PI) + 180) % 360;
+    }
 
-        return new PIXI.Point(point.x + x, point.y + y);
+    convertBack(ang) {
+        return ang * Math.PI / 180;
     }
 
     getThroughTarget(arrowRadius, zoomedArrowRadius) {
@@ -533,9 +513,11 @@ export default class MainView extends React.Component {
         const graphicsObserverPlanet = new PIXI.Graphics();
         graphicsObserverPlanet.lineStyle(2, 0xffffff);
         graphicsObserverPlanet.drawCircle(this.orbitCenter.x, this.orbitCenter.y, this.props.radiusObserverPlanet);
+
         this.app.stage.addChild(graphicsObserverPlanet);
         return graphicsObserverPlanet;
     }
+
     drawTargetPlanetOrbit() {
         const graphicsTargetPlanet = new PIXI.Graphics();
         graphicsTargetPlanet.lineStyle(2, 0xffffff);
@@ -566,6 +548,19 @@ export default class MainView extends React.Component {
         observerPlanetContainer.addChild(observerPlanet);
         this.sprite = observerPlanet;
 
+        observerPlanetContainer
+        // events for drag start
+            .on('mousedown', this.onDragStart)
+            .on('touchstart', this.onDragStart)
+        // events for drag end
+            .on('mouseup', this.onDragEnd)
+            .on('mouseupoutside', this.onDragEnd)
+            .on('touchend', this.onDragEnd)
+            .on('touchendoutside', this.onDragEnd)
+        // events for drag move
+            .on('mousemove', this.onObserverPlanetMove)
+            .on('touchmove', this.onObserverPlanetMove);
+
         this.app.stage.addChild(observerPlanetContainer);
         return observerPlanetContainer;
     }
@@ -590,6 +585,19 @@ export default class MainView extends React.Component {
         targetPlanet.height = 20 * 2;
         targetPlanet.anchor.set(0.5);
         targetPlanetContainer.addChild(targetPlanet);
+
+        targetPlanetContainer
+        // events for drag start
+            .on('mousedown', this.onDragStart)
+            .on('touchstart', this.onDragStart)
+        // events for drag end
+            .on('mouseup', this.onDragEnd)
+            .on('mouseupoutside', this.onDragEnd)
+            .on('touchend', this.onDragEnd)
+            .on('touchendoutside', this.onDragEnd)
+        // events for drag move
+            .on('mousemove', this.onTargetPlanetMove)
+            .on('touchmove', this.onTargetPlanetMove);
 
         this.app.stage.addChild(targetPlanetContainer);
         return targetPlanetContainer;
@@ -621,6 +629,12 @@ export default class MainView extends React.Component {
         constellation.height = 40 * 2;
         constellation.alpha = 0.64;  // opacity
         constellation.anchor.set(0.5);
+        constellation.visible = false;
+
+        // Triggers events that display name of constellation
+        constellation.on('mousemove', this.onConstellationMove);
+        constellation.on('touchmove', this.onConstellationMove);
+
         this.app.stage.addChild(constellation);
 
         const constellationName = new PIXI.Text(name, {
@@ -629,12 +643,14 @@ export default class MainView extends React.Component {
             fontFamily: 'Garamond',
             fill: 0xffd700,
         });
+
         constellationName.visible = false;
         constellationName.resolution = 2;
         constellationName.anchor.set(0.5);
         constellation.position = getPlanetPos(420, angle);
         constellationName.position = getPlanetPos(320, angle);
         this.constellationsText.push(constellationName);
+
         this.app.stage.addChild(constellationName);
 
         return constellation;
@@ -656,6 +672,7 @@ export default class MainView extends React.Component {
             this.draggingSun = true;
         } else if (event.target.name === 'observerPlanet') {
             this.draggingObserverPlanet = true;
+
         } else if (event.target.name === 'targetPlanet') {
             this.draggingTargetPlanet = true;
         }
@@ -665,7 +682,6 @@ export default class MainView extends React.Component {
         this.draggingSun = false;
         this.draggingObserverPlanet = false;
         this.draggingTargetPlanet = false;
-        // set the interaction data to null
         this.data = null;
     }
 

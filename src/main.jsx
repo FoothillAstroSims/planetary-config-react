@@ -6,8 +6,8 @@ import { forceNumber } from './utils';
 
 class PlanetaryConfigSim extends React.Component {
     constructor(props) {
-	super(props);
-	this.initialState = {
+        super(props);
+        this.initialState = {
             targetFixed: true,
             observerPlanetAngle: 0,
             targetPlanetAngle: 0,
@@ -33,225 +33,232 @@ class PlanetaryConfigSim extends React.Component {
             zoomOut: false,
             startBtnText: 'start animation',
             isPlaying: false,
-	};
+            days: 0
+        };
 
-	this.state = this.initialState;
-	this.raf = null;
+        this.state = this.initialState;
+        this.raf = null;
 
-	this.stopAnimation = this.stopAnimation.bind(this);
+        this.stopAnimation = this.stopAnimation.bind(this);
     }
 
     render() {
         return <React.Fragment>
-                 <nav className="navbar navbar-expand-md navbar-light bg-dark d-flex justify-content-between">
-                   <span className="navbar-brand mb-0 text-light h1">Planetary Configurations Simulator</span>
+            <nav className="navbar navbar-expand-md navbar-light bg-dark d-flex justify-content-between">
+                <span className="navbar-brand mb-0 text-light h1">Planetary Configurations Simulator</span>
 
-                   <ul className="navbar-nav">
-                     <li className="nav-item">
-                       <a className="nav-link text-light" href="#" onClick={this.onResetClick.bind(this)}>Reset</a>
-                     </li>
-                     <li className="nav-item">
-                       <a className="nav-link text-light" href="#" data-toggle="modal" data-target="#helpModal">Help</a>
-                     </li>
-                     <li className="nav-item">
-                       <a className="nav-link text-light" href="#" data-toggle="modal" data-target="#aboutModal">About</a>
-                     </li>
-                   </ul>
-                 </nav>
-                 <div className="row mt-2">
-                   <div className="col-8">
-                     <MainView
-                       targetPlanetAngle={this.state.targetPlanetAngle}
-                       observerPlanetAngle={this.state.observerPlanetAngle}
-                       radiusTargetPlanet={this.state.radiusPixelTarget}
-                       radiusObserverPlanet={this.state.radiusPixelObserver}
-                       onTargetPlanetAngleUpdate={this.onTargetPlanetAngleUpdate.bind(this)}
-                       onObserverPlanetAngleUpdate={this.onObserverPlanetAngleUpdate.bind(this)}
-                       stopAnimation={this.stopAnimation}
-                       targetAngle={this.state.targetAngle}
-                       sunAngle={this.state.sunAngle}
-                       elongationAngle={this.state.elongationAngle}
-                       targetName={this.state.targetName}
-                       observerName={this.state.observerName}
-                       labelOrbits={this.state.labelOrbits}
-                       showElongation={this.state.showElongation}
-                       zoomOut={this.state.zoomOut}
-                     />
-                   </div>
-                   <div className="rowx">
-                     <div className="col">
-                       <h4 id="text">Orbit Sizes</h4>
-                       <div className="radiusText">
-                         <label htmlFor="radObserverPlanetRange" id="text">Radius of observer planet's orbit (AU):</label>
-                       </div>
+                <ul className="navbar-nav">
+                    <li className="nav-item">
+                        <a className="nav-link text-light" href="#" onClick={this.onResetClick.bind(this)}>Reset</a>
+                    </li>
+                    <li className="nav-item">
+                        <a className="nav-link text-light" href="#" data-toggle="modal" data-target="#helpModal">Help</a>
+                    </li>
+                    <li className="nav-item">
+                        <a className="nav-link text-light" href="#" data-toggle="modal" data-target="#aboutModal">About</a>
+                    </li>
+                </ul>
+            </nav>
+            <div className="row mt-2">
+                <div className="col-8">
+                    <MainView
+                        targetPlanetAngle={this.state.targetPlanetAngle}
+                        observerPlanetAngle={this.state.observerPlanetAngle}
+                        radiusTargetPlanet={this.state.radiusPixelTarget}
+                        radiusObserverPlanet={this.state.radiusPixelObserver}
+                        onTargetPlanetAngleUpdate={this.onTargetPlanetAngleUpdate.bind(this)}
+                        onObserverPlanetAngleUpdate={this.onObserverPlanetAngleUpdate.bind(this)}
+                        stopAnimation={this.stopAnimation}
+                        targetAngle={this.state.targetAngle}
+                        sunAngle={this.state.sunAngle}
+                        elongationAngle={this.state.elongationAngle}
+                        targetName={this.state.targetName}
+                        observerName={this.state.observerName}
+                        labelOrbits={this.state.labelOrbits}
+                        showElongation={this.state.showElongation}
+                        zoomOut={this.state.zoomOut}
+                    />
+                </div>
+                <div className="rowx">
+                    <div className="col">
+                        <h4 id="text">Orbit Sizes</h4>
+                        <div className="radiusText">
+                            <label htmlFor="radObserverPlanetRange" id="text">Radius of observer planet's orbit (AU):</label>
+                        </div>
 
-                       <div className="observerInput">
-                         <form onSubmit={this.onSubmitObserver.bind(this)}>
-                           <input
-                             className="input"
-                             type="number"
-                             min={0.25}
-                             max={10.00}
-                             step={0.01}
-                             value={this.state.holdObserver}
-                             onChange={this.changeValObserver.bind(this)}
-                           />
-                         </form>
-                       </div>
+                        <div className="observerInput">
+                            <form onSubmit={this.onSubmitObserver.bind(this)}>
+                                <input
+                                    className="input"
+                                    type="number"
+                                    min={0.25}
+                                    max={10.00}
+                                    step={0.01}
+                                    value={this.state.holdObserver}
+                                    onChange={this.changeValObserver.bind(this)}
+                                />
+                            </form>
+                        </div>
 
-                       <div className="observerSlider">
-                         <input
-                           type="range"
-                           min={0.25}
-                           max={10.00}
-                           step={0.01}
-                           value={this.state.radiusObserverPlanet}
-                           onChange={this.onObserverPlanetRadiusChange.bind(this)}
-                         />
-                       </div>
+                        <div className="observerSlider">
+                            <input
+                                type="range"
+                                min={0.25}
+                                max={10.00}
+                                step={0.01}
+                                value={this.state.radiusObserverPlanet}
+                                onChange={this.onObserverPlanetRadiusChange.bind(this)}
+                            />
+                        </div>
 
-                       <div className="observerPresets">
-                         <select className="form-control form-control-sm"
-                                 onChange={this.onPresetSelectObserver.bind(this)}
-                                 value={this.state.optionObserver}>
-                           <option value={0} defaultValue>*preset*</option>
-                           <option value={1}>Mercury</option>
-                           <option value={2}>Venus</option>
-                           <option value={3}>Earth</option>
-                           <option value={4}>Mars</option>
-                           <option value={5}>Jupiter</option>
-                           <option value={6}>Saturn</option>
-                           <option value={7}>Arbitrary Observer</option>
-                         </select>
-                       </div>
+                        <div className="observerPresets">
+                            <select className="form-control form-control-sm"
+                                    onChange={this.onPresetSelectObserver.bind(this)}
+                                    value={this.state.optionObserver}>
+                                <option value={0} defaultValue>*preset*</option>
+                                <option value={1}>Mercury</option>
+                                <option value={2}>Venus</option>
+                                <option value={3}>Earth</option>
+                                <option value={4}>Mars</option>
+                                <option value={5}>Jupiter</option>
+                                <option value={6}>Saturn</option>
+                                <option value={7}>Arbitrary Observer</option>
+                            </select>
+                        </div>
 
-                       <div className="radiusText">
-                         <label htmlFor="radTargetPlanetRange" id="text">Radius of target planet's orbit (AU):</label>
-                       </div>
-                       <div className="targetInput">
-                         <form onSubmit={this.onSubmitTarget.bind(this)}>
-                           <input
-                             className="input"
-                             type="number"
-                             min={0.25}
-                             max={10.00}
-                             step={0.01}
-                             value={this.state.holdTarget}
-                             onChange={this.changeValTarget.bind(this)}
-                           />
-                         </form>
-                       </div>
+                        <div className="radiusText">
+                            <label htmlFor="radTargetPlanetRange" id="text">Radius of target planet's orbit (AU):</label>
+                        </div>
+                        <div className="targetInput">
+                            <form onSubmit={this.onSubmitTarget.bind(this)}>
+                                <input
+                                    className="input"
+                                    type="number"
+                                    min={0.25}
+                                    max={10.00}
+                                    step={0.01}
+                                    value={this.state.holdTarget}
+                                    onChange={this.changeValTarget.bind(this)}
+                                />
+                            </form>
+                        </div>
 
-                       <div className="targetSlider">
-                         <input
-                           type="range"
-                           min={0.25}
-                           max={10.00}
-                           step={0.01}
-                           value={this.state.radiusTargetPlanet}
-                           onChange={this.onTargetPlanetRadiusChange.bind(this)}
-                         />
-                       </div>
-                       <div className="targetPresets">
-                         <select className="form-control form-control-sm"
-                                 onChange={this.onPresetSelectTarget.bind(this)}
-                                 value={this.state.optionTarget}>
-                           <option value={0} defaultValue>*preset*</option>
-                           <option value={1}>Mercury</option>
-                           <option value={2}>Venus</option>
-                           <option value={3}>Earth</option>
-                           <option value={4}>Mars</option>
-                           <option value={5}>Jupiter</option>
-                           <option value={6}>Saturn</option>
-                           <option value={7}>Arbitrary Target</option>
-                         </select>
-                       </div>
-                     </div>
+                        <div className="targetSlider">
+                            <input
+                                type="range"
+                                min={0.25}
+                                max={10.00}
+                                step={0.01}
+                                value={this.state.radiusTargetPlanet}
+                                onChange={this.onTargetPlanetRadiusChange.bind(this)}
+                            />
+                        </div>
 
-                     <div className="col">
-                       <h4 id="text">Animation Control</h4>
-                       <div className="animationText">
-                         <label htmlFor="diamRange" id="text">Speed:</label>
-                       </div>
-                       <div className="animationSlider">
-                         <input
-                           type="range"
-                           step={0.1}
-                           min={0.1}
-                           max={Math.PI}
-                           value={this.state.animationRate}
-                           onChange={this.onAnimationRateChange.bind(this)}
-                         />
-                       </div>
-                       <div className="animationButton">
-                         <button type="button"
-                                 className="btn btn-primary btn-sm"
-                                 onClick={this.onStartClick.bind(this)}>
-                           {this.state.startBtnText}
-                         </button>
-                       </div>
-                     </div>
+                        <div className="targetPresets">
+                            <select className="form-control form-control-sm"
+                                    onChange={this.onPresetSelectTarget.bind(this)}
+                                    value={this.state.optionTarget}>
+                                <option value={0} defaultValue>*preset*</option>
+                                <option value={1}>Mercury</option>
+                                <option value={2}>Venus</option>
+                                <option value={3}>Earth</option>
+                                <option value={4}>Mars</option>
+                                <option value={5}>Jupiter</option>
+                                <option value={6}>Saturn</option>
+                                <option value={7}>Arbitrary Target</option>
+                            </select>
+                        </div>
+                    </div>
 
-                     <div className="controls">
+                    <div className="col">
+                        <h4 id="text">Animation Control</h4>
+                        <div className="animationText">
+                            <label htmlFor="diamRange" id="text">Speed:</label>
+                        </div>
+                        <div className="animationSlider">
+                            <input
+                                type="range"
+                                step={0.1}
+                                min={0.1}
+                                max={Math.PI}
+                                value={this.state.animationRate}
+                                onChange={this.onAnimationRateChange.bind(this)}
+                            />
+                        </div>
+                        <div className="animationButton">
+                            <button type="button"
+                                    className="btn btn-primary btn-sm"
+                                    onClick={this.onStartClick.bind(this)}>
+                                {this.state.startBtnText}
+                            </button>
+                        </div>
+                    </div>
 
-                       <div className="custom-control custom-checkboxes">
-                         <input type="checkbox"
-                                onChange={this.showOrbits.bind(this)}
-                                checked={this.state.labelOrbits}
-                                id="orbits-display"
-                         />
-                         <label className="" htmlFor="orbits-display" id="text">
-                           Label Orbits
-                         </label>
-                       </div>
+                    <div className="controls">
+                        <div className="custom-control custom-checkboxes">
+                            <input type="checkbox"
+                                   onChange={this.showOrbits.bind(this)}
+                                   checked={this.state.labelOrbits}
+                                   id="orbits-display"
+                            />
+                            <label className="" htmlFor="orbits-display" id="text">
+                                Label Orbits
+                            </label>
+                        </div>
 
-                       <div className="custom-control custom-checkbox">
-                         <input type="checkbox"
-                                onChange={this.showElongationAngle.bind(this)}
-                                checked={this.state.showElongation}
-                                id="angle-display"
-                         />
-                         <label className="" htmlFor="angle-display" id="text">
-                           Show Elongation Angle
-                         </label>
-                       </div>
+                        <div className="custom-control custom-checkbox">
+                            <input type="checkbox"
+                                   onChange={this.showElongationAngle.bind(this)}
+                                   checked={this.state.showElongation}
+                                   id="angle-display"
+                            />
+                            <label className="" htmlFor="angle-display" id="text">
+                                Show Elongation Angle
+                            </label>
+                        </div>
 
-                       <div className="custom-control custom-checkbox">
-                         <input type="checkbox"
-                                onChange={this.displayZoomOut.bind(this)}
-                                checked={this.state.zoomOut}
-                                id="zoom-out-display"
-                         />
-                         <label className="" htmlFor="zoom-out-display" id="text">
-                           Zoom Out to View Constellations
-                         </label>
-                       </div>
+                        <div className="custom-control custom-checkbox">
+                            <input type="checkbox"
+                                   onChange={this.displayZoomOut.bind(this)}
+                                   checked={this.state.zoomOut}
+                                   id="zoom-out-display"
+                            />
+                            <label className="" htmlFor="zoom-out-display" id="text">
+                                Zoom Out to View Constellations
+                            </label>
+                        </div>
+                    </div>
 
-                     </div>
-                     <div className="survey">
-                         <a href="https://forms.office.com/Pages/ResponsePage.aspx?id=n7L3RQCxQUyAT7NBighZStjAWTIFlutChq8ZZEGLLMdUNTJOMEw5TkRPWUExTUREQzRLR0FDV0FBVi4u" 
-                         target="_blank" 
-                         rel="noopener noreferrer">
-                             <button type="button" className="btn btn-warning">Give us feedback!</button>
-                         </a>
-                     </div>
+                    <div className="controls">
+                        <div className="custom-control custom-checkboxes">
+                            <p>Earth Days Elapsed: {this.state.days.toFixed(0).slice(-6)}</p>
+                        </div>
+                    </div>
 
-                   </div>
+                    <div className="survey">
+                        <a href="https://forms.office.com/Pages/ResponsePage.aspx?id=n7L3RQCxQUyAT7NBighZStjAWTIFlutChq8ZZEGLLMdUNTJOMEw5TkRPWUExTUREQzRLR0FDV0FBVi4u"
+                           target="_blank"
+                           rel="noopener noreferrer">
+                            <button type="button" className="btn btn-warning">Give us feedback!</button>
+                        </a>
+                    </div>
 
-		   <div className="bot">
-		     <ZodiacStrip
-                       speed={this.state.animationRate}
-                       observerPlanetAngle={this.state.observerPlanetAngle}
-                       targetPlanetAngle={this.state.targetPlanetAngle}
-                       radiusObserverPlanet={this.state.radiusPixelObserver}
-                       radiusTargetPlanet={this.state.radiusPixelTarget}
-                       isPlaying={this.state.isPlaying}
-                       stopAnimation={this.stopAnimation}
-                       updateAngles={this.updateAngles.bind(this)}
-		     />
-                   </div>
-                 </div>
-               </React.Fragment>;
+                </div>
+
+                <div className="bot">
+                    <ZodiacStrip
+                        speed={this.state.animationRate}
+                        observerPlanetAngle={this.state.observerPlanetAngle}
+                        targetPlanetAngle={this.state.targetPlanetAngle}
+                        radiusObserverPlanet={this.state.radiusPixelObserver}
+                        radiusTargetPlanet={this.state.radiusPixelTarget}
+                        isPlaying={this.state.isPlaying}
+                        stopAnimation={this.stopAnimation}
+                        updateAngles={this.updateAngles.bind(this)}
+                    />
+                </div>
+            </div>
+        </React.Fragment>;
     }
 
     incrementObserverPlanetAngle(n, inc) {
@@ -270,12 +277,20 @@ class PlanetaryConfigSim extends React.Component {
         return newAngle;
     }
 
+    incrementDays(delta) {
+        let newDaysPassed = 0.665 * delta * this.state.observerMultiplier;
+        console.log('angle', this.state.observerPlanetAngle * 180 / Math.PI);
+        console.log('new days passed', newDaysPassed);
+        return  newDaysPassed;
+    }
+
     animate() {
         const me = this;
         this.updateMultiplier();
         this.setState(prevState => ({
             observerPlanetAngle: me.incrementObserverPlanetAngle(prevState.observerPlanetAngle, 0.0115 * this.state.animationRate),
-            targetPlanetAngle: me.incrementTargetPlanetAngle(prevState.targetPlanetAngle, 0.0115 * this.state.animationRate)
+            targetPlanetAngle: me.incrementTargetPlanetAngle(prevState.targetPlanetAngle, 0.0115 * this.state.animationRate),
+            days: prevState.days + me.incrementDays(this.state.animationRate)
         }));
 
         this.raf = requestAnimationFrame(this.animate.bind(this));
@@ -325,7 +340,7 @@ class PlanetaryConfigSim extends React.Component {
             && prevObserverPlanetAng <= (-Math.PI / 2)) {
             diff = -(Math.abs(newAng - Math.PI) + Math.abs(-Math.PI - prevObserverPlanetAng));
         } else if (prevObserverPlanetAng >= (Math.PI / 2) && prevObserverPlanetAng <= Math.PI
-                   && newAng >= -Math.PI && newAng <= (-Math.PI / 2)) {
+            && newAng >= -Math.PI && newAng <= (-Math.PI / 2)) {
             diff = (Math.abs(prevObserverPlanetAng - Math.PI) + Math.abs(-Math.PI - newAng));
         } else {
             diff = newAng - this.state.observerPlanetAngle;
@@ -343,7 +358,8 @@ class PlanetaryConfigSim extends React.Component {
         this.setState({
             isPlaying: false,
             observerPlanetAngle: newAngle,
-            targetPlanetAngle: newTargetPlanet
+            targetPlanetAngle: newTargetPlanet,
+            days: this.state.days + Math.abs(newAngle - prevObserverPlanetAng) * 29.85
         });
     }
 
@@ -357,7 +373,7 @@ class PlanetaryConfigSim extends React.Component {
             && prevObserverPlanetAng <= (-Math.PI / 2)) {
             diff = -(Math.abs(newAng - Math.PI) + Math.abs(-Math.PI - prevObserverPlanetAng));
         } else if (prevObserverPlanetAng >= (Math.PI / 2) && prevObserverPlanetAng <= Math.PI
-                   && newAng >= -Math.PI && newAng <= (-Math.PI / 2)) {
+            && newAng >= -Math.PI && newAng <= (-Math.PI / 2)) {
             diff = (Math.abs(prevObserverPlanetAng - Math.PI) + Math.abs(-Math.PI - newAng));
         } else {
             diff = newAng - this.state.targetPlanetAngle;
@@ -375,7 +391,8 @@ class PlanetaryConfigSim extends React.Component {
         this.setState({
             isPlaying: false,
             targetPlanetAngle: newAngle,
-            observerPlanetAngle: newObserverPlanet
+            observerPlanetAngle: newObserverPlanet,
+            days: this.state.days + Math.abs(newObserverPlanet - prevObserverPlanetAng) * 29.85
         });
     }
 
@@ -462,7 +479,7 @@ class PlanetaryConfigSim extends React.Component {
         }
 
         if (typeof(e) === 'object') {
-    	    au = e.target.value;
+            au = e.target.value;
             this.setState({
                 observerName: "observer planet",
                 holdObserver: au,
@@ -511,7 +528,7 @@ class PlanetaryConfigSim extends React.Component {
         }
 
         if (typeof(e) === 'object') {
-    	    au = e.target.value;
+            au = e.target.value;
             this.setState({
                 targetName: "target planet",
                 holdTarget: au,
@@ -528,7 +545,7 @@ class PlanetaryConfigSim extends React.Component {
         } else {
             let ratio = (au / this.state.radiusObserverPlanet) * maximumPixel;
             this.setState({
-            	radiusPixelTarget: forceNumber(ratio),
+                radiusPixelTarget: forceNumber(ratio),
                 radiusTargetPlanet: forceNumber(au),
                 radiusPixelObserver: maximumPixel,
             });
@@ -598,11 +615,43 @@ class PlanetaryConfigSim extends React.Component {
     }
 
     changeValObserver(e) {
-        this.setState({holdObserver: e.target.value});
+        let enteredValue = e.target.value;
+
+        // This functionality ensures you cannoot
+        // enter the same radius value for both
+        // target and observer. But since the Prof didn't want it,
+        // it's commented out for now.
+
+        // let otherVal = this.state.holdTarget;
+        // if (enteredValue == otherVal) {
+        //     if (otherVal == 10.0) {
+        //         enteredValue -= 0.01;
+        //     } else {
+        //         enteredValue += 0.01;
+        //     }
+        // }
+
+        this.setState({holdObserver: enteredValue});
     }
 
     changeValTarget(e) {
-        this.setState({holdTarget: e.target.value});
+        let enteredValue = e.target.value;
+
+        // This functionality ensures you cannoot
+        // enter the same radius value for both
+        // target and observer. But since the Prof didn't want it,
+        // it's commented out for now.
+
+        // let otherVal = this.state.holdObserver;
+        // if (enteredValue == otherVal) {
+        //     if (otherVal == 10.0) {
+        //         enteredValue -= 0.01;
+        //     } else {
+        //         enteredValue += 0.01;
+        //     }
+        // }
+
+        this.setState({holdTarget: enteredValue});
     }
 }
 
