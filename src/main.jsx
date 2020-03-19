@@ -31,7 +31,7 @@ class PlanetaryConfigSim extends React.Component {
             labelOrbits: true,
             showElongation: false,
             zoomOut: false,
-            startBtnText: 'play animation',
+            startBtnText: 'start animation',
             isPlaying: false,
             days: 0
         };
@@ -270,6 +270,7 @@ class PlanetaryConfigSim extends React.Component {
 
     incrementTargetPlanetAngle(n, inc) {
         const newAngle = n + (this.state.targetMultiplier * inc);
+        console.log('this is the new angle', n * 180 / Math.PI);
         if (newAngle > Math.PI) {
             return newAngle * -1;
         }
@@ -303,13 +304,13 @@ class PlanetaryConfigSim extends React.Component {
             this.raf = requestAnimationFrame(this.animate.bind(this));
             this.setState({
                 isPlaying: true,
-                startBtnText: 'pause animation'
+                startBtnText: 'stop animation'
             });
         } else {
             this.stopAnimation();
             this.setState({
                 isPlaying: false,
-                startBtnText: 'play animation'
+                startBtnText: 'start animation'
             });
         }
     }
@@ -334,27 +335,27 @@ class PlanetaryConfigSim extends React.Component {
 
     onObserverPlanetAngleUpdate(newAngle) {
         this.stopAnimation();
-        let diff = 0;
+        let diff;
         let newAng = newAngle;
         let prevObserverPlanetAng = this.state.observerPlanetAngle;
 
-        if (newAng >= (Math.PI / 2) && newAng <= Math.PI && prevObserverPlanetAng >= -Math.PI
-            && prevObserverPlanetAng <= (-Math.PI / 2)) {
+        let ninetyDegrees = Math.PI / 2;
+        if (newAng >= ninetyDegrees && prevObserverPlanetAng <= -ninetyDegrees) {
             diff = -(Math.abs(newAng - Math.PI) + Math.abs(-Math.PI - prevObserverPlanetAng));
-        } else if (prevObserverPlanetAng >= (Math.PI / 2) && prevObserverPlanetAng <= Math.PI
-            && newAng >= -Math.PI && newAng <= (-Math.PI / 2)) {
+        } else if (newAng <= -ninetyDegrees && prevObserverPlanetAng >= ninetyDegrees) {
             diff = (Math.abs(prevObserverPlanetAng - Math.PI) + Math.abs(-Math.PI - newAng));
         } else {
-            diff = newAng - this.state.observerPlanetAngle;
+            diff = newAng - prevObserverPlanetAng;
         }
 
         this.updateMultiplier();
         diff *= this.state.targetMultiplier / this.state.observerMultiplier;
         let newTargetPlanet = (this.state.targetPlanetAngle + diff);
+
         if (newTargetPlanet >= Math.PI) {
-            newTargetPlanet = -Math.PI;
+            newTargetPlanet = -2 * ninetyDegrees;
         } else if (newTargetPlanet <= -Math.PI) {
-            newTargetPlanet = Math.PI;
+            newTargetPlanet = 2 * ninetyDegrees;
         }
 
         this.setState({
@@ -367,27 +368,26 @@ class PlanetaryConfigSim extends React.Component {
 
     onTargetPlanetAngleUpdate(newAngle) {
         this.stopAnimation();
-        let diff = 0;
+        let diff;
         let newAng = newAngle;
-        let prevObserverPlanetAng = this.state.targetPlanetAngle;
+        let prevTargetPlanetAng = this.state.targetPlanetAngle;
 
-        if (newAng >= (Math.PI / 2) && newAng <= Math.PI && prevObserverPlanetAng >= -Math.PI
-            && prevObserverPlanetAng <= (-Math.PI / 2)) {
-            diff = -(Math.abs(newAng - Math.PI) + Math.abs(-Math.PI - prevObserverPlanetAng));
-        } else if (prevObserverPlanetAng >= (Math.PI / 2) && prevObserverPlanetAng <= Math.PI
-            && newAng >= -Math.PI && newAng <= (-Math.PI / 2)) {
-            diff = (Math.abs(prevObserverPlanetAng - Math.PI) + Math.abs(-Math.PI - newAng));
+        let ninetyDegrees = Math.PI / 2;
+        if (newAng >= ninetyDegrees && prevTargetPlanetAng <= -ninetyDegrees) {
+            diff = -(Math.abs(newAng - Math.PI) + Math.abs(-Math.PI - prevTargetPlanetAng));
+        } else if (newAng <= -ninetyDegrees && prevTargetPlanetAng >= ninetyDegrees) {
+            diff = (Math.abs(prevTargetPlanetAng - Math.PI) + Math.abs(-Math.PI - newAng));
         } else {
-            diff = newAng - this.state.targetPlanetAngle;
+            diff = newAng - prevTargetPlanetAng;
         }
 
         this.updateMultiplier();
         diff *= this.state.observerMultiplier / this.state.targetMultiplier;
         let newObserverPlanet = (this.state.observerPlanetAngle + diff);
         if (newObserverPlanet >= Math.PI) {
-            newObserverPlanet = -Math.PI;
+            newObserverPlanet = -2 * ninetyDegrees;
         } else if (newObserverPlanet <= -Math.PI) {
-            newObserverPlanet = Math.PI;
+            newObserverPlanet = 2 * ninetyDegrees;
         }
 
         this.setState({

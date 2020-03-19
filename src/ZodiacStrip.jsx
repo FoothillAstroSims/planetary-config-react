@@ -106,7 +106,7 @@ export default class ZodiacStrip extends React.Component {
 
         angleText.resolution = 2;
         angleText.anchor.set(0.5);
-        angleText.position.x = 270;
+        angleText.position.x = 300;
         angleText.position.y = 175;
         this.app.stage.addChild(angleText);
 
@@ -122,7 +122,7 @@ export default class ZodiacStrip extends React.Component {
 
         angleDirectionText.resolution = 2;
         angleDirectionText.anchor.set(0.5);
-        angleDirectionText.position.x = 340;
+        angleDirectionText.position.x = 375;
         angleDirectionText.position.y = 175;
         this.app.stage.addChild(angleDirectionText);
 
@@ -397,15 +397,14 @@ export default class ZodiacStrip extends React.Component {
         if (num > 180) {
             let temp = num - 180;
             num -= temp * 2;
-            direction = 'W';
+            direction = 'W ';
         }
-        
+
         if (num == 0 || num == 180) {
             direction = '';
         }
-        
 
-        let textNum = String(" " + num.toFixed(0));
+        let textNum = String(" " + num.toFixed(0)).slice(-6);
         textNum += '°';
 
         this.updateText(textNum);
