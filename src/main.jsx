@@ -46,7 +46,6 @@ class PlanetaryConfigSim extends React.Component {
         return <React.Fragment>
             <nav className="navbar navbar-expand-md navbar-light bg-dark d-flex justify-content-between">
                 <span className="navbar-brand mb-0 text-light h1">Planetary Configurations Simulator</span>
-
                 <ul className="navbar-nav">
                     <li className="nav-item">
                         <a className="nav-link text-light" href="#" onClick={this.onResetClick.bind(this)}>Reset</a>
@@ -277,11 +276,14 @@ class PlanetaryConfigSim extends React.Component {
         return newAngle;
     }
 
-    incrementDays(delta) {
-        let newDaysPassed = 0.665 * delta * this.state.observerMultiplier;
-        console.log('angle', this.state.observerPlanetAngle * 180 / Math.PI);
-        console.log('new days passed', newDaysPassed);
-        return  newDaysPassed;
+    incrementDays() {
+        let ang = this.state.observerPlanetAngle;
+        let elapsed = (ang / (2 * Math.PI)) * 365;
+        if (ang < 0) {
+            elapsed = ((2 * Math.PI + ang) / (2 * Math.PI)) * 365;
+        }
+        elapsed *= (1 / this.state.observerMultiplier);
+        return elapsed;
     }
 
     animate() {
@@ -290,7 +292,7 @@ class PlanetaryConfigSim extends React.Component {
         this.setState(prevState => ({
             observerPlanetAngle: me.incrementObserverPlanetAngle(prevState.observerPlanetAngle, 0.0115 * this.state.animationRate),
             targetPlanetAngle: me.incrementTargetPlanetAngle(prevState.targetPlanetAngle, 0.0115 * this.state.animationRate),
-            days: prevState.days + me.incrementDays(this.state.animationRate)
+            days: me.incrementDays()
         }));
 
         this.raf = requestAnimationFrame(this.animate.bind(this));
@@ -359,7 +361,7 @@ class PlanetaryConfigSim extends React.Component {
             isPlaying: false,
             observerPlanetAngle: newAngle,
             targetPlanetAngle: newTargetPlanet,
-            days: this.state.days + Math.abs(newAngle - prevObserverPlanetAng) * 29.85
+            days: this.incrementDays()
         });
     }
 
@@ -392,7 +394,7 @@ class PlanetaryConfigSim extends React.Component {
             isPlaying: false,
             targetPlanetAngle: newAngle,
             observerPlanetAngle: newObserverPlanet,
-            days: this.state.days + Math.abs(newObserverPlanet - prevObserverPlanetAng) * 29.85
+            days: this.incrementDays()
         });
     }
 
