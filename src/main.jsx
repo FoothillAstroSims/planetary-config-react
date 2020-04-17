@@ -234,7 +234,7 @@ class PlanetaryConfigSim extends React.Component {
                         <div className="custom-control custom-checkboxes">
                             <div id="elapsedText">
                                 <p>
-                                    {this.getYear()} years and {this.getDaysElapsed().toFixed(0)} days
+                                    {this.getEarthYearsElapsed()} years and {(this.getEarthDaysElapsed() % 365).toFixed(0)} days
                                 </p>
                             </div>
                             <div id="resetButton">
@@ -273,6 +273,45 @@ class PlanetaryConfigSim extends React.Component {
         </React.Fragment>;
     }
 
+
+    getEarthDaysElapsed() {
+
+        let orbitDays = this.getDaysElapsed();
+        let orbitYears = this.getYear();
+        let orbitalPeriod = 365 * (1 / this.state.observerMultiplier);
+
+        let earthDaysElapsed = ((orbitYears * orbitalPeriod) + orbitDays);
+
+        return earthDaysElapsed;
+
+        // if (this.state.days === 0) {
+        //     return 0;
+        // }
+
+
+        // let daysElapsed;
+        // if (this.state.cyclesCompleted <= 0) {
+        //     daysElapsed = this.state.days - orbitalPeriod;
+        //     daysElapsed += this.getYear() * orbitalPeriod;
+        //     return daysElapsed % 365;
+        // }
+
+        // daysElapsed = this.state.days;
+        // daysElapsed += this.getYear() * orbitalPeriod;
+        // return daysElapsed % 365;
+    }
+
+    getEarthYearsElapsed() {
+        let earthDaysElapsed = this.getEarthDaysElapsed();
+
+        let yearsElapsed = Math.floor(earthDaysElapsed / 365);
+        if (yearsElapsed < 0) {
+            return yearsElapsed + 1;
+        }
+
+        return yearsElapsed;
+    }
+
     getDaysElapsed() {
         if (this.state.days === 0) {
             return 0;
@@ -283,7 +322,17 @@ class PlanetaryConfigSim extends React.Component {
 
     getYear() {
         let year = this.state.cyclesCompleted;
-        return year < 0 ? (year) : (year - 1 === -1 ? 0 : year - 1);
+
+        if (year < 0) {
+            return year;
+        }
+
+        if (year - 1 === -1) {
+            return 0;
+        }
+
+        return year - 1;
+        // return year < 0 ? (year) : (year - 1 === -1 ? 0 : year - 1);
     }
 
     resetDaysElapsed() {
