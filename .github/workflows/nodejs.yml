@@ -1,0 +1,40 @@
+name: Node CI
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x]
+
+    steps:
+    - uses: actions/checkout@master
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: npm ci, build
+      run: |
+        #npm install
+        npm ci #Install a project with a clean slate, never write to package.json or any of the package-locks
+        #npm run build --if-present
+        npm run-script build --if-present
+        #npm test
+        #npm run serve uses webpack-dev-server
+        #npm run dev does not use webpack-dev-server
+      env:
+        CI: true  
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test for public javascript library vulnerabilities 
+        uses: lirantal/is-website-vulnerable@master
+        with:
+          scan-url: "https://foothillastrosims.github.io/planetary-config-react/"
