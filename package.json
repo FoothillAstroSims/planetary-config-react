@@ -1,45 +1,46 @@
 {
-  "name": "planetary-configuration-simulator",
-  "version": "1.0.1",
-  "private": true,
-  "main": "main.js",
-  "scripts": {
-    "serve": "webpack-dev-server --mode development",
-    "dev": "webpack --mode development --watch",
-    "build": "webpack --mode production",
-    "eslint": "eslint src/*.js src/*.jsx",
-    "fix": "eslint src/*.js src/*.jsx --fix"
-  },
-  "dependencies": {
-    "@babel/cli": "^7.8.4",
-    "eslint-plugin-security": "^1.4.0",
-    "pixi.js": "^5.2.3",
-    "react": "~16.12.0",
-    "react-dom": "~16.12.0",
-    "react-range-step-input": "^1.2.1"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.9.6",
-    "@babel/preset-env": "^7.9.6",
-    "@babel/preset-react": "^7.9.4",
-    "babel-core": "^7.0.0-bridge.0",
-    "babel-eslint": "^10.1.0",
-    "babel-loader": "^8.1.0",
-    "eslint": "^6.8.0",
-    "eslint-config-standard": "^14.1.1",
-    "eslint-plugin-import": "^2.20.2",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-react": "^7.19.0",
-    "eslint-plugin-standard": "^4.0.1",
-    "webpack": "^4.43.0",
-    "webpack-cli": "^3.3.11",
-    "webpack-dev-server": "^3.10.3"
-  },
-  "babel": {
-    "presets": [
-      "@babel/env",
-      "@babel/react"
-    ]
-  }
+    "name": "planetary-configuration-simulator",
+    "version": "1.0.1",
+    "private": true,
+    "main": "main.js",
+    "scripts": {
+        "serve": "webpack-dev-server --mode development",
+        "dev": "webpack --mode development --watch",
+        "build": "webpack --mode production",
+        "eslint": "eslint src/*.js src/*.jsx",
+        "fix": "eslint src/*.js src/*.jsx --fix"
+    },
+    "dependencies": {
+        "@babel/cli": "^7.8.4",
+        "eslint-plugin-security": "^1.4.0",
+        "jquery": "^3.5.0",
+        "pixi.js": "^5.2.3",
+        "react": "~16.12.0",
+        "react-dom": "~16.12.0",
+        "react-range-step-input": "^1.2.1"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.9.6",
+        "@babel/preset-env": "^7.9.6",
+        "@babel/preset-react": "^7.9.4",
+        "babel-core": "^7.0.0-bridge.0",
+        "babel-eslint": "^10.1.0",
+        "babel-loader": "^8.1.0",
+        "eslint": "^6.8.0",
+        "eslint-config-standard": "^14.1.1",
+        "eslint-plugin-import": "^2.20.2",
+        "eslint-plugin-node": "^11.1.0",
+        "eslint-plugin-promise": "^4.2.1",
+        "eslint-plugin-react": "^7.19.0",
+        "eslint-plugin-standard": "^4.0.1",
+        "webpack": "^4.43.0",
+        "webpack-cli": "^3.3.11",
+        "webpack-dev-server": "^3.10.3"
+    },
+    "babel": {
+        "presets": [
+            "@babel/env",
+            "@babel/react"
+        ]
+    }
 }
