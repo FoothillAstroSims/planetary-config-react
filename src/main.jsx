@@ -31,7 +31,7 @@ class PlanetaryConfigSim extends React.Component {
             labelOrbits: true,
             showElongation: false,
             zoomOut: false,
-            startBtnText: 'start animation',
+            startBtnText: 'Play animation',
             isPlaying: false,
             days: 0,
             thetaShift: 0,
@@ -415,13 +415,13 @@ class PlanetaryConfigSim extends React.Component {
             this.raf = requestAnimationFrame(this.animate.bind(this));
             this.setState({
                 isPlaying: true,
-                startBtnText: 'stop animation'
+                startBtnText: 'Pause animation'
             });
         } else {
             this.stopAnimation();
             this.setState({
                 isPlaying: false,
-                startBtnText: 'start animation'
+                startBtnText: 'Play animation'
             });
         }
     }
