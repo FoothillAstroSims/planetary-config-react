@@ -2,11 +2,14 @@ const path = require('path');
 const webpack = require('webpack');
 
 module.exports = {
-    entry: './src/main.jsx',
+    entry: {
+        bundle: './src/main.jsx',
+        vendor: './src/vendor.js'
+    },
     mode: process.env.WEBPACK_SERVE ? 'development' : 'production',
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: 'bundle.js',
+        filename: '[name].js',
         publicPath: '/dist/',
     },
     resolve: {
@@ -14,6 +17,10 @@ module.exports = {
     },
     module: {
         rules: [
+            {
+                test: /\.css$/,
+                use: ['style-loader', 'css-loader']
+            },
             {
                 test: /\.(js|jsx)$/,
                 include: path.resolve(__dirname, 'src'),
