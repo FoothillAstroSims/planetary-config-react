@@ -3,8 +3,9 @@ const webpack = require('webpack');
 
 module.exports = {
     entry: {
-        bundle: './src/main.jsx',
-        vendor: './src/vendor.js'
+        css: './src/css.js',
+        vendor: './src/vendor.js',
+        bundle: './src/main.jsx'
     },
     mode: process.env.WEBPACK_SERVE ? 'development' : 'production',
     output: {
