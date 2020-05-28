@@ -26,7 +26,7 @@ jobs:
         npm ci #Install a project with a clean slate, never write to package.json or any of the package-locks
         #npm run build --if-present
         npm run-script build --if-present
-        #npm audit
+        npm audit
         #npm test
         #npm run serve uses webpack-dev-server
         #npm run dev does not use webpack-dev-server
