@@ -4,7 +4,6 @@
   "private": true,
   "main": "main.jsx",
   "scripts": {
-    "serve": "webpack-dev-server --mode development",
     "dev": "webpack --mode development --watch",
     "build": "webpack --mode production",
     "eslint": "eslint src/*.js src/*.jsx",
@@ -25,6 +24,7 @@
     "@babel/core": "*",
     "@babel/preset-env": "*",
     "@babel/preset-react": "*",
+    "@webpack-cli/serve": "^1.7.0",
     "babel-core": "*",
     "babel-eslint": "*",
     "babel-loader": "*",
@@ -36,10 +36,10 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-react": "^7.20.0",
     "eslint-plugin-standard": "^4.0.1",
+    "express": "*",
     "style-loader": "^1.2.1",
     "webpack": "*",
-    "webpack-cli": "*",
-    "webpack-dev-server": "*"
+    "webpack-cli": "*"
   },
   "babel": {
     "presets": [
