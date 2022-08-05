@@ -15,10 +15,10 @@
     "eslint-plugin-security": "^1.4.0",
     "jquery": "^3.5.1",
     "pixi.js": "^5.3.0",
-    "popper.js": "^1.16.1",
-    "react": "~16.12.0",
-    "react-dom": "~16.12.0",
-    "react-range-step-input": "^1.2.1"
+    "popper.js": "*",
+    "react": "*",
+    "react-dom": "*",
+    "react-range-step-input": "*"
   },
   "devDependencies": {
     "@babel/core": "*",
@@ -26,10 +26,10 @@
     "@babel/preset-react": "*",
     "@webpack-cli/serve": "^1.7.0",
     "babel-core": "*",
-    "babel-eslint": "*",
+    "@babel/eslint-parser": "*",
     "babel-loader": "*",
     "css-loader": "^3.6.0",
-    "eslint": "*",
+    "eslint": "^8.0.0",
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-import": "^2.21.2",
     "eslint-plugin-node": "^11.1.0",
