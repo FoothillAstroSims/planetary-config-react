@@ -10,7 +10,7 @@ The second readme, "Playing With React and D3", from https://github.com/freddyra
 
 Lead Maintaner: [Dr. Baba Kofi Weusijana](https://github.com/BabaKofiFHDA)
 
-# astro-simulations [![Build Status](https://travis-ci.org/ccnmtl/astro-simulations.svg?branch=master)](https://travis-ci.org/ccnmtl/astro-simulations)
+# astro-simulations
 
 Astronomy Simulations and Animations
 
@@ -33,21 +33,20 @@ should have the code hierarchy.
 
 Here are instructions on how to develop and make changes to these simulations. If you're using Windows, replace the forward slashes with back-slashes.
 
-- Install [node.js](https://nodejs.org/en/)
+- Install [node.js](https://nodejs.org/en/) by installing [nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 - Clone this repository
 - Go into this simulation, e.g.:
   `cd planetary-config-react`
+- Run `nvm install --lts`
 - Run `npm install`
-- Run `npm run serve`
+- Run `npm run build`
 - Wait for the build to complete. It takes a while.
-- Open http://localhost:8080 in your web browser.
+- Run `node express.js`
+- Open http://localhost:3000 in your web browser.
 
 You can also use the `npm run dev` command if all you want to do is
-make a development build of a simulation without using
-[webpack-dev-server](https://github.com/webpack/webpack-dev-server). Three.js
-has an overview of this in [How to run things locally](https://threejs.org/docs/#manual/en/introduction/How-to-run-things-locally).
-Both `npm run dev` and `npm run serve` watch the `src/` directory for file
-changes.
+make a development build of a simulation and rebuilds based on watching the `src/` directory for file changes.
+Three.js has an overview of this in [How to run things locally](https://threejs.org/docs/#manual/en/introduction/How-to-run-things-locally).
 
 Here are some blog posts I've made about these simulations:
 
