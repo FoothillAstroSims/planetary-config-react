@@ -5,128 +5,112 @@ object-assign
 */
 
 /*!
- * @pixi/app - v6.5.1
- * Compiled Sun, 24 Jul 2022 20:56:21 UTC
+ * @pixi/app - v6.5.10
+ * Compiled Thu, 06 Jul 2023 15:25:11 UTC
  *
  * @pixi/app is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
  */
 
 /*!
- * @pixi/constants - v6.5.1
- * Compiled Sun, 24 Jul 2022 20:56:21 UTC
- *
- * @pixi/constants is licensed under the MIT License.
- * http://www.opensource.org/licenses/mit-license
- */
-
-/*!
- * @pixi/core - v6.5.1
- * Compiled Sun, 24 Jul 2022 20:56:21 UTC
+ * @pixi/core - v6.5.10
+ * Compiled Thu, 06 Jul 2023 15:25:11 UTC
  *
  * @pixi/core is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
  */
 
 /*!
- * @pixi/display - v6.5.1
- * Compiled Sun, 24 Jul 2022 20:56:21 UTC
+ * @pixi/display - v6.5.10
+ * Compiled Thu, 06 Jul 2023 15:25:11 UTC
  *
  * @pixi/display is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
  */
 
 /*!
- * @pixi/extensions - v6.5.1
- * Compiled Sun, 24 Jul 2022 20:56:21 UTC
+ * @pixi/extensions - v6.5.10
+ * Compiled Thu, 06 Jul 2023 15:25:11 UTC
  *
  * @pixi/extensions is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
  */
 
 /*!
- * @pixi/filter-displacement - v6.5.1
- * Compiled Sun, 24 Jul 2022 20:56:21 UTC
+ * @pixi/filter-displacement - v6.5.10
+ * Compiled Thu, 06 Jul 2023 15:25:11 UTC
  *
  * @pixi/filter-displacement is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
  */
 
 /*!
- * @pixi/math - v6.5.1
- * Compiled Sun, 24 Jul 2022 20:56:21 UTC
+ * @pixi/math - v6.5.10
+ * Compiled Thu, 06 Jul 2023 15:25:11 UTC
  *
  * @pixi/math is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
  */
 
 /*!
- * @pixi/mesh-extras - v6.5.1
- * Compiled Sun, 24 Jul 2022 20:56:21 UTC
+ * @pixi/mesh-extras - v6.5.10
+ * Compiled Thu, 06 Jul 2023 15:25:11 UTC
  *
  * @pixi/mesh-extras is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
  */
 
 /*!
- * @pixi/mixin-get-child-by-name - v6.5.1
- * Compiled Sun, 24 Jul 2022 20:56:21 UTC
+ * @pixi/mixin-get-child-by-name - v6.5.10
+ * Compiled Thu, 06 Jul 2023 15:25:11 UTC
  *
  * @pixi/mixin-get-child-by-name is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
  */
 
 /*!
- * @pixi/mixin-get-global-position - v6.5.1
- * Compiled Sun, 24 Jul 2022 20:56:21 UTC
+ * @pixi/mixin-get-global-position - v6.5.10
+ * Compiled Thu, 06 Jul 2023 15:25:11 UTC
  *
  * @pixi/mixin-get-global-position is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
  */
 
 /*!
- * @pixi/polyfill - v6.5.1
- * Compiled Sun, 24 Jul 2022 20:56:21 UTC
+ * @pixi/polyfill - v6.5.10
+ * Compiled Thu, 06 Jul 2023 15:25:11 UTC
  *
  * @pixi/polyfill is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
  */
 
 /*!
- * @pixi/prepare - v6.5.1
- * Compiled Sun, 24 Jul 2022 20:56:21 UTC
+ * @pixi/prepare - v6.5.10
+ * Compiled Thu, 06 Jul 2023 15:25:11 UTC
  *
  * @pixi/prepare is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
  */
 
 /*!
- * @pixi/settings - v6.5.1
- * Compiled Sun, 24 Jul 2022 20:56:21 UTC
+ * @pixi/settings - v6.5.10
+ * Compiled Thu, 06 Jul 2023 15:25:11 UTC
  *
  * @pixi/settings is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
  */
 
 /*!
- * @pixi/ticker - v6.5.1
- * Compiled Sun, 24 Jul 2022 20:56:21 UTC
+ * @pixi/ticker - v6.5.10
+ * Compiled Thu, 06 Jul 2023 15:25:11 UTC
  *
  * @pixi/ticker is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
  */
 
 /*!
- * @pixi/utils - v6.5.1
- * Compiled Sun, 24 Jul 2022 20:56:21 UTC
- *
- * @pixi/utils is licensed under the MIT License.
- * http://www.opensource.org/licenses/mit-license
- */
-
-/*!
- * pixi.js - v6.5.1
- * Compiled Sun, 24 Jul 2022 20:56:21 UTC
+ * pixi.js - v6.5.10
+ * Compiled Thu, 06 Jul 2023 15:25:11 UTC
  *
  * pixi.js is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -147,7 +131,7 @@ OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 PERFORMANCE OF THIS SOFTWARE.
 ***************************************************************************** */
 
-/*! https://mths.be/punycode v1.3.2 by @mathias */
+/*! https://mths.be/punycode v1.4.1 by @mathias */
 
 /** @license React v0.20.2
  * scheduler.production.min.js

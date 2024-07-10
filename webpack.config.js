@@ -8,6 +8,7 @@ module.exports = {
         bundle: './src/main.jsx'
     },
     mode: process.env.WEBPACK_SERVE ? 'development' : 'production',
+    devtool: process.env.WEBPACK_SERVE ? 'source-map' : false,
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: '[name].js',

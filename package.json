@@ -1,6 +1,6 @@
 {
   "name": "planetary-configuration-simulator",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "main": "main.jsx",
   "scripts": {
@@ -11,21 +11,20 @@
   },
   "dependencies": {
     "@babel/cli": "*",
-    "bootstrap": "*",
+    "bootstrap": "4.6",
     "eslint-plugin-security": "^1.5.0",
-    "jquery": "^3.6.0",
+    "jquery": "3.7.1",
     "pixi.js": "^6.5.1",
-    "popper.js": "*",
+    "popper.js": "1.16.1",
     "react": "*",
     "react-dom": "*",
     "react-range-step-input": "*"
   },
   "devDependencies": {
-    "@babel/core": "^7.18.10",
+    "@babel/core": "^7.23.2",
     "@babel/preset-env": "*",
     "@babel/preset-react": "*",
     "@webpack-cli/serve": "^1.7.0",
-    "babel-core": "*",
     "@babel/eslint-parser": "*",
     "babel-loader": "*",
     "css-loader": "^6.7.1",
